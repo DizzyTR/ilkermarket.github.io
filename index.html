@@ -804,6 +804,12 @@
       { id: 'tatli', name: 'Tatlı', emoji: '🍰', active: true, color: '#FBEAF0', textColor: '#72243E' },
     ];
 
+    const DELIVERY_REGIONS = [
+      { id: 'barbaros', name: 'Barbaros Mahallesi', fee: 0 },
+      { id: 'kemalpasa', name: 'Kemalpaşa Mahallesi', fee: 100 },
+      { id: 'esenler', name: 'Esenler Mahallesi', fee: 150 },
+    ];
+
     function loadData() {
       try {
         const p = localStorage.getItem('siparis_products');
@@ -1010,19 +1016,22 @@
         return p ? { p, qty, sub: p.price * qty } : null;
       }).filter(Boolean);
       const total = lines.reduce((s, l) => s + l.sub, 0);
+      window.currentOrderBaseTotal = total;
       const linesHtml = lines.map(l => `<div class="oline"><span>${l.p.emoji} ${l.p.name} <span style="color:var(--text2)">×${l.qty}</span></span><span>₺${l.sub}</span></div>`).join('');
       document.getElementById('sheet').innerHTML = `
         <h3>Sipariş Bilgileri</h3>
         <div class="frow"><label>Ad Soyad*</label><input type="text" id="customerName" placeholder="Adınız ve Soyadınız"></div>
         <div class="frow"><label>Adres*</label><textarea id="customerAddress" placeholder="Adresiniz"></textarea></div>
+        <div class="frow"><label>Bölge*</label><select id="customerRegion" onchange="updateDeliveryFee()">${DELIVERY_REGIONS.map(r => `<option value="${r.id}">${r.name}${r.fee ? ` - Servis Ücreti ₺${r.fee}` : ' - Servis Ücreti Yok'}</option>`).join('')}</select></div>
         <div class="frow"><label>Telefon*</label><input type="text" id="customerPhone" placeholder="05xxxxxxxxx"></div>
         <div class="frow"><label>Ek Not (Opsiyonel)</label><textarea id="customerNote" placeholder="İsteğe bağlı not"></textarea></div>
         <div class="frow"><label>Ödeme Şekli*</label><select id="paymentMethod"><option value="Nakit">Nakit</option><option value="Kart">Kart</option></select></div>
-        <div class="frow"><label>Sipariş Özeti</label>${linesHtml}<div class="ototal"><span>Toplam</span><span style="color:var(--green)">₺${total}</span></div></div>
+        <div class="frow"><label>Sipariş Özeti</label>${linesHtml}<div class="oline"><span>Servis Ücreti</span><span id="delivery-fee">₺0</span></div><div class="ototal"><span>Toplam</span><span id="delivery-total" style="color:var(--green)">₺${total}</span></div></div>
         <div class="sheet-actions">
           <button class="btn" onclick="openOrderSheet()">Geri dön</button>
           <button class="btn btn-g" onclick="sendOrder()">WhatsApp'a Gönder</button>
         </div>`;
+      updateDeliveryFee();
     }
 
     function sendOrder() {
@@ -1037,14 +1046,19 @@
         return p ? { p, qty, sub: p.price * qty } : null;
       }).filter(Boolean);
       if (!lines.length) return alert('Sepetinizde geçerli ürün yok.');
-      const total = lines.reduce((s, l) => s + l.sub, 0);
+      const region = document.getElementById('customerRegion').value;
+      const regionData = DELIVERY_REGIONS.find(r => r.id === region) || DELIVERY_REGIONS[0];
+      const serviceFee = regionData.fee || 0;
+      const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
       const message = [
         'Sipariş Talebi:',
         ...lines.map(l => `${l.p.emoji} ${l.p.name} x${l.qty} = ₺${l.sub}`),
+        `Servis Ücreti (${regionData.name}): ₺${serviceFee}`,
         `Toplam: ₺${total}`,
         '',
         `Ad Soyad: ${name}`,
         `Adres: ${address}`,
+        `Bölge: ${regionData.name}`,
         `Telefon: ${phone}`,
         `Ödeme: ${paymentMethod}`,
         note ? `Not: ${note}` : ''
@@ -1060,6 +1074,18 @@
       updateCartBar();
       closeSheet();
       renderOrderProducts();
+    }
+
+    function updateDeliveryFee() {
+      const region = document.getElementById('customerRegion');
+      if (!region) return;
+      const regionData = DELIVERY_REGIONS.find(r => r.id === region.value) || DELIVERY_REGIONS[0];
+      const fee = regionData.fee || 0;
+      const total = (window.currentOrderBaseTotal || 0) + fee;
+      const feeEl = document.getElementById('delivery-fee');
+      const totalEl = document.getElementById('delivery-total');
+      if (feeEl) feeEl.textContent = fee ? `₺${fee}` : '₺0';
+      if (totalEl) totalEl.textContent = `₺${total}`;
     }
 
     function closeSheet() { document.getElementById('sheet-overlay').classList.remove('open'); }
