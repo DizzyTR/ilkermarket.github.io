@@ -733,8 +733,10 @@
             </select>
             <button class="btn btn-g" onclick="openModal('prod','new')"><i class="ti ti-plus"></i> Yeni ürün</button>
             <button class="btn" onclick="exportData()"><i class="ti ti-download"></i> Dışa Aktar</button>
-            <button class="btn" onclick="document.getElementById('data-import').click()"><i class="ti ti-upload"></i> İçe Aktar</button>
-            <input id="data-import" type="file" accept="application/json" style="display:none" onchange="importData(event)">
+            <button class="btn" onclick="document.getElementById('data-import').click()"><i class="ti ti-upload"></i>
+              İçe Aktar</button>
+            <input id="data-import" type="file" accept="application/json" style="display:none"
+              onchange="importData(event)">
           </div>
           <div class="tbl-wrap">
             <table>
@@ -810,7 +812,33 @@
       { id: 'esenler', name: 'Esenler Mahallesi', fee: 150 },
     ];
 
-    function loadData() {
+    async function loadData() {
+
+      try {
+
+        const prodRes = await fetch("https://market-backend-production11.up.railway.app/products")
+        products = await prodRes.json()
+
+        const catRes = await fetch("https://market-backend-production11.up.railway.app/categories")
+        cats = await catRes.json()
+
+        nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
+
+        renderOrderCats()
+        renderOrderProducts()
+        renderAdminAll()
+
+      } catch (err) {
+
+        console.log(err)
+
+      }
+    }
+
+    function save() {
+      console.log("Save artık API üzerinden olacak")
+    }
+    /**function loadData() {
       try {
         const p = localStorage.getItem('siparis_products');
         const c = localStorage.getItem('siparis_cats');
@@ -821,12 +849,12 @@
         cats = JSON.parse(JSON.stringify(DEFAULT_CATS));
       }
       nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1;
-    }
+    }**/
 
-    function save() {
+    /**function save() {
       localStorage.setItem('siparis_products', JSON.stringify(products));
       localStorage.setItem('siparis_cats', JSON.stringify(cats));
-    }
+    }**/
 
     function exportData() {
       const payload = { products, cats };
@@ -874,8 +902,9 @@
           nextId = products.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0) + 1;
           save();
           renderAdminAll();
-          renderOrderCats();
-          renderOrderProducts();
+          /*renderOrderCats();
+          renderOrderProducts();*/
+          loadData()
           alert('Veri başarıyla içe aktarıldı.');
         } catch (err) {
           alert('Geçersiz JSON dosyası. Lütfen doğru formatı kullanın.');
@@ -1203,7 +1232,66 @@
     function closeModal() { document.getElementById('overlay').classList.remove('open'); editTarget = null; }
     function overlayBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-    function saveProd() {
+    async function saveProd() {
+
+      const name = document.getElementById('f-name').value.trim()
+      const desc = document.getElementById('f-desc').value.trim()
+      const price = parseInt(document.getElementById('f-price').value) || 0
+      const cat = document.getElementById('f-cat').value
+      const imageUrl = document.getElementById('f-image-url').value.trim()
+
+      if (!name) {
+        return alert('Ürün adı boş olamaz')
+      }
+
+      const payload = {
+        name,
+        desc,
+        price,
+        cat,
+        emoji: "🍽",
+        imageUrl,
+        active: true
+      }
+
+      try {
+
+        if (editTarget.id === 'new') {
+
+          await fetch("http://localhost:3000/products", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+
+        } else {
+
+          await fetch(`http://localhost:3000/products/${editTarget.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+
+        }
+
+        closeModal()
+
+        await loadData()
+
+      } catch (err) {
+
+        console.log(err)
+
+        alert("İşlem başarısız")
+
+      }
+    }
+
+    /*function saveProd() {
       const name = document.getElementById('f-name').value.trim();
       const desc = document.getElementById('f-desc').value.trim();
       const price = parseInt(document.getElementById('f-price').value) || 0;
@@ -1217,7 +1305,7 @@
         if (p) Object.assign(p, { name, desc, price, cat, imageUrl });
       }
       save(); closeModal(); renderAdminAll();
-    }
+    }*/
 
     function previewProductImage(event) {
       const file = event.target.files[0];
@@ -1251,7 +1339,81 @@
       if (fileInput) fileInput.value = '';
     }
 
-    function saveCat() {
+    async function saveCat() {
+
+      const name = document.getElementById('fc-name').value.trim()
+      const emoji = document.getElementById('fc-emoji').value.trim() || '🍽'
+      const color = document.getElementById('fc-color').value
+      const textColor = document.getElementById('fc-text').value
+
+      if (!name) {
+        return alert('Kategori adı boş olamaz')
+      }
+
+      let id
+
+      if (editTarget.id === 'new') {
+
+        id =
+          document.getElementById('fc-id').value.trim() ||
+          name
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+
+      } else {
+
+        id = editTarget.id
+
+      }
+
+      const payload = {
+        id,
+        name,
+        emoji,
+        color,
+        textColor,
+        active: true
+      }
+
+      try {
+
+        if (editTarget.id === 'new') {
+
+          await fetch("http://localhost:3000/categories", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+
+        } else {
+
+          await fetch(`http://localhost:3000/categories/${editTarget.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+
+        }
+
+        closeModal()
+
+        await loadData()
+
+      } catch (err) {
+
+        console.log(err)
+
+        alert("Kategori işlemi başarısız")
+
+      }
+    }
+
+    /*function saveCat() {
       const name = document.getElementById('fc-name').value.trim();
       const emoji = document.getElementById('fc-emoji').value.trim() || '🍽';
       const color = document.getElementById('fc-color').value;
@@ -1268,7 +1430,7 @@
         if (c) Object.assign(c, { name, emoji, color, textColor });
       }
       save(); closeModal(); renderAdminAll();
-    }
+    }*/
 
     function toggleProd(id) {
       const p = products.find(x => x.id === id);
@@ -1276,7 +1438,29 @@
       save(); renderAdminAll();
     }
 
-    function deleteProd(id) {
+    async function deleteProd(id) {
+
+      if (!confirm('Bu ürünü silmek istiyor musunuz?')) {
+        return
+      }
+
+      try {
+
+        await fetch(`http://localhost:3000/products/${id}`, {
+          method: "DELETE"
+        })
+
+        await loadData()
+
+      } catch (err) {
+
+        console.log(err)
+        alert("Silme işlemi başarısız")
+
+      }
+    }
+
+    /*function deleteProd(id) {
       if (!confirm('Bu ürünü silmek istiyor musunuz?')) return;
       products = products.filter(x => x.id !== id);
       Object.keys(cart).forEach(key => {
@@ -1284,7 +1468,7 @@
       });
       save(); renderAdminAll();
       updateCartBar();
-    }
+    }*/
 
     function toggleCat(id) {
       const c = cats.find(x => x.id === id);
@@ -1292,13 +1476,36 @@
       save(); renderAdminAll();
     }
 
-    function deleteCat(id) {
+    async function deleteCat(id) {
+
+      if (!confirm('Bu kategoriyi silmek istiyor musunuz?')) {
+        return
+      }
+
+      try {
+
+        await fetch(`http://localhost:3000/categories/${id}`, {
+          method: "DELETE"
+        })
+
+        await loadData()
+
+      } catch (err) {
+
+        console.log(err)
+
+        alert("Kategori silinemedi")
+
+      }
+    }
+
+    /*function deleteCat(id) {
       if (products.some(p => p.cat === id))
         return alert('Bu kategoride ürün var. Önce ürünleri başka kategoriye taşıyın.');
       if (!confirm('Bu kategoriyi silmek istiyor musunuz?')) return;
       cats = cats.filter(x => x.id !== id);
       save(); renderAdminAll();
-    }
+    }*/
 
     /* ─── BAŞLANGIÇ ─── */
     renderOrderCats();
