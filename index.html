@@ -732,6 +732,9 @@
               <option value="">Tüm kategoriler</option>
             </select>
             <button class="btn btn-g" onclick="openModal('prod','new')"><i class="ti ti-plus"></i> Yeni ürün</button>
+            <button class="btn" onclick="exportData()"><i class="ti ti-download"></i> Dışa Aktar</button>
+            <button class="btn" onclick="document.getElementById('data-import').click()"><i class="ti ti-upload"></i> İçe Aktar</button>
+            <input id="data-import" type="file" accept="application/json" style="display:none" onchange="importData(event)">
           </div>
           <div class="tbl-wrap">
             <table>
@@ -830,6 +833,63 @@
     function save() {
       localStorage.setItem('siparis_products', JSON.stringify(products));
       localStorage.setItem('siparis_cats', JSON.stringify(cats));
+    }
+
+    function exportData() {
+      const payload = { products, cats };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'siparis-data.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!confirm('Mevcut ürünler ve kategoriler bu dosya ile değiştirilecek. Devam edilsin mi?')) {
+        event.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!data || !Array.isArray(data.products) || !Array.isArray(data.cats)) throw new Error();
+          products = data.products.map(p => ({
+            id: Number(p.id) || 0,
+            name: String(p.name || ''),
+            desc: String(p.desc || ''),
+            price: Number(p.price) || 0,
+            cat: String(p.cat || ''),
+            emoji: String(p.emoji || '🍽'),
+            imageUrl: String(p.imageUrl || ''),
+            active: Boolean(p.active)
+          }));
+          cats = data.cats.map(c => ({
+            id: String(c.id || ''),
+            name: String(c.name || ''),
+            emoji: String(c.emoji || '🍽'),
+            active: Boolean(c.active),
+            color: String(c.color || '#E1F5EE'),
+            textColor: String(c.textColor || '#085041')
+          }));
+          nextId = products.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0) + 1;
+          save();
+          renderAdminAll();
+          renderOrderCats();
+          renderOrderProducts();
+          alert('Veri başarıyla içe aktarıldı.');
+        } catch (err) {
+          alert('Geçersiz JSON dosyası. Lütfen doğru formatı kullanın.');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
     }
 
     let products, cats, nextId;
