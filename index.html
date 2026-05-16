@@ -1288,7 +1288,8 @@
         alert("Sipariş kaydedilemedi")
         return
       }
-      window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');
+      /*window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');*/
+      showOrderSuccess(orderData.orderId, total);
       resetOrder();
     }
 
@@ -1853,6 +1854,40 @@
         console.log(err)
         alert("Sipariş durumu güncellenemedi")
       }
+    }
+
+    function showOrderSuccess(orderId, total) {
+      document.getElementById('sheet').innerHTML = `
+    <div style="text-align:center;padding:20px 8px">
+      <div style="font-size:42px;margin-bottom:10px">✅</div>
+      <h3>Siparişiniz alındı</h3>
+
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:12px 0">
+        Siparişiniz sisteme kaydedildi. Hazırlanmaya başlandığında durum bilgisi güncellenecektir.
+      </p>
+
+      <div style="background:var(--bg2);border-radius:12px;padding:14px;margin:14px 0;text-align:left">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="color:var(--text2);font-size:13px">Sipariş No</span>
+          <strong>#${orderId}</strong>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="color:var(--text2);font-size:13px">Durum</span>
+          <strong style="color:var(--green)">Bekliyor</strong>
+        </div>
+
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text2);font-size:13px">Toplam</span>
+          <strong>₺${total}</strong>
+        </div>
+      </div>
+
+      <button class="btn btn-g" style="width:100%;height:42px;justify-content:center" onclick="finishOrderSuccess()">
+        Tamam
+      </button>
+    </div>
+  `
     }
 
     /* ─── BAŞLANGIÇ ─── */
