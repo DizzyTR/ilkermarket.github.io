@@ -695,8 +695,8 @@
       <i class="ti ti-shopping-cart"></i> Sipariş Ver
     </button>
     <button class="nav-btn" id="nav-admin" onclick="switchView('admin')">
-      <i class="ti ti-settings"></i> Yönetim
-    </button>
+  <i class="ti ti-settings"></i> Yönetim
+</button>
   </div>
 
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
@@ -794,6 +794,8 @@
   <script>
     /* ─── VERİ ─── */
     const WHATSAPP_TARGET = '905436325080'; // uluslararası formatta kayıtlı numara
+    const API_URL = "http://localhost:3000"
+    let isAdminLoggedIn = false
     const DEFAULT_PRODUCTS = [
       { id: 1, name: 'Nescafe Xpress 250ml', desc: 'Hazır kahve, lezzetli', price: 75, cat: 'icecek', emoji: '☕', active: true },
       { id: 2, name: 'Red Bull 250ml', desc: 'Enerji içeceği', price: 80, cat: 'icecek', emoji: '🥤', active: true },
@@ -816,10 +818,10 @@
 
       try {
 
-        const prodRes = await fetch("https://market-backend-production11.up.railway.app/products")
+        const prodRes = await fetch(`${API_URL}/products`)
         products = await prodRes.json()
 
-        const catRes = await fetch("https://market-backend-production11.up.railway.app/categories")
+        const catRes = await fetch(`${API_URL}/categories`)
         cats = await catRes.json()
 
         nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
@@ -920,25 +922,114 @@
     const cart = {};
     let orderCat = 'hepsi';
     let editTarget = null;
-    const ADMIN_PASSWORD = 'yonetim123'; // yönetim paneli için şifreyi buradan değiştirin
+    /*const ADMIN_PASSWORD = 'yonetim123'; // yönetim paneli için şifreyi buradan değiştirin*/
 
     /* ─── NAVİGASYON ─── */
     function switchView(v) {
-      if (v === 'admin' && !verifyAdminPassword()) return;
-      ['order', 'admin'].forEach(x => {
-        document.getElementById('view-' + x).classList.toggle('active', x === v);
-        document.getElementById('nav-' + x).classList.toggle('active', x === v);
-      });
-      if (v === 'order') { renderOrderCats(); renderOrderProducts(); }
-      if (v === 'admin') { renderAdminAll(); }
-    }
+      if (v === 'admin' && !isAdminLoggedIn) {
+        openAdminLogin()
+        return
+      }
 
-    function verifyAdminPassword() {
+      ['order', 'admin'].forEach(x => {
+        document.getElementById('view-' + x).classList.toggle('active', x === v)
+        document.getElementById('nav-' + x).classList.toggle('active', x === v)
+      })
+
+      if (v === 'order') {
+        renderOrderCats()
+        renderOrderProducts()
+      }
+
+      if (v === 'admin') {
+        renderAdminAll()
+      }
+    }
+    /*if (v === 'admin' && !verifyAdminPassword()) return;
+    ['order', 'admin'].forEach(x => {
+      document.getElementById('view-' + x).classList.toggle('active', x === v);
+      document.getElementById('nav-' + x).classList.toggle('active', x === v);
+    });
+    if (v === 'order') { renderOrderCats(); renderOrderProducts(); }
+    if (v === 'admin') { renderAdminAll(); }*/
+
+    /*function verifyAdminPassword() {
       const answer = prompt('Yönetim paneli şifresini girin:');
       if (answer === null) return false;
       if (answer.trim() === ADMIN_PASSWORD) return true;
       alert('Hatalı şifre.');
       return false;
+    }*/
+
+    function openAdminLogin() {
+      const m = document.getElementById('modal')
+
+      m.innerHTML = `
+    <h3>Admin Girişi</h3>
+
+    <div class="frow">
+      <label>Kullanıcı adı</label>
+      <input id="admin-username" placeholder="admin">
+    </div>
+
+    <div class="frow">
+      <label>Şifre</label>
+      <input id="admin-password" type="password" placeholder="Şifre">
+    </div>
+
+    <div class="faction">
+      <button class="btn" onclick="closeModal()">İptal</button>
+      <button class="btn btn-g" onclick="adminLogin()">Giriş Yap</button>
+    </div>
+  `
+
+      document.getElementById('overlay').classList.add('open')
+    }
+
+    async function adminLogin() {
+      const username = document.getElementById('admin-username').value.trim()
+      const password = document.getElementById('admin-password').value.trim()
+
+      console.log("Login denendi:", username, password)
+
+      if (!username || !password) {
+        return alert("Kullanıcı adı ve şifre gerekli")
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/admin/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        })
+
+        const data = await res.json()
+
+        console.log("Login cevabı:", data)
+
+        if (!res.ok || !data.success) {
+          return alert(data.message || "Giriş başarısız")
+        }
+
+        isAdminLoggedIn = true
+        console.log("Admin giriş durumu:", isAdminLoggedIn)
+
+        document.getElementById('overlay').classList.remove('open')
+
+        document.getElementById('view-order').classList.remove('active')
+        document.getElementById('view-admin').classList.add('active')
+
+        document.getElementById('nav-order').classList.remove('active')
+        document.getElementById('nav-admin').classList.add('active')
+
+        renderAdminAll()
+
+      } catch (err) {
+        console.log("Login hatası:", err)
+        alert("API bağlantı hatası")
+      }
     }
 
     function switchAdminTab(t) {
@@ -1258,7 +1349,7 @@
 
         if (editTarget.id === 'new') {
 
-          await fetch("https://market-backend-production11.up.railway.app/products", {
+          await fetch(`${API_URL}/products`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -1268,7 +1359,7 @@
 
         } else {
 
-          await fetch(`https://market-backend-production11.up.railway.app/products/${editTarget.id}`, {
+          await fetch(`${API_URL}/products/${editTarget.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json"
@@ -1380,7 +1471,7 @@
 
         if (editTarget.id === 'new') {
 
-          await fetch("https://market-backend-production11.up.railway.app/categories", {
+          await fetch(`${API_URL}/categories`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -1390,7 +1481,7 @@
 
         } else {
 
-          await fetch(`https://market-backend-production11.up.railway.app/categories/${editTarget.id}`, {
+          await fetch(`${API_URL}/categories/${editTarget.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json"
@@ -1446,7 +1537,7 @@
 
       try {
 
-        await fetch(`https://market-backend-production11.up.railway.app/products/${id}`, {
+        await fetch(`${API_URL}/products/${id}`, {
           method: "DELETE"
         })
 
@@ -1484,7 +1575,7 @@
 
       try {
 
-        await fetch(`https://market-backend-production11.up.railway.app/categories/${id}`, {
+        await fetch(`${API_URL}/categories/${id}`, {
           method: "DELETE"
         })
 
