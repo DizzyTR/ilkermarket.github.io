@@ -1565,11 +1565,36 @@
       save(); closeModal(); renderAdminAll();
     }*/
 
-    function toggleProd(id) {
+    async function toggleProd(id) {
+      const p = products.find(x => x.id == id)
+      if (!p) return
+
+      const payload = {
+        name: p.name,
+        desc: p.desc,
+        price: p.price,
+        cat: p.cat,
+        emoji: p.emoji || "🍽",
+        imageUrl: p.imageUrl || "",
+        active: p.active ? 0 : 1
+      }
+
+      await fetch(`${API_URL}/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+
+      await loadData()
+    }
+
+    /*function toggleProd(id) {
       const p = products.find(x => x.id === id);
       if (p) p.active = !p.active;
       save(); renderAdminAll();
-    }
+    }*/
 
     async function deleteProd(id) {
 
@@ -1603,11 +1628,35 @@
       updateCartBar();
     }*/
 
-    function toggleCat(id) {
+    async function toggleCat(id) {
+      const c = cats.find(x => x.id == id)
+      if (!c) return
+
+      const payload = {
+        id: c.id,
+        name: c.name,
+        emoji: c.emoji || "🍽",
+        color: c.color || "#E1F5EE",
+        textColor: c.textColor || "#085041",
+        active: c.active ? 0 : 1
+      }
+
+      await fetch(`${API_URL}/categories/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+
+      await loadData()
+    }
+
+    /*function toggleCat(id) {
       const c = cats.find(x => x.id === id);
       if (c) c.active = !c.active;
       save(); renderAdminAll();
-    }
+    }*/
 
     async function deleteCat(id) {
 
