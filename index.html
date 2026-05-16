@@ -1193,7 +1193,7 @@
       updateDeliveryFee();
     }
 
-    function sendOrder() {
+    async function sendOrder() {
       const name = document.getElementById('customerName').value.trim();
       const address = document.getElementById('customerAddress').value.trim();
       const phone = document.getElementById('customerPhone').value.trim();
@@ -1250,6 +1250,44 @@
       ].filter(Boolean).join('\n');*/
       const target = WHATSAPP_TARGET.replace(/[^0-9]/g, '');
       if (!target) return alert('WhatsApp hedef numarası ayarlı değil.');
+      try {
+        const orderRes = await fetch(`${API_URL}/orders`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            customerName: name,
+            customerAddress: address,
+            customerPhone: phone,
+            customerRegion: regionData.name,
+            paymentMethod,
+            note,
+            serviceFee,
+            total,
+            items: lines.map(l => ({
+              productId: l.p.id,
+              productName: l.p.name,
+              quantity: l.qty,
+              price: l.p.price,
+              subtotal: l.sub
+            }))
+          })
+        })
+
+        const orderData = await orderRes.json()
+
+        if (!orderRes.ok) {
+          console.log("Sipariş kayıt hatası:", orderData)
+          alert("Sipariş veritabanına kaydedilemedi")
+          return
+        }
+
+      } catch (err) {
+        console.log("Sipariş API hatası:", err)
+        alert("Sipariş kaydedilemedi")
+        return
+      }
       window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');
       resetOrder();
     }
