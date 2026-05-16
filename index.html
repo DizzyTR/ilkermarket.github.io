@@ -695,8 +695,8 @@
       <i class="ti ti-shopping-cart"></i> Sipariş Ver
     </button>
     <button class="nav-btn" id="nav-admin" onclick="switchView('admin')">
-  <i class="ti ti-settings"></i> Yönetim
-</button>
+      <i class="ti ti-settings"></i> Yönetim
+    </button>
   </div>
 
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
@@ -1399,7 +1399,48 @@
       save(); closeModal(); renderAdminAll();
     }*/
 
-    function previewProductImage(event) {
+    async function previewProductImage(event) {
+      const file = event.target.files[0]
+      if (!file) return
+
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "market_upload")
+
+      try {
+        const res = await fetch("https://api.cloudinary.com/v1_1/dg76jseno/image/upload", {
+          method: "POST",
+          body: formData
+        })
+
+        const data = await res.json()
+
+        if (!data.secure_url) {
+          console.log(data)
+          return alert("Cloudinary görsel yükleme hatası")
+        }
+
+        document.getElementById("f-image-url").value = data.secure_url
+
+        const preview = document.getElementById("f-image-preview")
+        const previewRow = document.getElementById("f-image-preview-row")
+
+        if (preview) {
+          preview.src = data.secure_url
+          preview.style.display = "block"
+        }
+
+        if (previewRow) {
+          previewRow.style.display = "block"
+        }
+
+      } catch (err) {
+        console.log(err)
+        alert("Görsel yüklenemedi")
+      }
+    }
+
+    /*function previewProductImage(event) {
       const file = event.target.files[0];
       const preview = document.getElementById('f-image-preview');
       const previewRow = document.getElementById('f-image-preview-row');
@@ -1415,7 +1456,7 @@
         if (imageUrlInput) imageUrlInput.value = reader.result;
       };
       reader.readAsDataURL(file);
-    }
+    }*/
 
     function removeProductImage() {
       const preview = document.getElementById('f-image-preview');
