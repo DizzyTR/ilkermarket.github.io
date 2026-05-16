@@ -720,6 +720,7 @@
       <div class="admin-tabs">
         <button class="atab active" onclick="switchAdminTab('prod')"><i class="ti ti-package"></i> Ürünler</button>
         <button class="atab" onclick="switchAdminTab('cat')"><i class="ti ti-tag"></i> Kategoriler</button>
+        <button class="atab" onclick="switchAdminTab('orders')"><i class="ti ti-receipt"></i> Siparişler</button>
       </div>
 
       <!-- Ürünler -->
@@ -777,6 +778,32 @@
             </table>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="asec-orders" class="asec">
+    <div class="panel">
+      <div class="toolbar">
+        <button class="btn" onclick="renderOrders()">
+          <i class="ti ti-refresh"></i> Yenile
+        </button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:60px">No</th>
+              <th>Müşteri</th>
+              <th>Telefon</th>
+              <th style="width:90px">Toplam</th>
+              <th style="width:130px">Durum</th>
+              <th style="width:140px">Tarih</th>
+            </tr>
+          </thead>
+          <tbody id="a-orders-body"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -1034,11 +1061,22 @@
     }
 
     function switchAdminTab(t) {
+      ['prod', 'cat', 'orders'].forEach((x, i) => {
+        document.getElementById('asec-' + x).classList.toggle('active', x === t)
+        document.querySelectorAll('.atab')[i].classList.toggle('active', x === t)
+      })
+
+      if (t === 'orders') {
+        renderOrders()
+      }
+    }
+
+    /*function switchAdminTab(t) {
       ['prod', 'cat'].forEach(x => {
         document.getElementById('asec-' + x).classList.toggle('active', x === t);
         document.querySelectorAll('.atab')[x === 'prod' ? 0 : 1].classList.toggle('active', x === t);
       });
-    }
+    }*/
 
     /* ─── SİPARİŞ SAYFASI ─── */
     function renderOrderCats() {
@@ -1714,6 +1752,70 @@
       cats = cats.filter(x => x.id !== id);
       save(); renderAdminAll();
     }*/
+
+    async function renderOrders() {
+      const tbody = document.getElementById('a-orders-body')
+
+      try {
+        const res = await fetch(`${API_URL}/orders`)
+        const orders = await res.json()
+
+        if (!orders.length) {
+          tbody.innerHTML = `<tr><td colspan="6"><div class="empty-msg">Henüz sipariş yok.</div></td></tr>`
+          return
+        }
+
+        tbody.innerHTML = orders.map(o => `
+      <tr>
+        <td>#${o.id}</td>
+
+        <td>
+          <div style="font-weight:500">${o.customerName}</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.4">${o.customerAddress}</div>
+          <div style="font-size:11px;color:var(--text2)">${o.customerRegion || ''}</div>
+        </td>
+
+        <td>${o.customerPhone}</td>
+
+        <td style="font-weight:500;color:var(--green)">₺${o.total}</td>
+
+        <td>
+          <select onchange="updateOrderStatus(${o.id}, this.value)">
+            <option value="Bekliyor" ${o.status === 'Bekliyor' ? 'selected' : ''}>Bekliyor</option>
+            <option value="Hazırlanıyor" ${o.status === 'Hazırlanıyor' ? 'selected' : ''}>Hazırlanıyor</option>
+            <option value="Yolda" ${o.status === 'Yolda' ? 'selected' : ''}>Yolda</option>
+            <option value="Teslim edildi" ${o.status === 'Teslim edildi' ? 'selected' : ''}>Teslim edildi</option>
+            <option value="İptal" ${o.status === 'İptal' ? 'selected' : ''}>İptal</option>
+          </select>
+        </td>
+
+        <td>${new Date(o.createdAt).toLocaleString('tr-TR')}</td>
+      </tr>
+    `).join('')
+
+      } catch (err) {
+        console.log(err)
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-msg">Siparişler yüklenemedi.</div></td></tr>`
+      }
+    }
+
+    async function updateOrderStatus(id, status) {
+      try {
+        await fetch(`${API_URL}/orders/${id}/status`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ status })
+        })
+
+        renderOrders()
+
+      } catch (err) {
+        console.log(err)
+        alert("Sipariş durumu güncellenemedi")
+      }
+    }
 
     /* ─── BAŞLANGIÇ ─── */
     renderOrderCats();
