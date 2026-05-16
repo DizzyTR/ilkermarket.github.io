@@ -1172,6 +1172,32 @@
       const serviceFee = regionData.fee || 0;
       const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
       const message = [
+        '🛒 *Yeni Sipariş Talebi*',
+        '',
+        '📦 *Ürünler*',
+        ...lines.map((l, index) =>
+          `${index + 1}. ${l.p.name} × ${l.qty} — ₺${l.sub}`
+        ),
+        '',
+        '🚚 *Teslimat*',
+        `Bölge: ${regionData.name}`,
+        `Servis Ücreti: ₺${serviceFee}`,
+        '',
+        '💰 *Toplam*',
+        `₺${total}`,
+        '',
+        '👤 *Müşteri Bilgileri*',
+        `Ad Soyad: ${name}`,
+        `Telefon: ${phone}`,
+        `Adres: ${address}`,
+        '',
+        '💳 *Ödeme*',
+        paymentMethod,
+        note ? '' : null,
+        note ? '📝 *Not*' : null,
+        note ? note : null
+      ].filter(Boolean).join('\n')
+      /*const message = [
         'Sipariş Talebi:',
         ...lines.map(l => `${l.p.emoji} ${l.p.name} x${l.qty} = ₺${l.sub}`),
         `Servis Ücreti (${regionData.name}): ₺${serviceFee}`,
@@ -1183,7 +1209,7 @@
         `Telefon: ${phone}`,
         `Ödeme: ${paymentMethod}`,
         note ? `Not: ${note}` : ''
-      ].filter(Boolean).join('\n');
+      ].filter(Boolean).join('\n');*/
       const target = WHATSAPP_TARGET.replace(/[^0-9]/g, '');
       if (!target) return alert('WhatsApp hedef numarası ayarlı değil.');
       window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');
