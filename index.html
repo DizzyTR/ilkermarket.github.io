@@ -1258,7 +1258,7 @@
 
         if (editTarget.id === 'new') {
 
-          await fetch("http://localhost:3000/products", {
+          await fetch("https://market-backend-production11.up.railway.app/products", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -1268,7 +1268,7 @@
 
         } else {
 
-          await fetch(`http://localhost:3000/products/${editTarget.id}`, {
+          await fetch(`https://market-backend-production11.up.railway.app/products/${editTarget.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json"
@@ -1380,7 +1380,7 @@
 
         if (editTarget.id === 'new') {
 
-          await fetch("http://localhost:3000/categories", {
+          await fetch("https://market-backend-production11.up.railway.app/categories", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -1390,7 +1390,7 @@
 
         } else {
 
-          await fetch(`http://localhost:3000/categories/${editTarget.id}`, {
+          await fetch(`https://market-backend-production11.up.railway.app/categories/${editTarget.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json"
@@ -1446,7 +1446,7 @@
 
       try {
 
-        await fetch(`http://localhost:3000/products/${id}`, {
+        await fetch(`https://market-backend-production11.up.railway.app/products/${id}`, {
           method: "DELETE"
         })
 
@@ -1484,7 +1484,7 @@
 
       try {
 
-        await fetch(`http://localhost:3000/categories/${id}`, {
+        await fetch(`https://market-backend-production11.up.railway.app/categories/${id}`, {
           method: "DELETE"
         })
 
