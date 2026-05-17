@@ -734,19 +734,37 @@
   <!-- ══════════ ADMİN PANELİ ══════════ -->
   <div class="view" id="view-admin">
     <div class="wrap" style="padding-bottom:24px">
+
       <div class="admin-tabs">
-        <button class="atab active" onclick="switchAdminTab('dash')"><i class="ti ti-dashboard"></i> Dashboard</button>
-        <button class="atab" onclick="switchAdminTab('prod')"><i class="ti ti-package"></i> Ürünler</button>
-        <button class="atab" onclick="switchAdminTab('cat')"><i class="ti ti-tag"></i> Kategoriler</button>
-        <button class="atab" onclick="switchAdminTab('orders')"><i class="ti ti-receipt"></i> Siparişler</button>
+        <button class="atab active" onclick="switchAdminTab('dash')">
+          <i class="ti ti-dashboard"></i> Dashboard
+        </button>
+
+        <button class="atab" onclick="switchAdminTab('prod')">
+          <i class="ti ti-package"></i> Ürünler
+        </button>
+
+        <button class="atab" onclick="switchAdminTab('cat')">
+          <i class="ti ti-tag"></i> Kategoriler
+        </button>
+
+        <button class="atab" onclick="switchAdminTab('subcat')">
+          <i class="ti ti-category"></i> Alt Gruplar
+        </button>
+
+        <button class="atab" onclick="switchAdminTab('orders')">
+          <i class="ti ti-receipt"></i> Siparişler
+        </button>
       </div>
 
+      <!-- DASHBOARD -->
       <div id="asec-dash" class="asec active">
         <div class="panel">
           <div class="stat-row" id="dashboard-stats"></div>
 
           <div style="margin-top:16px">
             <h3 style="font-size:15px;margin-bottom:10px">Son Siparişler</h3>
+
             <div class="tbl-wrap">
               <table>
                 <thead>
@@ -758,6 +776,7 @@
                     <th>Tarih</th>
                   </tr>
                 </thead>
+
                 <tbody id="dashboard-orders"></tbody>
               </table>
             </div>
@@ -765,22 +784,35 @@
         </div>
       </div>
 
-      <!-- Ürünler -->
-      <div id="asec-prod" class="asec active">
+      <!-- ÜRÜNLER -->
+      <div id="asec-prod" class="asec">
         <div class="panel">
+
           <div class="stat-row" id="a-stats"></div>
+
           <div class="toolbar">
             <input type="text" id="a-search" placeholder="Ürün ara..." oninput="renderAdminProducts()">
+
             <select id="a-filter" onchange="renderAdminProducts()">
               <option value="">Tüm kategoriler</option>
             </select>
-            <button class="btn btn-g" onclick="openModal('prod','new')"><i class="ti ti-plus"></i> Yeni ürün</button>
-            <button class="btn" onclick="exportData()"><i class="ti ti-download"></i> Dışa Aktar</button>
-            <button class="btn" onclick="document.getElementById('data-import').click()"><i class="ti ti-upload"></i>
-              İçe Aktar</button>
+
+            <button class="btn btn-g" onclick="openModal('prod','new')">
+              <i class="ti ti-plus"></i> Yeni ürün
+            </button>
+
+            <button class="btn" onclick="exportData()">
+              <i class="ti ti-download"></i> Dışa Aktar
+            </button>
+
+            <button class="btn" onclick="document.getElementById('data-import').click()">
+              <i class="ti ti-upload"></i> İçe Aktar
+            </button>
+
             <input id="data-import" type="file" accept="application/json" style="display:none"
               onchange="importData(event)">
           </div>
+
           <div class="tbl-wrap">
             <table>
               <thead>
@@ -793,18 +825,23 @@
                   <th style="width:96px"></th>
                 </tr>
               </thead>
+
               <tbody id="a-prod-body"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- Kategoriler -->
+      <!-- KATEGORİLER -->
       <div id="asec-cat" class="asec">
         <div class="panel">
+
           <div class="toolbar">
-            <button class="btn btn-g" onclick="openModal('cat','new')"><i class="ti ti-plus"></i> Yeni kategori</button>
+            <button class="btn btn-g" onclick="openModal('cat','new')">
+              <i class="ti ti-plus"></i> Yeni kategori
+            </button>
           </div>
+
           <div class="tbl-wrap">
             <table>
               <thead>
@@ -816,40 +853,70 @@
                   <th style="width:96px"></th>
                 </tr>
               </thead>
+
               <tbody id="a-cat-body"></tbody>
             </table>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div id="asec-orders" class="asec">
-    <div class="panel">
-      <div class="toolbar">
-        <button class="btn" onclick="renderOrders()">
-          <i class="ti ti-refresh"></i> Yenile
-        </button>
+      <!-- ALT GRUPLAR -->
+      <div id="asec-subcat" class="asec">
+        <div class="panel">
+
+          <div class="toolbar">
+            <button class="btn btn-g" onclick="openModal('subcat','new')">
+              <i class="ti ti-plus"></i> Yeni alt grup
+            </button>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Alt grup adı</th>
+                  <th style="width:130px">Ana kategori</th>
+                  <th style="width:80px">Durum</th>
+                  <th style="width:96px"></th>
+                </tr>
+              </thead>
+
+              <tbody id="a-subcat-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
+      <!-- SİPARİŞLER -->
+      <div id="asec-orders" class="asec">
+        <div class="panel">
 
-      #Sipariş Kısmı
-      <div class="tbl-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:60px">No</th>
-              <th>Müşteri</th>
-              <th>Telefon</th>
-              <th style="width:90px">Toplam</th>
-              <th style="width:130px">Durum</th>
-              <th style="width:140px">Tarih</th>
-              <th style="width:80px"></th>
-            </tr>
-          </thead>
-          <tbody id="a-orders-body"></tbody>
-        </table>
+          <div class="toolbar">
+            <button class="btn" onclick="renderOrders()">
+              <i class="ti ti-refresh"></i> Yenile
+            </button>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:60px">No</th>
+                  <th>Müşteri</th>
+                  <th>Telefon</th>
+                  <th style="width:90px">Toplam</th>
+                  <th style="width:130px">Durum</th>
+                  <th style="width:140px">Tarih</th>
+                  <th style="width:80px"></th>
+                </tr>
+              </thead>
+
+              <tbody id="a-orders-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -923,6 +990,9 @@
         const catRes = await fetch(`${API_URL}/categories`)
         cats = await catRes.json()
 
+        const subRes = await fetch(`${API_URL}/subcategories`)
+        subcats = await subRes.json()
+
         nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
 
         renderOrderCats()
@@ -989,6 +1059,7 @@
             desc: String(p.desc || ''),
             price: Number(p.price) || 0,
             cat: String(p.cat || ''),
+            subCat: String(p.subCat || ''),
             emoji: String(p.emoji || '🍽'),
             imageUrl: String(p.imageUrl || ''),
             active: Boolean(p.active)
@@ -1016,7 +1087,7 @@
       reader.readAsText(file);
     }
 
-    let products, cats, nextId;
+    let products, cats, subcats, nextId;
     loadData();
 
     const cart = {};
@@ -1136,13 +1207,14 @@
     }
 
     function switchAdminTab(t) {
-      ['dash', 'prod', 'cat', 'orders'].forEach((x, i) => {
+      ['dash', 'prod', 'cat', 'subcat', 'orders'].forEach((x, i) => {
         document.getElementById('asec-' + x).classList.toggle('active', x === t)
         document.querySelectorAll('.atab')[i].classList.toggle('active', x === t)
       })
 
       if (t === 'dash') renderDashboard()
       if (t === 'orders') renderOrders()
+      if (t === 'subcat') renderAdminSubCats()
     }
 
     /*function switchAdminTab(t) {
@@ -1177,7 +1249,7 @@
     }*/
 
     function renderOrderSubCats() {
-      if (!Array.isArray(products)) products = []
+      if (!Array.isArray(subcats)) subcats = []
 
       const el = document.getElementById('order-subcats')
       if (!el) return
@@ -1187,21 +1259,17 @@
         return
       }
 
-      const subs = [...new Set(
-        products
-          .filter(p => p.active && p.cat === orderCat && p.subCat)
-          .map(p => p.subCat)
-      )]
+      const list = subcats.filter(s => s.active && s.catId === orderCat)
 
-      if (!subs.length) {
+      if (!list.length) {
         el.innerHTML = ''
         return
       }
 
       el.innerHTML =
         `<button class="cat-btn${orderSubCat === 'hepsi' ? ' active' : ''}" onclick="setOrderSubCat('hepsi')">Tümü</button>` +
-        subs.map(s =>
-          `<button class="cat-btn${orderSubCat === s ? ' active' : ''}" onclick="setOrderSubCat('${s}')">${s}</button>`
+        list.map(s =>
+          `<button class="cat-btn${orderSubCat === s.id ? ' active' : ''}" onclick="setOrderSubCat('${s.id}')">${s.name}</button>`
         ).join('')
     }
 
@@ -1240,11 +1308,15 @@
       }
 
       if (search) {
-        list = list.filter(p =>
-          (p.name || '').toLowerCase().includes(search) ||
-          (p.desc || '').toLowerCase().includes(search) ||
-          (p.subCat || '').toLowerCase().includes(search)
-        )
+        list = list.filter(p => {
+          const sub = subcats.find(s => s.id === p.subCat)
+
+          return (
+            (p.name || '').toLowerCase().includes(search) ||
+            (p.desc || '').toLowerCase().includes(search) ||
+            (sub?.name || '').toLowerCase().includes(search)
+          )
+        })
       }
 
       const el = document.getElementById('order-products')
@@ -1507,6 +1579,7 @@
       populateFilter()
       renderAdminProducts()
       renderAdminCats()
+      renderAdminSubCats()
     }
 
     function renderStats() {
@@ -1572,6 +1645,42 @@
       }).join('');
     }
 
+    function renderAdminSubCats() {
+      if (!Array.isArray(subcats)) subcats = []
+
+      const tbody = document.getElementById('a-subcat-body')
+
+      if (!subcats.length) {
+        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-msg">Alt grup yok.</div></td></tr>`
+        return
+      }
+
+      tbody.innerHTML = subcats.map(s => {
+        const c = cats.find(x => x.id === s.catId)
+
+        return `
+      <tr>
+        <td style="font-weight:500">${s.name}</td>
+        <td>${c ? c.name : s.catId}</td>
+        <td><span class="badge ${s.active ? 'b-active' : 'b-passive'}">${s.active ? 'Aktif' : 'Pasif'}</span></td>
+        <td>
+          <div class="iact">
+            <button class="btn btn-sm" onclick="openModal('subcat','${s.id}')">
+              <i class="ti ti-edit"></i>
+            </button>
+            <button class="btn btn-sm" onclick="toggleSubCat('${s.id}')">
+              <i class="ti ti-${s.active ? 'eye-off' : 'eye'}"></i>
+            </button>
+            <button class="btn btn-sm btn-r" onclick="deleteSubCat('${s.id}')">
+              <i class="ti ti-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `
+      }).join('')
+    }
+
     /* ─── MODAL ─── */
     function openModal(type, id) {
       editTarget = { type, id };
@@ -1595,13 +1704,61 @@
       </div>
       <div class="frow">
         <label>Alt grup</label>
-        <input id="f-subcat" value="${p.subCat || ''}" placeholder="Örn: enerji-icecegi">
+        <select id="f-subcat">
+          <option value="">Alt grup yok</option>
+          ${subcats
+            .filter(s => s.active && s.catId === p.cat)
+            .map(s => `
+              <option value="${s.id}" ${s.id === p.subCat ? 'selected' : ''}>
+                ${s.name}
+              </option>
+            `).join('')}
+        </select>
       </div>
       <div class="faction">
         <button class="btn" onclick="closeModal()">İptal</button>
         <button class="btn btn-g" onclick="saveProd()">Kaydet</button>
       </div>`;
-      } else {
+      } else if (type === 'subcat') {
+        const isNew = id === 'new'
+
+        const s = isNew
+          ? { id: '', catId: cats[0]?.id || '', name: '', active: true }
+          : subcats.find(x => x.id === id)
+
+        m.innerHTML = `
+    <h3>${isNew ? 'Yeni alt grup' : 'Alt grup düzenle'}</h3>
+
+    <div class="frow">
+      <label>Alt grup adı</label>
+      <input id="fs-name" value="${s.name}" placeholder="Örn: Enerji İçecekleri">
+    </div>
+
+    ${isNew ? `
+      <div class="frow">
+        <label>Alt grup ID</label>
+        <input id="fs-id" placeholder="ornek: enerji-icecekleri">
+      </div>
+    ` : ''}
+
+    <div class="frow">
+      <label>Ana kategori</label>
+      <select id="fs-cat">
+        ${cats.map(c => `
+          <option value="${c.id}" ${c.id === s.catId ? 'selected' : ''}>
+            ${c.name}
+          </option>
+        `).join('')}
+      </select>
+    </div>
+
+    <div class="faction">
+      <button class="btn" onclick="closeModal()">İptal</button>
+      <button class="btn btn-g" onclick="saveSubCat()">Kaydet</button>
+    </div>
+  `
+      }
+      else if (type === 'cat') {
         const isNew = id === 'new';
         const c = isNew ? { name: '', emoji: '🍽', color: '#E1F5EE', textColor: '#085041' } : cats.find(x => x.id === id);
         m.innerHTML = `
@@ -1864,6 +2021,113 @@
       }
       save(); closeModal(); renderAdminAll();
     }*/
+
+    async function toggleSubCat(id) {
+      const s = subcats.find(x => x.id === id)
+
+      if (!s) return
+
+      try {
+        await fetch(`${API_URL}/subcategories/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...s,
+            active: !s.active
+          })
+        })
+
+        await loadData()
+
+      } catch (err) {
+        console.log(err)
+        alert("Durum değiştirilemedi")
+      }
+    }
+
+    async function saveSubCat() {
+      const name = document.getElementById('fs-name').value.trim()
+      const catId = document.getElementById('fs-cat').value
+
+      if (!name) {
+        return alert('Alt grup adı boş olamaz')
+      }
+
+      let id
+
+      if (editTarget.id === 'new') {
+        id =
+          document.getElementById('fs-id').value.trim() ||
+          name
+            .toLowerCase()
+            .replaceAll('ğ', 'g')
+            .replaceAll('ü', 'u')
+            .replaceAll('ş', 's')
+            .replaceAll('ı', 'i')
+            .replaceAll('ö', 'o')
+            .replaceAll('ç', 'c')
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+      } else {
+        id = editTarget.id
+      }
+
+      const payload = {
+        id,
+        catId,
+        name,
+        active: true
+      }
+
+      try {
+        if (editTarget.id === 'new') {
+          await fetch(`${API_URL}/subcategories`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+        } else {
+          await fetch(`${API_URL}/subcategories/${editTarget.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+        }
+
+        closeModal()
+        await loadData()
+
+      } catch (err) {
+        console.log(err)
+        alert("Alt grup kaydedilemedi")
+      }
+    }
+
+    async function deleteSubCat(id) {
+
+      if (!confirm("Alt grup silinsin mi?")) return
+
+      try {
+
+        await fetch(`${API_URL}/subcategories/${id}`, {
+          method: "DELETE"
+        })
+
+        await loadData()
+
+      } catch (err) {
+
+        console.log(err)
+        alert("Alt grup silinemedi")
+
+      }
+    }
 
     async function toggleProd(id) {
       const p = products.find(x => x.id == id)
