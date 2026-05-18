@@ -954,10 +954,13 @@
     <div class="sheet" id="sheet"></div>
   </div>
 
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
   <script>
     /* ─── VERİ ─── */
     /*const WHATSAPP_TARGET = '905436325080'; // uluslararası formatta kayıtlı numara*/
     const API_URL = "https://market-backend-production-e1a5.up.railway.app"
+    let socket = null
     let lastKnownOrderId = null
     let orderCheckStarted = false
     /*const API_URL = "http://localhost:3000"*/
@@ -1100,7 +1103,7 @@
     function switchView(v) {
       if (v === 'admin' && !isAdminLoggedIn) {
         openAdminLogin()
-        startOrderWatcher()
+        //startOrderWatcher()
         return
       }
 
@@ -1116,6 +1119,7 @@
 
       if (v === 'admin') {
         renderAdminAll()
+        startSocket()
       }
     }
     /*if (v === 'admin' && !verifyAdminPassword()) return;
@@ -1187,7 +1191,8 @@
         }
 
         isAdminLoggedIn = true
-        startOrderWatcher()
+        startSocket()
+        //startOrderWatcher()
         console.log("Admin giriş durumu:", isAdminLoggedIn)
 
         document.getElementById('overlay').classList.remove('open')
@@ -2640,6 +2645,44 @@
       checkNewOrders()
 
       setInterval(checkNewOrders, 7000)
+    }
+
+    function startSocket() {
+      if (socket) return
+
+      socket = io(API_URL, {
+        transports: ["websocket", "polling"]
+      })
+
+      socket.on("connect", () => {
+        console.log("Socket bağlandı:", socket.id)
+      })
+
+      socket.on("new-order", async (order) => {
+        console.log("Yeni sipariş geldi:", order)
+
+        playNewOrderSound()
+        showNewOrderAlert({
+          id: order.orderId,
+          customerName: order.customerName,
+          total: order.total
+        })
+
+        await loadData()
+        renderDashboard()
+        renderOrders()
+      })
+
+      socket.on("order-status-updated", async (data) => {
+        console.log("Sipariş durumu güncellendi:", data)
+
+        renderDashboard()
+        renderOrders()
+      })
+
+      socket.on("disconnect", () => {
+        console.log("Socket bağlantısı koptu")
+      })
     }
 
     /* ─── BAŞLANGIÇ ─── */
