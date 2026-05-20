@@ -5,9 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sipariş Uygulaması</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1D9E75">
-  <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,
@@ -191,7 +188,7 @@
     .card-media img {
       width: 100%;
       height: 120px;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 12px;
     }
 
@@ -694,9 +691,6 @@
 
   <div class="topbar">
     <div class="logo">🛒 İlker<span>Market</span></div>
-    <button class="nav-btn" id="nav-track" onclick="switchView('track')">
-      <i class="ti ti-search"></i> Sipariş Takip
-    </button>
     <button class="nav-btn active" id="nav-order" onclick="switchView('order')">
       <i class="ti ti-shopping-cart"></i> Sipariş Ver
     </button>
@@ -708,21 +702,7 @@
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
     <div class="wrap">
-      <div style="margin-bottom:14px">
-        <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
-      width:100%;
-      height:42px;
-      border-radius:12px;
-      border:0.5px solid var(--border2);
-      background:var(--bg2);
-      color:var(--text);
-      padding:0 14px;
-      font-size:14px;
-      outline:none;
-    ">
-      </div>
       <div class="cats" id="order-cats"></div>
-      <div class="cats" id="order-subcats"></div>
       <div class="products" id="order-products"></div>
     </div>
     <div class="cart-bar">
@@ -737,85 +717,28 @@
   <!-- ══════════ ADMİN PANELİ ══════════ -->
   <div class="view" id="view-admin">
     <div class="wrap" style="padding-bottom:24px">
-
       <div class="admin-tabs">
-        <button class="atab active" onclick="switchAdminTab('dash')">
-          <i class="ti ti-dashboard"></i> Dashboard
-        </button>
-
-        <button class="atab" onclick="switchAdminTab('prod')">
-          <i class="ti ti-package"></i> Ürünler
-        </button>
-
-        <button class="atab" onclick="switchAdminTab('cat')">
-          <i class="ti ti-tag"></i> Kategoriler
-        </button>
-
-        <button class="atab" onclick="switchAdminTab('subcat')">
-          <i class="ti ti-category"></i> Alt Gruplar
-        </button>
-
-        <button class="atab" onclick="switchAdminTab('orders')">
-          <i class="ti ti-receipt"></i> Siparişler
-        </button>
+        <button class="atab active" onclick="switchAdminTab('prod')"><i class="ti ti-package"></i> Ürünler</button>
+        <button class="atab" onclick="switchAdminTab('cat')"><i class="ti ti-tag"></i> Kategoriler</button>
+        <button class="atab" onclick="switchAdminTab('orders')"><i class="ti ti-receipt"></i> Siparişler</button>
       </div>
 
-      <!-- DASHBOARD -->
-      <div id="asec-dash" class="asec active">
+      <!-- Ürünler -->
+      <div id="asec-prod" class="asec active">
         <div class="panel">
-          <div class="stat-row" id="dashboard-stats"></div>
-
-          <div style="margin-top:16px">
-            <h3 style="font-size:15px;margin-bottom:10px">Son Siparişler</h3>
-
-            <div class="tbl-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Müşteri</th>
-                    <th>Toplam</th>
-                    <th>Durum</th>
-                    <th>Tarih</th>
-                  </tr>
-                </thead>
-
-                <tbody id="dashboard-orders"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ÜRÜNLER -->
-      <div id="asec-prod" class="asec">
-        <div class="panel">
-
           <div class="stat-row" id="a-stats"></div>
-
           <div class="toolbar">
             <input type="text" id="a-search" placeholder="Ürün ara..." oninput="renderAdminProducts()">
-
             <select id="a-filter" onchange="renderAdminProducts()">
               <option value="">Tüm kategoriler</option>
             </select>
-
-            <button class="btn btn-g" onclick="openModal('prod','new')">
-              <i class="ti ti-plus"></i> Yeni ürün
-            </button>
-
-            <button class="btn" onclick="exportData()">
-              <i class="ti ti-download"></i> Dışa Aktar
-            </button>
-
-            <button class="btn" onclick="document.getElementById('data-import').click()">
-              <i class="ti ti-upload"></i> İçe Aktar
-            </button>
-
+            <button class="btn btn-g" onclick="openModal('prod','new')"><i class="ti ti-plus"></i> Yeni ürün</button>
+            <button class="btn" onclick="exportData()"><i class="ti ti-download"></i> Dışa Aktar</button>
+            <button class="btn" onclick="document.getElementById('data-import').click()"><i class="ti ti-upload"></i>
+              İçe Aktar</button>
             <input id="data-import" type="file" accept="application/json" style="display:none"
               onchange="importData(event)">
           </div>
-
           <div class="tbl-wrap">
             <table>
               <thead>
@@ -828,23 +751,18 @@
                   <th style="width:96px"></th>
                 </tr>
               </thead>
-
               <tbody id="a-prod-body"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- KATEGORİLER -->
+      <!-- Kategoriler -->
       <div id="asec-cat" class="asec">
         <div class="panel">
-
           <div class="toolbar">
-            <button class="btn btn-g" onclick="openModal('cat','new')">
-              <i class="ti ti-plus"></i> Yeni kategori
-            </button>
+            <button class="btn btn-g" onclick="openModal('cat','new')"><i class="ti ti-plus"></i> Yeni kategori</button>
           </div>
-
           <div class="tbl-wrap">
             <table>
               <thead>
@@ -856,93 +774,36 @@
                   <th style="width:96px"></th>
                 </tr>
               </thead>
-
               <tbody id="a-cat-body"></tbody>
             </table>
           </div>
         </div>
       </div>
-
-      <!-- ALT GRUPLAR -->
-      <div id="asec-subcat" class="asec">
-        <div class="panel">
-
-          <div class="toolbar">
-            <button class="btn btn-g" onclick="openModal('subcat','new')">
-              <i class="ti ti-plus"></i> Yeni alt grup
-            </button>
-          </div>
-
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Alt grup adı</th>
-                  <th style="width:130px">Ana kategori</th>
-                  <th style="width:80px">Durum</th>
-                  <th style="width:96px"></th>
-                </tr>
-              </thead>
-
-              <tbody id="a-subcat-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- SİPARİŞLER -->
-      <div id="asec-orders" class="asec">
-        <div class="panel">
-
-          <div class="toolbar">
-            <button class="btn" onclick="renderOrders()">
-              <i class="ti ti-refresh"></i> Yenile
-            </button>
-          </div>
-
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:60px">No</th>
-                  <th>Müşteri</th>
-                  <th>Telefon</th>
-                  <th style="width:90px">Toplam</th>
-                  <th style="width:130px">Durum</th>
-                  <th style="width:140px">Tarih</th>
-                  <th style="width:80px"></th>
-                </tr>
-              </thead>
-
-              <tbody id="a-orders-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <div class="view" id="view-track">
-    <div class="wrap">
-      <div class="panel" style="border:0.5px solid var(--border2);border-radius:var(--rlg);">
-        <h3 style="font-size:16px;margin-bottom:14px">Sipariş Takip</h3>
-
-        <div class="frow">
-          <label>Sipariş No</label>
-          <input id="track-order-id" type="number" placeholder="Örn: 157">
-        </div>
-
-        <div class="frow">
-          <label>Telefon</label>
-          <input id="track-phone" placeholder="05xxxxxxxxx">
-        </div>
-
-        <button class="btn btn-g" style="width:100%;justify-content:center;height:40px" onclick="trackOrder()">
-          Sorgula
+  <div id="asec-orders" class="asec">
+    <div class="panel">
+      <div class="toolbar">
+        <button class="btn" onclick="renderOrders()">
+          <i class="ti ti-refresh"></i> Yenile
         </button>
+      </div>
 
-        <div id="track-result" style="margin-top:16px"></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:60px">No</th>
+              <th>Müşteri</th>
+              <th>Telefon</th>
+              <th style="width:90px">Toplam</th>
+              <th style="width:130px">Durum</th>
+              <th style="width:140px">Tarih</th>
+            </tr>
+          </thead>
+          <tbody id="a-orders-body"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -957,15 +818,10 @@
     <div class="sheet" id="sheet"></div>
   </div>
 
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
   <script>
     /* ─── VERİ ─── */
-    /*const WHATSAPP_TARGET = '905436325080'; // uluslararası formatta kayıtlı numara*/
+    const WHATSAPP_TARGET = '905436325080'; // uluslararası formatta kayıtlı numara
     const API_URL = "https://market-backend-production-e1a5.up.railway.app"
-    let socket = null
-    let lastKnownOrderId = null
-    let orderCheckStarted = false
     /*const API_URL = "http://localhost:3000"*/
     let isAdminLoggedIn = false
     const DEFAULT_PRODUCTS = [
@@ -996,13 +852,9 @@
         const catRes = await fetch(`${API_URL}/categories`)
         cats = await catRes.json()
 
-        const subRes = await fetch(`${API_URL}/subcategories`)
-        subcats = await subRes.json()
-
         nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
 
         renderOrderCats()
-        renderOrderSubCats()
         renderOrderProducts()
         renderAdminAll()
 
@@ -1065,7 +917,6 @@
             desc: String(p.desc || ''),
             price: Number(p.price) || 0,
             cat: String(p.cat || ''),
-            subCat: String(p.subCat || ''),
             emoji: String(p.emoji || '🍽'),
             imageUrl: String(p.imageUrl || ''),
             active: Boolean(p.active)
@@ -1093,12 +944,11 @@
       reader.readAsText(file);
     }
 
-    let products, cats, subcats, nextId;
+    let products, cats, nextId;
     loadData();
 
     const cart = {};
     let orderCat = 'hepsi';
-    let orderSubCat = 'hepsi';
     let editTarget = null;
     /*const ADMIN_PASSWORD = 'yonetim123'; // yönetim paneli için şifreyi buradan değiştirin*/
 
@@ -1106,11 +956,10 @@
     function switchView(v) {
       if (v === 'admin' && !isAdminLoggedIn) {
         openAdminLogin()
-        //startOrderWatcher()
         return
       }
 
-      ['order', 'admin', 'track'].forEach(x => {
+      ['order', 'admin'].forEach(x => {
         document.getElementById('view-' + x).classList.toggle('active', x === v)
         document.getElementById('nav-' + x).classList.toggle('active', x === v)
       })
@@ -1122,7 +971,6 @@
 
       if (v === 'admin') {
         renderAdminAll()
-        startSocket()
       }
     }
     /*if (v === 'admin' && !verifyAdminPassword()) return;
@@ -1194,8 +1042,6 @@
         }
 
         isAdminLoggedIn = true
-        startSocket()
-        //startOrderWatcher()
         console.log("Admin giriş durumu:", isAdminLoggedIn)
 
         document.getElementById('overlay').classList.remove('open')
@@ -1215,14 +1061,14 @@
     }
 
     function switchAdminTab(t) {
-      ['dash', 'prod', 'cat', 'subcat', 'orders'].forEach((x, i) => {
+      ['prod', 'cat', 'orders'].forEach((x, i) => {
         document.getElementById('asec-' + x).classList.toggle('active', x === t)
         document.querySelectorAll('.atab')[i].classList.toggle('active', x === t)
       })
 
-      if (t === 'dash') renderDashboard()
-      if (t === 'orders') renderOrders()
-      if (t === 'subcat') renderAdminSubCats()
+      if (t === 'orders') {
+        renderOrders()
+      }
     }
 
     /*function switchAdminTab(t) {
@@ -1234,117 +1080,38 @@
 
     /* ─── SİPARİŞ SAYFASI ─── */
     function renderOrderCats() {
-      if (!Array.isArray(cats)) {
-        cats = []
-      }
-
-      const activeCats = cats.filter(c => c.active)
-
-      document.getElementById('order-cats').innerHTML =
-        `<button class="cat-btn${orderCat === 'hepsi' ? ' active' : ''}" onclick="setOrderCat('hepsi')">Tümü</button>` +
-        activeCats.map(c =>
-          `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
-        ).join('')
-    }
-
-    /*function renderOrderCats() {
       const activeCats = cats.filter(c => c.active);
       document.getElementById('order-cats').innerHTML =
         `<button class="cat-btn${orderCat === 'hepsi' ? ' active' : ''}" onclick="setOrderCat('hepsi')">Tümü</button>` +
         activeCats.map(c =>
           `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
         ).join('');
-    }*/
-
-    function renderOrderSubCats() {
-      if (!Array.isArray(subcats)) subcats = []
-
-      const el = document.getElementById('order-subcats')
-      if (!el) return
-
-      if (orderCat === 'hepsi') {
-        el.innerHTML = ''
-        return
-      }
-
-      const list = subcats.filter(s => s.active && s.catId === orderCat)
-
-      if (!list.length) {
-        el.innerHTML = ''
-        return
-      }
-
-      el.innerHTML =
-        `<button class="cat-btn${orderSubCat === 'hepsi' ? ' active' : ''}" onclick="setOrderSubCat('hepsi')">Tümü</button>` +
-        list.map(s =>
-          `<button class="cat-btn${orderSubCat === s.id ? ' active' : ''}" onclick="setOrderSubCat('${s.id}')">${s.name}</button>`
-        ).join('')
     }
 
     function setOrderCat(id) {
-      orderCat = id
-      orderSubCat = 'hepsi'
-
-      renderOrderCats()
-      renderOrderSubCats()
-      renderOrderProducts()
-    }
-
-    function setOrderSubCat(id) {
-      orderSubCat = id
-
-      renderOrderSubCats()
-      renderOrderProducts()
+      orderCat = id;
+      renderOrderCats();
+      renderOrderProducts();
     }
 
     function renderOrderProducts() {
-      if (!Array.isArray(products)) products = []
-      if (!Array.isArray(cats)) cats = []
-
-      const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id))
-
-      let list = products.filter(p => p.active && activeCatIds.has(p.cat))
-
-      const search = (document.getElementById('product-search')?.value || '').toLowerCase().trim()
-
-      if (orderCat !== 'hepsi') {
-        list = list.filter(p => p.cat === orderCat)
-      }
-
-      if (orderSubCat && orderSubCat !== 'hepsi') {
-        list = list.filter(p => (p.subCat || '') === orderSubCat)
-      }
-
-      if (search) {
-        list = list.filter(p => {
-          const sub = subcats.find(s => s.id === p.subCat)
-
-          return (
-            (p.name || '').toLowerCase().includes(search) ||
-            (p.desc || '').toLowerCase().includes(search) ||
-            (sub?.name || '').toLowerCase().includes(search)
-          )
-        })
-      }
-
-      const el = document.getElementById('order-products')
-
+      const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id));
+      let list = products.filter(p => p.active && activeCatIds.has(p.cat));
+      if (orderCat !== 'hepsi') list = list.filter(p => p.cat === orderCat);
+      const el = document.getElementById('order-products');
       if (!list.length) {
-        el.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">Ürün bulunamadı.</div>`
-        return
+        el.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">Bu kategoride ürün bulunmuyor.</div>`;
+        return;
       }
-
       el.innerHTML = list.map(p => {
-        const qty = cart[p.id] || 0
-
+        const qty = cart[p.id] || 0;
         const mediaHtml = p.imageUrl
-          ? `<div class="card-media"><img src="${p.imageUrl}" alt="${p.name}" loading="lazy"></div>`
-          : `<div class="card-media"><div class="card-emoji">${p.emoji || '🍽'}</div></div>`
-
+          ? `<div class="card-media"><img src="${p.imageUrl}" alt="${p.name}"></div>`
+          : `<div class="card-media"><div class="card-emoji">${p.emoji}</div></div>`;
         return `<div class="card">
       ${mediaHtml}
       <div class="card-name">${p.name}</div>
-      <div class="card-desc">${p.desc || ''}</div>
+      <div class="card-desc">${p.desc}</div>
       <div class="card-footer">
         <span class="price">₺${p.price}</span>
         ${qty === 0
@@ -1353,11 +1120,11 @@
               <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
               <span class="qty-num">${qty}</span>
               <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
-            </div>`
+             </div>`
           }
       </div>
-    </div>`
-      }).join('')
+    </div>`;
+      }).join('');
     }
 
     function cartAdd(id) { cart[id] = (cart[id] || 0) + 1; updateCartBar(); renderOrderProducts(); }
@@ -1481,7 +1248,7 @@
         `Ödeme: ${paymentMethod}`,
         note ? `Not: ${note}` : ''
       ].filter(Boolean).join('\n');*/
-      /*const target = WHATSAPP_TARGET.replace(/[^0-9]/g, '');
+      const target = WHATSAPP_TARGET.replace(/[^0-9]/g, '');
       if (!target) return alert('WhatsApp hedef numarası ayarlı değil.');
       try {
         const orderRes = await fetch(`${API_URL}/orders`, {
@@ -1520,42 +1287,10 @@
         console.log("Sipariş API hatası:", err)
         alert("Sipariş kaydedilemedi")
         return
-      }*/
-
-      const orderRes = await fetch(`${API_URL}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          customerName: name,
-          customerAddress: address,
-          customerPhone: phone,
-          customerRegion: regionData.name,
-          paymentMethod,
-          note,
-          serviceFee,
-          total,
-          items: lines.map(l => ({
-            productId: l.p.id,
-            productName: l.p.name,
-            quantity: l.qty,
-            price: l.p.price,
-            subtotal: l.sub
-          }))
-        })
-      })
-
-      const orderData = await orderRes.json()
-
-      if (!orderRes.ok) {
-        console.log("Sipariş kayıt hatası:", orderData)
-        alert("Sipariş kaydedilemedi")
-        return
       }
-
-      showOrderSuccess(orderData.orderId, total)
       /*window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');*/
+      showOrderSuccess(orderData.orderId, total);
+      resetOrder();
     }
 
     function resetOrder() {
@@ -1581,14 +1316,7 @@
     function sheetBg(e) { if (e.target === document.getElementById('sheet-overlay')) closeSheet(); }
 
     /* ─── ADMİN ─── */
-    function renderAdminAll() {
-      renderDashboard()
-      renderStats()
-      populateFilter()
-      renderAdminProducts()
-      renderAdminCats()
-      renderAdminSubCats()
-    }
+    function renderAdminAll() { renderStats(); populateFilter(); renderAdminProducts(); renderAdminCats(); }
 
     function renderStats() {
       const total = products.length, active = products.filter(p => p.active).length;
@@ -1653,42 +1381,6 @@
       }).join('');
     }
 
-    function renderAdminSubCats() {
-      if (!Array.isArray(subcats)) subcats = []
-
-      const tbody = document.getElementById('a-subcat-body')
-
-      if (!subcats.length) {
-        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-msg">Alt grup yok.</div></td></tr>`
-        return
-      }
-
-      tbody.innerHTML = subcats.map(s => {
-        const c = cats.find(x => x.id === s.catId)
-
-        return `
-      <tr>
-        <td style="font-weight:500">${s.name}</td>
-        <td>${c ? c.name : s.catId}</td>
-        <td><span class="badge ${s.active ? 'b-active' : 'b-passive'}">${s.active ? 'Aktif' : 'Pasif'}</span></td>
-        <td>
-          <div class="iact">
-            <button class="btn btn-sm" onclick="openModal('subcat','${s.id}')">
-              <i class="ti ti-edit"></i>
-            </button>
-            <button class="btn btn-sm" onclick="toggleSubCat('${s.id}')">
-              <i class="ti ti-${s.active ? 'eye-off' : 'eye'}"></i>
-            </button>
-            <button class="btn btn-sm btn-r" onclick="deleteSubCat('${s.id}')">
-              <i class="ti ti-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `
-      }).join('')
-    }
-
     /* ─── MODAL ─── */
     function openModal(type, id) {
       editTarget = { type, id };
@@ -1710,63 +1402,11 @@
       <div class="frow"><label>Kategori</label>
         <select id="f-cat">${cats.map(c => `<option value="${c.id}"${c.id === p.cat ? ' selected' : ''}>${c.emoji} ${c.name}</option>`).join('')}</select>
       </div>
-      <div class="frow">
-        <label>Alt grup</label>
-        <select id="f-subcat">
-          <option value="">Alt grup yok</option>
-          ${subcats
-            .filter(s => s.active && s.catId === p.cat)
-            .map(s => `
-              <option value="${s.id}" ${s.id === p.subCat ? 'selected' : ''}>
-                ${s.name}
-              </option>
-            `).join('')}
-        </select>
-      </div>
       <div class="faction">
         <button class="btn" onclick="closeModal()">İptal</button>
         <button class="btn btn-g" onclick="saveProd()">Kaydet</button>
       </div>`;
-      } else if (type === 'subcat') {
-        const isNew = id === 'new'
-
-        const s = isNew
-          ? { id: '', catId: cats[0]?.id || '', name: '', active: true }
-          : subcats.find(x => x.id === id)
-
-        m.innerHTML = `
-    <h3>${isNew ? 'Yeni alt grup' : 'Alt grup düzenle'}</h3>
-
-    <div class="frow">
-      <label>Alt grup adı</label>
-      <input id="fs-name" value="${s.name}" placeholder="Örn: Enerji İçecekleri">
-    </div>
-
-    ${isNew ? `
-      <div class="frow">
-        <label>Alt grup ID</label>
-        <input id="fs-id" placeholder="ornek: enerji-icecekleri">
-      </div>
-    ` : ''}
-
-    <div class="frow">
-      <label>Ana kategori</label>
-      <select id="fs-cat">
-        ${cats.map(c => `
-          <option value="${c.id}" ${c.id === s.catId ? 'selected' : ''}>
-            ${c.name}
-          </option>
-        `).join('')}
-      </select>
-    </div>
-
-    <div class="faction">
-      <button class="btn" onclick="closeModal()">İptal</button>
-      <button class="btn btn-g" onclick="saveSubCat()">Kaydet</button>
-    </div>
-  `
-      }
-      else if (type === 'cat') {
+      } else {
         const isNew = id === 'new';
         const c = isNew ? { name: '', emoji: '🍽', color: '#E1F5EE', textColor: '#085041' } : cats.find(x => x.id === id);
         m.innerHTML = `
@@ -1793,7 +1433,6 @@
       const desc = document.getElementById('f-desc').value.trim()
       const price = parseInt(document.getElementById('f-price').value) || 0
       const cat = document.getElementById('f-cat').value
-      const subCat = document.getElementById('f-subcat').value.trim()
       const imageUrl = document.getElementById('f-image-url').value.trim()
 
       if (!name) {
@@ -1805,7 +1444,6 @@
         desc,
         price,
         cat,
-        subCat,
         emoji: "🍽",
         imageUrl,
         active: true
@@ -2030,113 +1668,6 @@
       save(); closeModal(); renderAdminAll();
     }*/
 
-    async function toggleSubCat(id) {
-      const s = subcats.find(x => x.id === id)
-
-      if (!s) return
-
-      try {
-        await fetch(`${API_URL}/subcategories/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ...s,
-            active: !s.active
-          })
-        })
-
-        await loadData()
-
-      } catch (err) {
-        console.log(err)
-        alert("Durum değiştirilemedi")
-      }
-    }
-
-    async function saveSubCat() {
-      const name = document.getElementById('fs-name').value.trim()
-      const catId = document.getElementById('fs-cat').value
-
-      if (!name) {
-        return alert('Alt grup adı boş olamaz')
-      }
-
-      let id
-
-      if (editTarget.id === 'new') {
-        id =
-          document.getElementById('fs-id').value.trim() ||
-          name
-            .toLowerCase()
-            .replaceAll('ğ', 'g')
-            .replaceAll('ü', 'u')
-            .replaceAll('ş', 's')
-            .replaceAll('ı', 'i')
-            .replaceAll('ö', 'o')
-            .replaceAll('ç', 'c')
-            .replace(/\s+/g, '-')
-            .replace(/[^a-z0-9-]/g, '')
-      } else {
-        id = editTarget.id
-      }
-
-      const payload = {
-        id,
-        catId,
-        name,
-        active: true
-      }
-
-      try {
-        if (editTarget.id === 'new') {
-          await fetch(`${API_URL}/subcategories`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          })
-        } else {
-          await fetch(`${API_URL}/subcategories/${editTarget.id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          })
-        }
-
-        closeModal()
-        await loadData()
-
-      } catch (err) {
-        console.log(err)
-        alert("Alt grup kaydedilemedi")
-      }
-    }
-
-    async function deleteSubCat(id) {
-
-      if (!confirm("Alt grup silinsin mi?")) return
-
-      try {
-
-        await fetch(`${API_URL}/subcategories/${id}`, {
-          method: "DELETE"
-        })
-
-        await loadData()
-
-      } catch (err) {
-
-        console.log(err)
-        alert("Alt grup silinemedi")
-
-      }
-    }
-
     async function toggleProd(id) {
       const p = products.find(x => x.id == id)
       if (!p) return
@@ -2298,16 +1829,8 @@
         </td>
 
         <td>${new Date(o.createdAt).toLocaleString('tr-TR')}</td>
-
-        <td>
-          <button class="btn btn-sm" onclick="openOrderDetail(${o.id})">
-            Detay
-          </button>
-        </td>
-        </tr>
-
+      </tr>
     `).join('')
-
 
       } catch (err) {
         console.log(err)
@@ -2363,9 +1886,6 @@
       <button class="btn btn-g" style="width:100%;height:42px;justify-content:center" onclick="finishOrderSuccess()">
         Tamam
       </button>
-      <p style="font-size:12px;color:var(--text2)">
-  Siparişinizi “Sipariş Takip” bölümünden sipariş no ve telefon numaranızla takip edebilirsiniz.
-      </p>
     </div>
   `
     }
@@ -2376,333 +1896,11 @@
       closeSheet()
       renderOrderProducts()
     }
-
-    async function trackOrder() {
-      const orderId = document.getElementById('track-order-id').value.trim()
-      const phone = normalizePhone(document.getElementById('track-phone').value.trim())
-      const resultEl = document.getElementById('track-result')
-
-      if (!orderId || !phone) {
-        return alert("Sipariş no ve telefon gerekli")
-      }
-
-      try {
-        const res = await fetch(`${API_URL}/track-order`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ orderId, phone })
-        })
-
-        const data = await res.json()
-
-        if (!res.ok) {
-          resultEl.innerHTML = `<div class="empty-msg">${data.message || "Sipariş bulunamadı"}</div>`
-          return
-        }
-
-        const o = data.order
-
-        resultEl.innerHTML = `
-      <div style="background:var(--bg2);border-radius:12px;padding:14px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Sipariş No</span>
-          <strong>#${o.id}</strong>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Durum</span>
-          <strong style="color:var(--green)">${o.status}</strong>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Toplam</span>
-          <strong>₺${o.total}</strong>
-        </div>
-
-        <div style="display:flex;justify-content:space-between">
-          <span style="color:var(--text2)">Tarih</span>
-          <strong>${new Date(o.createdAt).toLocaleString('tr-TR')}</strong>
-        </div>
-      </div>
-    `
-
-      } catch (err) {
-        console.log(err)
-        alert("Sipariş sorgulanamadı")
-      }
-    }
-
-    function normalizePhone(phone) {
-      let cleaned = phone.replace(/[^0-9]/g, "")
-
-      if (cleaned.startsWith("0")) {
-        cleaned = "9" + cleaned
-      }
-
-      if (!cleaned.startsWith("90")) {
-        cleaned = "90" + cleaned
-      }
-
-      return cleaned
-    }
-
-    /*customerPhone: normalizePhone(phone),*/
-
-    async function openOrderDetail(orderId) {
-      console.log("Detay açılıyor:", orderId)
-
-      try {
-        const res = await fetch(`${API_URL}/orders/${orderId}/items`)
-        const items = await res.json()
-
-        console.log("Sipariş ürünleri:", items)
-
-        const modal = document.getElementById('modal')
-
-        modal.innerHTML = `
-      <h3>Sipariş Detayı #${orderId}</h3>
-
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${items.length
-            ? items.map(item => `
-              <div class="oline">
-                <span>${item.productName} × ${item.quantity}</span>
-                <span>₺${item.subtotal}</span>
-              </div>
-            `).join('')
-            : `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
-          }
-      </div>
-
-      <div class="faction">
-        <button class="btn" onclick="closeModal()">Kapat</button>
-      </div>
-    `
-
-        document.getElementById('overlay').classList.add('open')
-
-      } catch (err) {
-        console.log("Detay hatası:", err)
-        alert("Sipariş detayı yüklenemedi")
-      }
-    }
-
-    async function renderDashboard() {
-      const statsEl = document.getElementById('dashboard-stats')
-      const ordersEl = document.getElementById('dashboard-orders')
-
-      try {
-        const res = await fetch(`${API_URL}/orders`)
-        const orders = await res.json()
-
-        const today = new Date().toLocaleDateString('tr-TR')
-
-        const todayOrders = orders.filter(o => {
-          return new Date(o.createdAt).toLocaleDateString('tr-TR') === today
-        })
-
-        const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total || 0), 0)
-        const todayRevenue = todayOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
-        const waitingOrders = orders.filter(o => o.status === 'Bekliyor').length
-
-        statsEl.innerHTML = `
-      <div class="stat">
-        <div class="stat-lbl">Toplam Sipariş</div>
-        <div class="stat-val">${orders.length}</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-lbl">Bugünkü Sipariş</div>
-        <div class="stat-val">${todayOrders.length}</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-lbl">Bekleyen</div>
-        <div class="stat-val">${waitingOrders}</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-lbl">Toplam Ciro</div>
-        <div class="stat-val">₺${totalRevenue}</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-lbl">Bugünkü Ciro</div>
-        <div class="stat-val">₺${todayRevenue}</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-lbl">Aktif Ürün</div>
-        <div class="stat-val">${products.filter(p => p.active).length}</div>
-      </div>
-    `
-
-        const lastOrders = orders.slice(0, 5)
-
-        if (!lastOrders.length) {
-          ordersEl.innerHTML = `<tr><td colspan="5"><div class="empty-msg">Henüz sipariş yok.</div></td></tr>`
-          return
-        }
-
-        ordersEl.innerHTML = lastOrders.map(o => `
-      <tr>
-        <td>#${o.id}</td>
-        <td>${o.customerName}</td>
-        <td style="font-weight:500;color:var(--green)">₺${o.total}</td>
-        <td><span class="badge b-active">${o.status}</span></td>
-        <td>${new Date(o.createdAt).toLocaleString('tr-TR')}</td>
-      </tr>
-    `).join('')
-
-      } catch (err) {
-        console.log(err)
-        statsEl.innerHTML = `<div class="empty-msg">Dashboard yüklenemedi.</div>`
-      }
-    }
-
-    function playNewOrderSound() {
-      const audio = document.getElementById("new-order-sound")
-
-      if (!audio) return
-
-      audio.currentTime = 0
-
-      audio.play().catch(() => { })
-
-      setTimeout(() => {
-        audio.currentTime = 0
-        audio.play().catch(() => { })
-      }, 900)
-
-      setTimeout(() => {
-        audio.currentTime = 0
-        audio.play().catch(() => { })
-      }, 1800)
-    }
-
-    function showNewOrderAlert(order) {
-      const box = document.createElement("div")
-
-      box.innerHTML = `
-    <div style="
-      position:fixed;
-      right:16px;
-      bottom:80px;
-      background:var(--bg);
-      border:1px solid var(--border2);
-      border-radius:12px;
-      padding:14px;
-      z-index:9999;
-      box-shadow:0 10px 30px rgba(0,0,0,0.18);
-      min-width:240px;
-    ">
-      <div style="font-weight:600;margin-bottom:4px">🔔 Yeni sipariş geldi</div>
-      <div style="font-size:13px;color:var(--text2)">#${order.id} · ${order.customerName}</div>
-      <div style="font-size:13px;color:var(--green);margin-top:4px">₺${order.total}</div>
-    </div>
-  `
-
-      document.body.appendChild(box)
-
-      setTimeout(() => {
-        box.remove()
-      }, 5000)
-    }
-
-    async function checkNewOrders() {
-      try {
-        const res = await fetch(`${API_URL}/orders`)
-        const orders = await res.json()
-
-        if (!orders.length) return
-
-        const newestOrder = orders[0]
-
-        if (lastKnownOrderId === null) {
-          lastKnownOrderId = newestOrder.id
-          return
-        }
-
-        if (newestOrder.id > lastKnownOrderId) {
-          lastKnownOrderId = newestOrder.id
-
-          playNewOrderSound()
-          showNewOrderAlert(newestOrder)
-
-          renderDashboard()
-          renderOrders()
-        }
-
-      } catch (err) {
-        console.log("Yeni sipariş kontrol hatası:", err)
-      }
-    }
-
-    function startOrderWatcher() {
-      if (orderCheckStarted) return
-
-      orderCheckStarted = true
-
-      checkNewOrders()
-
-      setInterval(checkNewOrders, 7000)
-    }
-
-    function startSocket() {
-      if (socket) return
-
-      socket = io(API_URL, {
-        transports: ["websocket", "polling"]
-      })
-
-      socket.on("connect", () => {
-        console.log("Socket bağlandı:", socket.id)
-      })
-
-      socket.on("new-order", async (order) => {
-        console.log("Yeni sipariş geldi:", order)
-
-        playNewOrderSound()
-        showNewOrderAlert({
-          id: order.orderId,
-          customerName: order.customerName,
-          total: order.total
-        })
-
-        await loadData()
-        renderDashboard()
-        renderOrders()
-      })
-
-      socket.on("order-status-updated", async (data) => {
-        console.log("Sipariş durumu güncellendi:", data)
-
-        renderDashboard()
-        renderOrders()
-      })
-
-      socket.on("disconnect", () => {
-        console.log("Socket bağlantısı koptu")
-      })
-    }
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-          .then(() => console.log("Service Worker kayıt edildi"))
-          .catch(err => console.log("Service Worker hatası:", err))
-      })
-    }
-
+    
     /* ─── BAŞLANGIÇ ─── */
-    loadData()
+    renderOrderCats();
+    renderOrderProducts();
   </script>
-
-  <audio id="new-order-sound" preload="auto">
-    <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
-  </audio>
 </body>
 
 </html>
