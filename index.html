@@ -755,6 +755,10 @@
           <i class="ti ti-category"></i> Alt Gruplar
         </button>
 
+        <button class="atab" onclick="switchAdminTab('regions')">
+          <i class="ti ti-map-pin"></i> Bölgeler
+        </button>
+
         <button class="atab" onclick="switchAdminTab('orders')">
           <i class="ti ti-receipt"></i> Siparişler
         </button>
@@ -890,6 +894,30 @@
         </div>
       </div>
 
+      <div id="asec-regions" class="asec">
+        <div class="panel">
+          <div class="toolbar">
+            <button class="btn btn-g" onclick="openModal('region','new')">
+              <i class="ti ti-plus"></i> Yeni bölge
+            </button>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bölge adı</th>
+                  <th style="width:90px">Ücret</th>
+                  <th style="width:80px">Durum</th>
+                  <th style="width:96px"></th>
+                </tr>
+              </thead>
+              <tbody id="a-region-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- SİPARİŞLER -->
       <div id="asec-orders" class="asec">
         <div class="panel">
@@ -961,12 +989,10 @@
 
   <script>
     /* ─── VERİ ─── */
-    /*const WHATSAPP_TARGET = '905436325080'; // uluslararası formatta kayıtlı numara*/
     const API_URL = "https://market-backend-production-e1a5.up.railway.app"
     let socket = null
     let lastKnownOrderId = null
     let orderCheckStarted = false
-    /*const API_URL = "http://localhost:3000"*/
     let isAdminLoggedIn = false
     const DEFAULT_PRODUCTS = [
       { id: 1, name: 'Nescafe Xpress 250ml', desc: 'Hazır kahve, lezzetli', price: 75, cat: 'icecek', emoji: '☕', active: true },
@@ -980,11 +1006,11 @@
       { id: 'tatli', name: 'Tatlı', emoji: '🍰', active: true, color: '#FBEAF0', textColor: '#72243E' },
     ];
 
-    const DELIVERY_REGIONS = [
-      { id: 'barbaros', name: 'Barbaros Mahallesi', fee: 0 },
-      { id: 'kemalpasa', name: 'Kemalpaşa Mahallesi', fee: 100 },
-      { id: 'esenler', name: 'Esenler Mahallesi', fee: 150 },
-    ];
+    const DEFAULT_REGIONS = [
+      { id: 'barbaros', name: 'Barbaros Mahallesi', fee: 0, active: true },
+      { id: 'kemalpasa', name: 'Kemalpaşa Mahallesi', fee: 100, active: true },
+      { id: 'esenler', name: 'Esenler Mahallesi', fee: 150, active: true },
+    ]
 
     async function loadData() {
 
@@ -998,6 +1024,9 @@
 
         const subRes = await fetch(`${API_URL}/subcategories`)
         subcats = await subRes.json()
+
+        const regionRes = await fetch(`${API_URL}/regions`)
+        regions = await regionRes.json()
 
         nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
 
@@ -1016,23 +1045,6 @@
     function save() {
       console.log("Save artık API üzerinden olacak")
     }
-    /**function loadData() {
-      try {
-        const p = localStorage.getItem('siparis_products');
-        const c = localStorage.getItem('siparis_cats');
-        products = p ? JSON.parse(p) : JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-        cats = c ? JSON.parse(c) : JSON.parse(JSON.stringify(DEFAULT_CATS));
-      } catch (e) {
-        products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-        cats = JSON.parse(JSON.stringify(DEFAULT_CATS));
-      }
-      nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1;
-    }**/
-
-    /**function save() {
-      localStorage.setItem('siparis_products', JSON.stringify(products));
-      localStorage.setItem('siparis_cats', JSON.stringify(cats));
-    }**/
 
     function exportData() {
       const payload = { products, cats };
@@ -1081,8 +1093,6 @@
           nextId = products.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0) + 1;
           save();
           renderAdminAll();
-          /*renderOrderCats();
-          renderOrderProducts();*/
           loadData()
           alert('Veri başarıyla içe aktarıldı.');
         } catch (err) {
@@ -1093,20 +1103,18 @@
       reader.readAsText(file);
     }
 
-    let products, cats, subcats, nextId;
+    let products, cats, subcats, regions, nextId;
     loadData();
 
     const cart = {};
     let orderCat = 'hepsi';
     let orderSubCat = 'hepsi';
     let editTarget = null;
-    /*const ADMIN_PASSWORD = 'yonetim123'; // yönetim paneli için şifreyi buradan değiştirin*/
 
     /* ─── NAVİGASYON ─── */
     function switchView(v) {
       if (v === 'admin' && !isAdminLoggedIn) {
         openAdminLogin()
-        //startOrderWatcher()
         return
       }
 
@@ -1125,21 +1133,6 @@
         startSocket()
       }
     }
-    /*if (v === 'admin' && !verifyAdminPassword()) return;
-    ['order', 'admin'].forEach(x => {
-      document.getElementById('view-' + x).classList.toggle('active', x === v);
-      document.getElementById('nav-' + x).classList.toggle('active', x === v);
-    });
-    if (v === 'order') { renderOrderCats(); renderOrderProducts(); }
-    if (v === 'admin') { renderAdminAll(); }*/
-
-    /*function verifyAdminPassword() {
-      const answer = prompt('Yönetim paneli şifresini girin:');
-      if (answer === null) return false;
-      if (answer.trim() === ADMIN_PASSWORD) return true;
-      alert('Hatalı şifre.');
-      return false;
-    }*/
 
     function openAdminLogin() {
       const m = document.getElementById('modal')
@@ -1195,7 +1188,6 @@
 
         isAdminLoggedIn = true
         startSocket()
-        //startOrderWatcher()
         console.log("Admin giriş durumu:", isAdminLoggedIn)
 
         document.getElementById('overlay').classList.remove('open')
@@ -1215,7 +1207,7 @@
     }
 
     function switchAdminTab(t) {
-      ['dash', 'prod', 'cat', 'subcat', 'orders'].forEach((x, i) => {
+      ['dash', 'prod', 'cat', 'subcat', 'regions', 'orders'].forEach((x, i) => {
         document.getElementById('asec-' + x).classList.toggle('active', x === t)
         document.querySelectorAll('.atab')[i].classList.toggle('active', x === t)
       })
@@ -1223,14 +1215,9 @@
       if (t === 'dash') renderDashboard()
       if (t === 'orders') renderOrders()
       if (t === 'subcat') renderAdminSubCats()
+      if (t === 'regions') renderAdminRegions()
     }
 
-    /*function switchAdminTab(t) {
-      ['prod', 'cat'].forEach(x => {
-        document.getElementById('asec-' + x).classList.toggle('active', x === t);
-        document.querySelectorAll('.atab')[x === 'prod' ? 0 : 1].classList.toggle('active', x === t);
-      });
-    }*/
 
     /* ─── SİPARİŞ SAYFASI ─── */
     function renderOrderCats() {
@@ -1247,14 +1234,6 @@
         ).join('')
     }
 
-    /*function renderOrderCats() {
-      const activeCats = cats.filter(c => c.active);
-      document.getElementById('order-cats').innerHTML =
-        `<button class="cat-btn${orderCat === 'hepsi' ? ' active' : ''}" onclick="setOrderCat('hepsi')">Tümü</button>` +
-        activeCats.map(c =>
-          `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
-        ).join('');
-    }*/
 
     function renderOrderSubCats() {
       if (!Array.isArray(subcats)) subcats = []
@@ -1414,7 +1393,7 @@
         <h3>Sipariş Bilgileri</h3>
         <div class="frow"><label>Ad Soyad*</label><input type="text" id="customerName" placeholder="Adınız ve Soyadınız"></div>
         <div class="frow"><label>Adres*</label><textarea id="customerAddress" placeholder="Adresiniz"></textarea></div>
-        <div class="frow"><label>Bölge*</label><select id="customerRegion" onchange="updateDeliveryFee()">${DELIVERY_REGIONS.map(r => `<option value="${r.id}">${r.name}${r.fee ? ` - Servis Ücreti ₺${r.fee}` : ' - Servis Ücreti Yok'}</option>`).join('')}</select></div>
+        <div class="frow"><label>Bölge*</label><select id="customerRegion" onchange="updateDeliveryFee()">${(regions || DEFAULT_REGIONS).filter(r => r.active).map(r => `<option value="${r.id}">${r.name}${Number(r.fee || 0) ? ` - Servis Ücreti ₺${r.fee}` : ' - Servis Ücreti Yok'}</option>`).join('')}</select></div>
         <div class="frow"><label>Telefon*</label><input type="text" id="customerPhone" placeholder="05xxxxxxxxx"></div>
         <div class="frow"><label>Ek Not (Opsiyonel)</label><textarea id="customerNote" placeholder="İsteğe bağlı not"></textarea></div>
         <div class="frow"><label>Ödeme Şekli*</label><select id="paymentMethod"><option value="Nakit">Nakit</option><option value="Kart">Kart</option></select></div>
@@ -1439,7 +1418,8 @@
       }).filter(Boolean);
       if (!lines.length) return alert('Sepetinizde geçerli ürün yok.');
       const region = document.getElementById('customerRegion').value;
-      const regionData = DELIVERY_REGIONS.find(r => r.id === region) || DELIVERY_REGIONS[0];
+      const list = regions || DEFAULT_REGIONS
+      const regionData = list.find(r => r.id === region) || list[0]
       const serviceFee = regionData.fee || 0;
       const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
       const message = [
@@ -1468,59 +1448,6 @@
         note ? '📝 *Not*' : null,
         note ? note : null
       ].filter(Boolean).join('\n')
-      /*const message = [
-        'Sipariş Talebi:',
-        ...lines.map(l => `${l.p.emoji} ${l.p.name} x${l.qty} = ₺${l.sub}`),
-        `Servis Ücreti (${regionData.name}): ₺${serviceFee}`,
-        `Toplam: ₺${total}`,
-        '',
-        `Ad Soyad: ${name}`,
-        `Adres: ${address}`,
-        `Bölge: ${regionData.name}`,
-        `Telefon: ${phone}`,
-        `Ödeme: ${paymentMethod}`,
-        note ? `Not: ${note}` : ''
-      ].filter(Boolean).join('\n');*/
-      /*const target = WHATSAPP_TARGET.replace(/[^0-9]/g, '');
-      if (!target) return alert('WhatsApp hedef numarası ayarlı değil.');
-      try {
-        const orderRes = await fetch(`${API_URL}/orders`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            customerName: name,
-            customerAddress: address,
-            customerPhone: phone,
-            customerRegion: regionData.name,
-            paymentMethod,
-            note,
-            serviceFee,
-            total,
-            items: lines.map(l => ({
-              productId: l.p.id,
-              productName: l.p.name,
-              quantity: l.qty,
-              price: l.p.price,
-              subtotal: l.sub
-            }))
-          })
-        })
-
-        const orderData = await orderRes.json()
-
-        if (!orderRes.ok) {
-          console.log("Sipariş kayıt hatası:", orderData)
-          alert("Sipariş veritabanına kaydedilemedi")
-          return
-        }
-
-      } catch (err) {
-        console.log("Sipariş API hatası:", err)
-        alert("Sipariş kaydedilemedi")
-        return
-      }*/
 
       const orderRes = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -1555,7 +1482,6 @@
       }
 
       showOrderSuccess(orderData.orderId, total)
-      /*window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(message), '_blank');*/
     }
 
     function resetOrder() {
@@ -1566,15 +1492,20 @@
     }
 
     function updateDeliveryFee() {
-      const region = document.getElementById('customerRegion');
-      if (!region) return;
-      const regionData = DELIVERY_REGIONS.find(r => r.id === region.value) || DELIVERY_REGIONS[0];
-      const fee = regionData.fee || 0;
-      const total = (window.currentOrderBaseTotal || 0) + fee;
-      const feeEl = document.getElementById('delivery-fee');
-      const totalEl = document.getElementById('delivery-total');
-      if (feeEl) feeEl.textContent = fee ? `₺${fee}` : '₺0';
-      if (totalEl) totalEl.textContent = `₺${total}`;
+      const region = document.getElementById('customerRegion')
+      if (!region) return
+
+      const list = regions || DEFAULT_REGIONS
+      const regionData = list.find(r => r.id === region.value) || list[0]
+
+      const fee = Number(regionData.fee || 0)
+      const total = (window.currentOrderBaseTotal || 0) + fee
+
+      const feeEl = document.getElementById('delivery-fee')
+      const totalEl = document.getElementById('delivery-total')
+
+      if (feeEl) feeEl.textContent = fee ? `₺${fee}` : '₺0'
+      if (totalEl) totalEl.textContent = `₺${total}`
     }
 
     function closeSheet() { document.getElementById('sheet-overlay').classList.remove('open'); }
@@ -1588,6 +1519,7 @@
       renderAdminProducts()
       renderAdminCats()
       renderAdminSubCats()
+      renderAdminRegions()
     }
 
     function renderStats() {
@@ -1689,6 +1621,45 @@
       }).join('')
     }
 
+    function renderAdminRegions() {
+      if (!Array.isArray(regions)) regions = []
+
+      const tbody = document.getElementById('a-region-body')
+      if (!tbody) return
+
+      if (!regions.length) {
+        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-msg">Bölge yok.</div></td></tr>`
+        return
+      }
+
+      tbody.innerHTML = regions.map(r => `
+    <tr>
+      <td style="font-weight:500">${r.name}</td>
+      <td>₺${r.fee || 0}</td>
+      <td>
+        <span class="badge ${r.active ? 'b-active' : 'b-passive'}">
+          ${r.active ? 'Aktif' : 'Pasif'}
+        </span>
+      </td>
+      <td>
+        <div class="iact">
+          <button class="btn btn-sm" onclick="openModal('region','${r.id}')">
+            <i class="ti ti-edit"></i>
+          </button>
+
+          <button class="btn btn-sm" onclick="toggleRegion('${r.id}')">
+            <i class="ti ti-${r.active ? 'eye-off' : 'eye'}"></i>
+          </button>
+
+          <button class="btn btn-sm btn-r" onclick="deleteRegion('${r.id}')">
+            <i class="ti ti-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('')
+    }
+
     /* ─── MODAL ─── */
     function openModal(type, id) {
       editTarget = { type, id };
@@ -1766,6 +1737,40 @@
     </div>
   `
       }
+      else if (type === 'region') {
+        const isNew = id === 'new'
+
+        const r = isNew
+          ? { id: '', name: '', fee: 0, active: true }
+          : regions.find(x => x.id === id)
+
+        m.innerHTML = `
+    <h3>${isNew ? 'Yeni bölge' : 'Bölge düzenle'}</h3>
+
+    <div class="frow">
+      <label>Bölge adı</label>
+      <input id="fr-name" value="${r.name || ''}" placeholder="Örn: Barbaros Mahallesi">
+    </div>
+
+    ${isNew ? `
+      <div class="frow">
+        <label>Bölge ID</label>
+        <input id="fr-id" placeholder="ornek: barbaros">
+      </div>
+    ` : ''}
+
+    <div class="frow">
+      <label>Servis ücreti</label>
+      <input id="fr-fee" type="number" value="${r.fee || 0}" placeholder="0">
+    </div>
+
+    <div class="faction">
+      <button class="btn" onclick="closeModal()">İptal</button>
+      <button class="btn btn-g" onclick="saveRegion()">Kaydet</button>
+    </div>
+  `
+      }
+
       else if (type === 'cat') {
         const isNew = id === 'new';
         const c = isNew ? { name: '', emoji: '🍽', color: '#E1F5EE', textColor: '#085041' } : cats.find(x => x.id === id);
@@ -1848,21 +1853,6 @@
       }
     }
 
-    /*function saveProd() {
-      const name = document.getElementById('f-name').value.trim();
-      const desc = document.getElementById('f-desc').value.trim();
-      const price = parseInt(document.getElementById('f-price').value) || 0;
-      const cat = document.getElementById('f-cat').value;
-      const imageUrl = document.getElementById('f-image-url').value.trim();
-      if (!name) return alert('Ürün adı boş olamaz');
-      if (editTarget.id === 'new') {
-        products.push({ id: nextId++, name, desc, price, cat, emoji: '🍽', imageUrl, active: true });
-      } else {
-        const p = products.find(x => x.id === editTarget.id);
-        if (p) Object.assign(p, { name, desc, price, cat, imageUrl });
-      }
-      save(); closeModal(); renderAdminAll();
-    }*/
 
     async function previewProductImage(event) {
       const file = event.target.files[0]
@@ -1905,23 +1895,6 @@
       }
     }
 
-    /*function previewProductImage(event) {
-      const file = event.target.files[0];
-      const preview = document.getElementById('f-image-preview');
-      const previewRow = document.getElementById('f-image-preview-row');
-      const imageUrlInput = document.getElementById('f-image-url');
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (preview) {
-          preview.src = reader.result;
-          preview.style.display = 'block';
-        }
-        if (previewRow) previewRow.style.display = 'block';
-        if (imageUrlInput) imageUrlInput.value = reader.result;
-      };
-      reader.readAsDataURL(file);
-    }*/
 
     function removeProductImage() {
       const preview = document.getElementById('f-image-preview');
@@ -2010,25 +1983,6 @@
 
       }
     }
-
-    /*function saveCat() {
-      const name = document.getElementById('fc-name').value.trim();
-      const emoji = document.getElementById('fc-emoji').value.trim() || '🍽';
-      const color = document.getElementById('fc-color').value;
-      const textColor = document.getElementById('fc-text').value;
-      if (!name) return alert('Kategori adı boş olamaz');
-      if (editTarget.id === 'new') {
-        const idEl = document.getElementById('fc-id');
-        const id = (idEl ? idEl.value.trim() : '') ||
-          name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        if (cats.find(c => c.id === id)) return alert('Bu ID zaten kullanımda');
-        cats.push({ id, name, emoji, color, textColor, active: true });
-      } else {
-        const c = cats.find(x => x.id === editTarget.id);
-        if (c) Object.assign(c, { name, emoji, color, textColor });
-      }
-      save(); closeModal(); renderAdminAll();
-    }*/
 
     async function toggleSubCat(id) {
       const s = subcats.find(x => x.id === id)
@@ -2162,12 +2116,6 @@
       await loadData()
     }
 
-    /*function toggleProd(id) {
-      const p = products.find(x => x.id === id);
-      if (p) p.active = !p.active;
-      save(); renderAdminAll();
-    }*/
-
     async function deleteProd(id) {
 
       if (!confirm('Bu ürünü silmek istiyor musunuz?')) {
@@ -2189,16 +2137,6 @@
 
       }
     }
-
-    /*function deleteProd(id) {
-      if (!confirm('Bu ürünü silmek istiyor musunuz?')) return;
-      products = products.filter(x => x.id !== id);
-      Object.keys(cart).forEach(key => {
-        if (!products.find(p => p.id == key)) delete cart[key];
-      });
-      save(); renderAdminAll();
-      updateCartBar();
-    }*/
 
     async function toggleCat(id) {
       const c = cats.find(x => x.id == id)
@@ -2224,12 +2162,6 @@
       await loadData()
     }
 
-    /*function toggleCat(id) {
-      const c = cats.find(x => x.id === id);
-      if (c) c.active = !c.active;
-      save(); renderAdminAll();
-    }*/
-
     async function deleteCat(id) {
 
       if (!confirm('Bu kategoriyi silmek istiyor musunuz?')) {
@@ -2253,13 +2185,107 @@
       }
     }
 
-    /*function deleteCat(id) {
-      if (products.some(p => p.cat === id))
-        return alert('Bu kategoride ürün var. Önce ürünleri başka kategoriye taşıyın.');
-      if (!confirm('Bu kategoriyi silmek istiyor musunuz?')) return;
-      cats = cats.filter(x => x.id !== id);
-      save(); renderAdminAll();
-    }*/
+    async function saveRegion() {
+      const name = document.getElementById('fr-name').value.trim()
+      const fee = parseInt(document.getElementById('fr-fee').value) || 0
+
+      if (!name) {
+        return alert('Bölge adı boş olamaz')
+      }
+
+      let id
+
+      if (editTarget.id === 'new') {
+        id =
+          document.getElementById('fr-id').value.trim() ||
+          name
+            .toLowerCase()
+            .replaceAll('ğ', 'g')
+            .replaceAll('ü', 'u')
+            .replaceAll('ş', 's')
+            .replaceAll('ı', 'i')
+            .replaceAll('ö', 'o')
+            .replaceAll('ç', 'c')
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+      } else {
+        id = editTarget.id
+      }
+
+      const payload = {
+        id,
+        name,
+        fee,
+        active: true
+      }
+
+      try {
+        if (editTarget.id === 'new') {
+          await fetch(`${API_URL}/regions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+        } else {
+          await fetch(`${API_URL}/regions/${editTarget.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          })
+        }
+
+        closeModal()
+        await loadData()
+
+      } catch (err) {
+        console.log(err)
+        alert("Bölge kaydedilemedi")
+      }
+    }
+
+    async function toggleRegion(id) {
+      const r = regions.find(x => x.id === id)
+      if (!r) return
+
+      try {
+        await fetch(`${API_URL}/regions/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...r,
+            active: !r.active
+          })
+        })
+
+        await loadData()
+
+      } catch (err) {
+        console.log(err)
+        alert("Bölge durumu değiştirilemedi")
+      }
+    }
+
+    async function deleteRegion(id) {
+      if (!confirm("Bu bölge silinsin mi?")) return
+
+      try {
+        await fetch(`${API_URL}/regions/${id}`, {
+          method: "DELETE"
+        })
+
+        await loadData()
+
+      } catch (err) {
+        console.log(err)
+        alert("Bölge silinemedi")
+      }
+    }
 
     async function renderOrders() {
       const tbody = document.getElementById('a-orders-body')
@@ -2447,8 +2473,6 @@
 
       return cleaned
     }
-
-    /*customerPhone: normalizePhone(phone),*/
 
     async function openOrderDetail(orderId) {
       console.log("Detay açılıyor:", orderId)
