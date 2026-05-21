@@ -2430,33 +2430,98 @@
 
         const o = data.order
 
-        resultEl.innerHTML = `
-      <div style="background:var(--bg2);border-radius:12px;padding:14px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Sipariş No</span>
-          <strong>#${o.id}</strong>
-        </div>
+const itemRes = await fetch(`${API_URL}/orders/${o.id}/items`)
+const items = await itemRes.json()
 
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Durum</span>
-          <strong style="color:var(--green)">${o.status}</strong>
-        </div>
+let itemsHtml = ""
 
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span style="color:var(--text2)">Toplam</span>
-          <strong>₺${o.total}</strong>
-        </div>
+if (items.length > 0) {
+  itemsHtml = items.map(item => `
+    <div class="oline">
+      <span>${item.productName} × ${item.quantity}</span>
+      <span>₺${item.subtotal}</span>
+    </div>
+  `).join("")
+} else {
+  itemsHtml = `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
+}
 
-        <div style="display:flex;justify-content:space-between">
-          <span style="color:var(--text2)">Tarih</span>
-          <strong>${new Date(o.createdAt).toLocaleString('tr-TR')}</strong>
-        </div>
+resultEl.innerHTML = `
+  <div style="
+    background:var(--bg2);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    margin-top:16px;
+  ">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-size:12px;color:var(--text2)">Sipariş No</div>
+        <div style="font-size:24px;font-weight:800;color:var(--green)">#${o.id}</div>
       </div>
-    `
+
+      <span style="
+        background:var(--green2);
+        color:var(--green3);
+        padding:7px 13px;
+        border-radius:999px;
+        font-size:13px;
+        font-weight:600;
+      ">
+        ${o.status}
+      </span>
+    </div>
+
+    <div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="color:var(--text2)">Tarih</span>
+        <strong>${new Date(o.createdAt).toLocaleString('tr-TR')}</strong>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="color:var(--text2)">Bölge</span>
+        <strong>${o.customerRegion || '-'}</strong>
+      </div>
+
+      <div style="display:flex;justify-content:space-between">
+        <span style="color:var(--text2)">Ödeme</span>
+        <strong>${o.paymentMethod || '-'}</strong>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">
+        Siparişiniz
+      </div>
+
+      ${itemsHtml}
+    </div>
+
+    <div style="background:var(--bg);border-radius:14px;padding:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="color:var(--text2)">Servis Ücreti</span>
+        <strong>₺${o.serviceFee || 0}</strong>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2)">Toplam</span>
+        <strong style="font-size:22px;color:var(--green)">₺${o.total}</strong>
+      </div>
+    </div>
+
+    ${o.note ? `
+      <div style="background:var(--green2);color:var(--green3);border-radius:14px;padding:13px;margin-top:14px;font-size:13px">
+        <strong>Not:</strong> ${o.note}
+      </div>
+    ` : ''}
+
+  </div>
+`
 
       } catch (err) {
         console.log(err)
-        alert("Sipariş sorgulanamadı")
+        alert("Sipariş bilgisi alınamadı")
       }
     }
 
@@ -2475,29 +2540,57 @@
     }
 
     async function openOrderDetail(orderId) {
-      console.log("Detay açılıyor:", orderId)
-
       try {
-        const res = await fetch(`${API_URL}/orders/${orderId}/items`)
-        const items = await res.json()
+        const orderRes = await fetch(`${API_URL}/orders`)
+        const orders = await orderRes.json()
+        const order = orders.find(o => o.id == orderId)
 
-        console.log("Sipariş ürünleri:", items)
+        if (!order) {
+          return alert("Sipariş bulunamadı")
+        }
 
-        const modal = document.getElementById('modal')
+        const itemRes = await fetch(`${API_URL}/orders/${orderId}/items`)
+        const items = await itemRes.json()
 
-        modal.innerHTML = `
+        let itemsHtml = ""
+
+        if (items.length > 0) {
+          itemsHtml = items.map(item => `
+        <div class="oline">
+          <span>${item.productName} × ${item.quantity}</span>
+          <span>₺${item.subtotal}</span>
+        </div>
+      `).join("")
+        } else {
+          itemsHtml = `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
+        }
+
+        document.getElementById("modal").innerHTML = `
       <h3>Sipariş Detayı #${orderId}</h3>
 
+      <div style="background:var(--bg2);border-radius:12px;padding:12px;margin-bottom:12px">
+        <div><strong>Müşteri:</strong> ${order.customerName || "-"}</div>
+        <div><strong>Telefon:</strong> ${order.customerPhone || "-"}</div>
+        <div><strong>Adres:</strong> ${order.customerAddress || "-"}</div>
+        <div><strong>Bölge:</strong> ${order.customerRegion || "-"}</div>
+        <div><strong>Ödeme:</strong> ${order.paymentMethod || "-"}</div>
+        <div><strong>Not:</strong> ${order.note || "-"}</div>
+      </div>
+
+      <h3>Ürünler</h3>
+
       <div style="display:flex;flex-direction:column;gap:8px">
-        ${items.length
-            ? items.map(item => `
-              <div class="oline">
-                <span>${item.productName} × ${item.quantity}</span>
-                <span>₺${item.subtotal}</span>
-              </div>
-            `).join('')
-            : `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
-          }
+        ${itemsHtml}
+      </div>
+
+      <div class="oline">
+        <span>Servis Ücreti</span>
+        <span>₺${order.serviceFee || 0}</span>
+      </div>
+
+      <div class="ototal">
+        <span>Toplam</span>
+        <span>₺${order.total || 0}</span>
       </div>
 
       <div class="faction">
@@ -2505,7 +2598,7 @@
       </div>
     `
 
-        document.getElementById('overlay').classList.add('open')
+        document.getElementById("overlay").classList.add("open")
 
       } catch (err) {
         console.log("Detay hatası:", err)
