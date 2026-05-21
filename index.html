@@ -1317,7 +1317,7 @@
         const qty = cart[p.id] || 0
 
         const mediaHtml = p.imageUrl
-          ? `<div class="card-media"><img src="${p.imageUrl}" alt="${p.name}" loading="lazy"></div>`
+          ? `<div class="card-media"><img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" loading="lazy"></div>`
           : `<div class="card-media"><div class="card-emoji">${p.emoji || '🍽'}</div></div>`
 
         return `<div class="card">
@@ -1555,7 +1555,7 @@
       const tbody = document.getElementById('a-prod-body');
       if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-msg">Ürün bulunamadı</div></td></tr>`; return; }
       tbody.innerHTML = list.map(p => `<tr>
-    <td style="text-align:center">${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">` : p.emoji}</td>
+    <td style="text-align:center">${p.imageUrl ? `<img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" style="width:40px;height:40px;object-fit:cover;border-radius:10px">` : p.emoji}</td>
     <td><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text2)">${p.desc}</div></td>
     <td>${catBadge(p.cat)}</td>
     <td style="font-weight:500">₺${p.price}</td>
@@ -2430,23 +2430,23 @@
 
         const o = data.order
 
-const itemRes = await fetch(`${API_URL}/orders/${o.id}/items`)
-const items = await itemRes.json()
+        const itemRes = await fetch(`${API_URL}/orders/${o.id}/items`)
+        const items = await itemRes.json()
 
-let itemsHtml = ""
+        let itemsHtml = ""
 
-if (items.length > 0) {
-  itemsHtml = items.map(item => `
+        if (items.length > 0) {
+          itemsHtml = items.map(item => `
     <div class="oline">
       <span>${item.productName} × ${item.quantity}</span>
       <span>₺${item.subtotal}</span>
     </div>
   `).join("")
-} else {
-  itemsHtml = `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
-}
+        } else {
+          itemsHtml = `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
+        }
 
-resultEl.innerHTML = `
+        resultEl.innerHTML = `
   <div style="
     background:var(--bg2);
     border:1px solid var(--border);
@@ -2812,6 +2812,17 @@ resultEl.innerHTML = `
           .catch(err => console.log("Service Worker hatası:", err))
       })
     }
+
+    function optimizeImage(url) {
+      if (!url) return ""
+
+      if (!url.includes("res.cloudinary.com")) {
+        return url
+      }
+
+      return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/")
+    }
+
 
     /* ─── BAŞLANGIÇ ─── */
     loadData()
