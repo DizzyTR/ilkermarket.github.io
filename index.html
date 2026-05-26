@@ -688,6 +688,46 @@
       border-radius: 10px;
       font-weight: 500;
     }
+
+    .category-home {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .category-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--green);
+      background: var(--bg2);
+    }
+
+    .category-card-emoji {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .category-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .category-card-info {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
   </style>
 </head>
 
@@ -1108,7 +1148,7 @@
     loadData();
 
     const cart = {};
-    let orderCat = 'hepsi';
+    let orderCat = null;
     let orderSubCat = 'hepsi';
     let editTarget = null;
 
@@ -1227,9 +1267,16 @@
       }
 
       const activeCats = cats.filter(c => c.active)
+      const el = document.getElementById('order-cats')
 
-      document.getElementById('order-cats').innerHTML =
-        `<button class="cat-btn${orderCat === 'hepsi' ? ' active' : ''}" onclick="setOrderCat('hepsi')">Tümü</button>` +
+      if (!el) return
+
+      if (!orderCat) {
+        el.innerHTML = ''
+        return
+      }
+
+      el.innerHTML =
         activeCats.map(c =>
           `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
         ).join('')
@@ -1237,15 +1284,15 @@
 
 
     function renderOrderSubCats() {
-      if (!Array.isArray(subcats)) subcats = []
+        if (!Array.isArray(subcats)) subcats = []
 
-      const el = document.getElementById('order-subcats')
-      if (!el) return
+        const el = document.getElementById('order-subcats')
+        if (!el) return
 
-      if (orderCat === 'hepsi') {
-        el.innerHTML = ''
-        return
-      }
+        if (!orderCat) {
+          el.innerHTML = ''
+          return
+        }
 
       const list = subcats.filter(s => s.active && s.catId === orderCat)
 
@@ -1278,6 +1325,13 @@
     }
 
     function renderOrderProducts() {
+      const el = document.getElementById('order-products')
+
+      if (!orderCat) {
+        el.innerHTML = renderCategoryHome()
+        return
+      }
+
       if (!Array.isArray(products)) products = []
       if (!Array.isArray(cats)) cats = []
 
@@ -1287,9 +1341,7 @@
 
       const search = (document.getElementById('product-search')?.value || '').toLowerCase().trim()
 
-      if (orderCat !== 'hepsi') {
-        list = list.filter(p => p.cat === orderCat)
-      }
+      list = list.filter(p => p.cat === orderCat)
 
       if (orderSubCat && orderSubCat !== 'hepsi') {
         list = list.filter(p => (p.subCat || '') === orderSubCat)
@@ -1306,8 +1358,6 @@
           )
         })
       }
-
-      const el = document.getElementById('order-products')
 
       if (!list.length) {
         el.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">Ürün bulunamadı.</div>`
@@ -1401,7 +1451,7 @@
         <div class="frow"><label>Sipariş Özeti</label>${linesHtml}<div class="oline"><span>Servis Ücreti</span><span id="delivery-fee">₺0</span></div><div class="ototal"><span>Toplam</span><span id="delivery-total" style="color:var(--green)">₺${total}</span></div></div>
         <div class="sheet-actions">
           <button class="btn" onclick="openOrderSheet()">Geri dön</button>
-          <button class="btn btn-g" onclick="sendOrder()">WhatsApp'a Gönder</button>
+          <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
         </div>`;
       updateDeliveryFee();
     }
@@ -2822,6 +2872,47 @@
       }
 
       return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/")
+    }
+
+    function renderCategoryHome() {
+      if (!Array.isArray(cats)) cats = []
+      if (!Array.isArray(products)) products = []
+
+      const activeCats = cats.filter(c => c.active)
+
+      if (!activeCats.length) {
+        return `
+      <div style="grid-column:1/-1" class="empty-msg">
+        Kategori bulunamadı.
+      </div>
+    `
+      }
+
+      return `
+    <div style="grid-column:1/-1;text-align:center;margin-bottom:4px">
+      <div style="font-size:38px;margin-bottom:8px">🛒</div>
+      <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px">
+        Alışverişe başlamak için kategori seçin
+      </div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">
+        Ürünler kategori seçtikten sonra listelenecek.
+      </div>
+    </div>
+
+    <div class="category-home">
+      ${activeCats.map(c => {
+        const count = products.filter(p => p.active && p.cat === c.id).length
+
+        return `
+          <div class="category-card" onclick="setOrderCat('${c.id}')">
+            <div class="category-card-emoji">${c.emoji || '🛒'}</div>
+            <div class="category-card-name">${c.name}</div>
+            <div class="category-card-info">${count} ürün</div>
+          </div>
+        `
+      }).join('')}
+    </div>
+  `
     }
 
 
