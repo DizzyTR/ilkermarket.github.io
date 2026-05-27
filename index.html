@@ -1758,7 +1758,7 @@
       <div class="frow"><label>Açıklama</label><textarea id="f-desc">${p.desc}</textarea></div>
       <div class="frow"><label>Fiyat (₺)</label><input id="f-price" type="number" value="${p.price}" placeholder="0"></div>
       <div class="frow"><label>Kategori</label>
-        <select id="f-cat">${cats.map(c => `<option value="${c.id}"${c.id === p.cat ? ' selected' : ''}>${c.emoji} ${c.name}</option>`).join('')}</select>
+        <select id="f-cat" onchange="updateProductSubCatOptions()">${cats.map(c => `<option value="${c.id}"${c.id === p.cat ? ' selected' : ''}>${c.emoji} ${c.name}</option>`).join('')}</select>
       </div>
       <div class="frow">
         <label>Alt grup</label>
@@ -1870,6 +1870,29 @@
 
     function closeModal() { document.getElementById('overlay').classList.remove('open'); editTarget = null; }
     function overlayBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+    function updateProductSubCatOptions() {
+      const catSelect = document.getElementById('f-cat')
+      const subSelect = document.getElementById('f-subcat')
+
+      if (!catSelect || !subSelect) return
+      if (!Array.isArray(subcats)) subcats = []
+
+      const catId = catSelect.value
+
+      const list = subcats.filter(s =>
+        s.active &&
+        s.catId === catId
+      )
+
+      subSelect.innerHTML =
+        `<option value="">Alt grup yok</option>` +
+        list.map(s => `
+      <option value="${s.id}">
+        ${s.name}
+      </option>
+    `).join('')
+    }
 
     async function saveProd() {
 
