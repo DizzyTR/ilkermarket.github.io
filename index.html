@@ -1329,6 +1329,14 @@
       const searchWrap = document.getElementById('search-wrap')
       const cartBar = document.getElementById('cart-bar')
 
+      if (cartBar) {
+        if (!orderCat || count === 0) {
+          cartBar.style.display = 'none'
+        } else {
+          cartBar.style.display = 'flex'
+        }
+      }
+
       if (!orderCat) {
         if (searchWrap) searchWrap.style.display = 'none'
         if (cartBar) cartBar.style.display = 'none'
