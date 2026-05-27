@@ -1342,6 +1342,7 @@
       }
 
       if (searchWrap) searchWrap.style.display = 'block'
+      if (cartBar) cartBar.style.display = 'block'
 
       if (!Array.isArray(products)) products = []
       if (!Array.isArray(cats)) cats = []
@@ -1429,7 +1430,7 @@
       const cartBar = document.getElementById('cart-bar')
 
       if (cartBar) {
-        if (!orderCat || count === 0) {
+        if (!orderCat) {
           cartBar.style.display = 'none'
         } else {
           cartBar.style.display = 'flex'
