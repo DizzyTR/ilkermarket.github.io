@@ -1312,9 +1312,13 @@
       orderCat = id
       orderSubCat = 'hepsi'
 
+      const searchInput = document.getElementById('product-search')
+      if (searchInput) searchInput.value = ''
+
       renderOrderCats()
       renderOrderSubCats()
       renderOrderProducts()
+      updateCartBar()
     }
 
     function setOrderSubCat(id) {
@@ -1328,14 +1332,6 @@
       const el = document.getElementById('order-products')
       const searchWrap = document.getElementById('search-wrap')
       const cartBar = document.getElementById('cart-bar')
-
-      if (cartBar) {
-        if (!orderCat || count === 0) {
-          cartBar.style.display = 'none'
-        } else {
-          cartBar.style.display = 'flex'
-        }
-      }
 
       if (!orderCat) {
         if (searchWrap) searchWrap.style.display = 'none'
@@ -1429,6 +1425,16 @@
       document.getElementById('cart-count').textContent = count + ' ürün';
       document.getElementById('cart-total').textContent = '₺' + total;
       document.getElementById('co-btn').disabled = count === 0;
+
+      const cartBar = document.getElementById('cart-bar')
+
+      if (cartBar) {
+        if (!orderCat || count === 0) {
+          cartBar.style.display = 'none'
+        } else {
+          cartBar.style.display = 'flex'
+        }
+      }
     }
 
     function openOrderSheet() {
