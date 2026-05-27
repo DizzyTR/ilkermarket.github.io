@@ -2871,7 +2871,10 @@
         return url
       }
 
-      return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/")
+      return url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto,c_pad,w_500,h_500,b_white/"
+      )
     }
 
     function renderCategoryHome() {
