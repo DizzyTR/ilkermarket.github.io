@@ -749,7 +749,7 @@
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
     <div class="wrap">
-      <div style="margin-bottom:14px">
+      <div id="search-wrap" style="margin-bottom:14px" display=none>
         <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
       width:100%;
       height:42px;
@@ -1433,7 +1433,7 @@
         if (!orderCat) {
           cartBar.style.display = 'none'
         } else {
-          cartBar.style.display = 'flex'
+          cartBar.style.display = 'block'
         }
       }
     }
