@@ -766,7 +766,7 @@
       <div class="cats" id="order-subcats"></div>
       <div class="products" id="order-products"></div>
     </div>
-    <div class="cart-bar">
+    <div class="cart-bar" id="cart-bar" style="display:none">
       <div class="cart-inner">
         <div class="cart-info">Sepet: <strong id="cart-count">0 ürün</strong> · <strong id="cart-total">₺0</strong>
         </div>
@@ -1326,14 +1326,22 @@
 
     function renderOrderProducts() {
       const el = document.getElementById('order-products')
+      const searchWrap = document.getElementById('search-wrap')
+      const cartBar = document.getElementById('cart-bar')
 
       if (!orderCat) {
+        if (searchWrap) searchWrap.style.display = 'none'
+        if (cartBar) cartBar.style.display = 'none'
+
         el.innerHTML = renderCategoryHome()
         return
       }
 
+      if (searchWrap) searchWrap.style.display = 'block'
+
       if (!Array.isArray(products)) products = []
       if (!Array.isArray(cats)) cats = []
+      if (!Array.isArray(subcats)) subcats = []
 
       const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id))
 
@@ -1371,22 +1379,27 @@
           ? `<div class="card-media"><img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" loading="lazy"></div>`
           : `<div class="card-media"><div class="card-emoji">${p.emoji || '🍽'}</div></div>`
 
-        return `<div class="card">
-      ${mediaHtml}
-      <div class="card-name">${p.name}</div>
-      <div class="card-desc">${p.desc || ''}</div>
-      <div class="card-footer">
-        <span class="price">₺${p.price}</span>
-        ${qty === 0
+        return `
+      <div class="card">
+        ${mediaHtml}
+
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc || ''}</div>
+
+        <div class="card-footer">
+          <span class="price">₺${p.price}</span>
+
+          ${qty === 0
             ? `<button class="add-btn" onclick="cartAdd(${p.id})">+</button>`
             : `<div class="qty-ctrl">
-              <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
-              <span class="qty-num">${qty}</span>
-              <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
-            </div>`
+                <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
+                <span class="qty-num">${qty}</span>
+                <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
+              </div>`
           }
+        </div>
       </div>
-    </div>`
+    `
       }).join('')
     }
 
