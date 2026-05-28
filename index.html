@@ -1354,7 +1354,7 @@
 
       const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id))
 
-      let list = products.filter(p => p.active && activeCatIds.has(p.cat))
+      let list = products.filter(p => activeCatIds.has(p.cat))
 
       const search = (document.getElementById('product-search')?.value || '').toLowerCase().trim()
 
