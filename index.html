@@ -1523,22 +1523,6 @@
       const regionData = list.find(r => r.id === region) || list[0]
       const serviceFee = regionData.fee || 0;
       const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
-      const orderId = data.orderId
-
-      const msg = `
-      Merhaba, siparişimi onaylıyorum.
-
-      Sipariş No: #${orderId}
-      Ad Soyad: ${name}
-      Telefon: ${phone}
-      Toplam: ₺${total}
-
-      Sipariş detayları sistemde kayıtlıdır.
-      `
-
-      const whatsappUrl = `https://wa.me/905436325080?text=${encodeURIComponent(msg)}`
-      alert("Siparişiniz oluşturuldu. Onay için açılan WhatsApp mesajını göndermeniz gerekmektedir.")
-      window.open(whatsappUrl, "_blank")
 
       const orderRes = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -1572,7 +1556,27 @@
         return
       }
 
-      showOrderSuccess(orderData.orderId, total)
+      const orderId = orderData.orderId || orderData.id
+
+      const msg = `
+      Merhaba, siparişimi onaylıyorum.
+
+      Sipariş No: #${orderId}
+      Ad Soyad: ${name}
+      Telefon: ${phone}
+      Toplam: ₺${total}
+
+      Sipariş detayları sistemde kayıtlıdır.
+      `
+
+      const whatsappUrl = `https://wa.me/905436325080?text=${encodeURIComponent(msg)}`
+
+      showOrderSuccess(orderId, total)
+
+      setTimeout(() => {
+        alert("Siparişiniz oluşturuldu. Onay için açılan WhatsApp mesajını göndermeniz gerekmektedir.")
+        window.open(whatsappUrl, "_blank")
+      }, 500)
     }
 
     function resetOrder() {
