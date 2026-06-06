@@ -176,7 +176,11 @@
     }
 
     .card.inactive {
-      opacity: 0.45;
+      opacity: 0.65;
+    }
+
+    .card.inactive .card-media img {
+      filter: grayscale(35%);
     }
 
     .card-media {
@@ -688,6 +692,46 @@
       border-radius: 10px;
       font-weight: 500;
     }
+
+    .category-home {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .category-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--green);
+      background: var(--bg2);
+    }
+
+    .category-card-emoji {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .category-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .category-card-info {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
   </style>
 </head>
 
@@ -709,7 +753,7 @@
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
     <div class="wrap">
-      <div style="margin-bottom:14px">
+      <div id="search-wrap" style="margin-bottom:14px" display=none>
         <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
       width:100%;
       height:42px;
@@ -726,7 +770,7 @@
       <div class="cats" id="order-subcats"></div>
       <div class="products" id="order-products"></div>
     </div>
-    <div class="cart-bar">
+    <div class="cart-bar" id="cart-bar" style="display:none">
       <div class="cart-inner">
         <div class="cart-info">Sepet: <strong id="cart-count">0 ürün</strong> · <strong id="cart-total">₺0</strong>
         </div>
@@ -1108,7 +1152,7 @@
     loadData();
 
     const cart = {};
-    let orderCat = 'hepsi';
+    let orderCat = null;
     let orderSubCat = 'hepsi';
     let editTarget = null;
 
@@ -1227,9 +1271,16 @@
       }
 
       const activeCats = cats.filter(c => c.active)
+      const el = document.getElementById('order-cats')
 
-      document.getElementById('order-cats').innerHTML =
-        `<button class="cat-btn${orderCat === 'hepsi' ? ' active' : ''}" onclick="setOrderCat('hepsi')">Tümü</button>` +
+      if (!el) return
+
+      if (!orderCat) {
+        el.innerHTML = ''
+        return
+      }
+
+      el.innerHTML =
         activeCats.map(c =>
           `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
         ).join('')
@@ -1242,7 +1293,7 @@
       const el = document.getElementById('order-subcats')
       if (!el) return
 
-      if (orderCat === 'hepsi') {
+      if (!orderCat) {
         el.innerHTML = ''
         return
       }
@@ -1265,9 +1316,13 @@
       orderCat = id
       orderSubCat = 'hepsi'
 
+      const searchInput = document.getElementById('product-search')
+      if (searchInput) searchInput.value = ''
+
       renderOrderCats()
       renderOrderSubCats()
       renderOrderProducts()
+      updateCartBar()
     }
 
     function setOrderSubCat(id) {
@@ -1278,18 +1333,32 @@
     }
 
     function renderOrderProducts() {
+      const el = document.getElementById('order-products')
+      const searchWrap = document.getElementById('search-wrap')
+      const cartBar = document.getElementById('cart-bar')
+
+      if (!orderCat) {
+        if (searchWrap) searchWrap.style.display = 'none'
+        if (cartBar) cartBar.style.display = 'none'
+
+        el.innerHTML = renderCategoryHome()
+        return
+      }
+
+      if (searchWrap) searchWrap.style.display = 'block'
+      if (cartBar) cartBar.style.display = 'block'
+
       if (!Array.isArray(products)) products = []
       if (!Array.isArray(cats)) cats = []
+      if (!Array.isArray(subcats)) subcats = []
 
       const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id))
 
-      let list = products.filter(p => p.active && activeCatIds.has(p.cat))
+      let list = products.filter(p => activeCatIds.has(p.cat))
 
       const search = (document.getElementById('product-search')?.value || '').toLowerCase().trim()
 
-      if (orderCat !== 'hepsi') {
-        list = list.filter(p => p.cat === orderCat)
-      }
+      list = list.filter(p => p.cat === orderCat)
 
       if (orderSubCat && orderSubCat !== 'hepsi') {
         list = list.filter(p => (p.subCat || '') === orderSubCat)
@@ -1307,8 +1376,6 @@
         })
       }
 
-      const el = document.getElementById('order-products')
-
       if (!list.length) {
         el.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">Ürün bulunamadı.</div>`
         return
@@ -1321,22 +1388,45 @@
           ? `<div class="card-media"><img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" loading="lazy"></div>`
           : `<div class="card-media"><div class="card-emoji">${p.emoji || '🍽'}</div></div>`
 
-        return `<div class="card">
-      ${mediaHtml}
-      <div class="card-name">${p.name}</div>
-      <div class="card-desc">${p.desc || ''}</div>
-      <div class="card-footer">
-        <span class="price">₺${p.price}</span>
-        ${qty === 0
-            ? `<button class="add-btn" onclick="cartAdd(${p.id})">+</button>`
-            : `<div class="qty-ctrl">
-              <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
-              <span class="qty-num">${qty}</span>
-              <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
-            </div>`
-          }
+        return `
+  <div class="card ${!p.active ? 'inactive' : ''}" style="position:relative">
+    ${!p.active ? `
+      <div style="
+        position:absolute;
+        top:10px;
+        right:10px;
+        background:#A32D2D;
+        color:white;
+        font-size:11px;
+        font-weight:700;
+        padding:4px 8px;
+        border-radius:999px;
+        z-index:2;
+      ">
+        Kalmadı
       </div>
-    </div>`
+    ` : ''}
+        ${mediaHtml}
+
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc || ''}</div>
+
+        <div class="card-footer">
+          <span class="price">₺${p.price}</span>
+
+          ${!p.active
+            ? `<button class="add-btn" disabled style="opacity:.35;cursor:not-allowed">+</button>`
+            : qty === 0
+              ? `<button class="add-btn" onclick="cartAdd(${p.id})">+</button>`
+              : `<div class="qty-ctrl">
+        <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
+      </div>`
+          }
+        </div>
+      </div>
+    `
       }).join('')
     }
 
@@ -1358,6 +1448,16 @@
       document.getElementById('cart-count').textContent = count + ' ürün';
       document.getElementById('cart-total').textContent = '₺' + total;
       document.getElementById('co-btn').disabled = count === 0;
+
+      const cartBar = document.getElementById('cart-bar')
+
+      if (cartBar) {
+        if (!orderCat) {
+          cartBar.style.display = 'none'
+        } else {
+          cartBar.style.display = 'block'
+        }
+      }
     }
 
     function openOrderSheet() {
@@ -1401,7 +1501,7 @@
         <div class="frow"><label>Sipariş Özeti</label>${linesHtml}<div class="oline"><span>Servis Ücreti</span><span id="delivery-fee">₺0</span></div><div class="ototal"><span>Toplam</span><span id="delivery-total" style="color:var(--green)">₺${total}</span></div></div>
         <div class="sheet-actions">
           <button class="btn" onclick="openOrderSheet()">Geri dön</button>
-          <button class="btn btn-g" onclick="sendOrder()">WhatsApp'a Gönder</button>
+          <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
         </div>`;
       updateDeliveryFee();
     }
@@ -1670,7 +1770,7 @@
       <div class="frow"><label>Açıklama</label><textarea id="f-desc">${p.desc}</textarea></div>
       <div class="frow"><label>Fiyat (₺)</label><input id="f-price" type="number" value="${p.price}" placeholder="0"></div>
       <div class="frow"><label>Kategori</label>
-        <select id="f-cat">${cats.map(c => `<option value="${c.id}"${c.id === p.cat ? ' selected' : ''}>${c.emoji} ${c.name}</option>`).join('')}</select>
+        <select id="f-cat" onchange="updateProductSubCatOptions()">${cats.map(c => `<option value="${c.id}"${c.id === p.cat ? ' selected' : ''}>${c.emoji} ${c.name}</option>`).join('')}</select>
       </div>
       <div class="frow">
         <label>Alt grup</label>
@@ -1686,9 +1786,18 @@
         </select>
       </div>
       <div class="faction">
-        <button class="btn" onclick="closeModal()">İptal</button>
-        <button class="btn btn-g" onclick="saveProd()">Kaydet</button>
-      </div>`;
+  <button class="btn" onclick="closeModal()">İptal</button>
+
+  ${isNew ? `
+    <button class="btn" onclick="saveProd(true)">
+      Kaydet ve Yeni
+    </button>
+  ` : ''}
+
+  <button class="btn btn-g" onclick="saveProd(false)">
+    Kaydet
+  </button>
+</div>`;
       } else if (type === 'subcat') {
         const isNew = id === 'new'
 
@@ -1783,7 +1892,30 @@
     function closeModal() { document.getElementById('overlay').classList.remove('open'); editTarget = null; }
     function overlayBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-    async function saveProd() {
+    function updateProductSubCatOptions() {
+      const catSelect = document.getElementById('f-cat')
+      const subSelect = document.getElementById('f-subcat')
+
+      if (!catSelect || !subSelect) return
+      if (!Array.isArray(subcats)) subcats = []
+
+      const catId = catSelect.value
+
+      const list = subcats.filter(s =>
+        s.active &&
+        s.catId === catId
+      )
+
+      subSelect.innerHTML =
+        `<option value="">Alt grup yok</option>` +
+        list.map(s => `
+      <option value="${s.id}">
+        ${s.name}
+      </option>
+    `).join('')
+    }
+
+    async function saveProd(keepOpen = false) {
 
       const name = document.getElementById('f-name').value.trim()
       const desc = document.getElementById('f-desc').value.trim()
@@ -1831,9 +1963,13 @@
 
         }
 
-        closeModal()
-
         await loadData()
+
+        if (keepOpen && editTarget.id === 'new') {
+          resetProductFormForNext()
+        } else {
+          closeModal()
+        }
 
       } catch (err) {
 
@@ -1844,6 +1980,27 @@
       }
     }
 
+    function resetProductFormForNext() {
+      const nameInput = document.getElementById('f-name')
+      const descInput = document.getElementById('f-desc')
+      const priceInput = document.getElementById('f-price')
+      const imageInput = document.getElementById('f-image')
+      const imageUrlInput = document.getElementById('f-image-url')
+      const preview = document.getElementById('f-image-preview')
+      const previewRow = document.getElementById('f-image-preview-row')
+
+      if (nameInput) nameInput.value = ''
+      if (descInput) descInput.value = ''
+      if (priceInput) priceInput.value = ''
+
+      if (imageInput) imageInput.value = ''
+      if (imageUrlInput) imageUrlInput.value = ''
+
+      if (preview) preview.src = ''
+      if (previewRow) previewRow.style.display = 'none'
+
+      if (nameInput) nameInput.focus()
+    }
 
     async function previewProductImage(event) {
       const file = event.target.files[0]
@@ -2091,6 +2248,7 @@
         desc: p.desc,
         price: p.price,
         cat: p.cat,
+        subCat: p.subCat || "",
         emoji: p.emoji || "🍽",
         imageUrl: p.imageUrl || "",
         active: p.active ? 0 : 1
@@ -2811,7 +2969,51 @@
         return url
       }
 
-      return url.replace("/upload/", "/upload/f_auto,q_auto,w_400/")
+      return url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto,c_pad,w_500,h_500,b_white/"
+      )
+    }
+
+    function renderCategoryHome() {
+      if (!Array.isArray(cats)) cats = []
+      if (!Array.isArray(products)) products = []
+
+      const activeCats = cats.filter(c => c.active)
+
+      if (!activeCats.length) {
+        return `
+      <div style="grid-column:1/-1" class="empty-msg">
+        Kategori bulunamadı.
+      </div>
+    `
+      }
+
+      return `
+    <div style="grid-column:1/-1;text-align:center;margin-bottom:4px">
+      <div style="font-size:38px;margin-bottom:8px">🛒</div>
+      <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px">
+        Alışverişe başlamak için kategori seçin
+      </div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">
+        Ürünler kategori seçtikten sonra listelenecek.
+      </div>
+    </div>
+
+    <div class="category-home">
+      ${activeCats.map(c => {
+        const count = products.filter(p => p.active && p.cat === c.id).length
+
+        return `
+          <div class="category-card" onclick="setOrderCat('${c.id}')">
+            <div class="category-card-emoji">${c.emoji || '🛒'}</div>
+            <div class="category-card-name">${c.name}</div>
+            <div class="category-card-info">${count} ürün</div>
+          </div>
+        `
+      }).join('')}
+    </div>
+  `
     }
 
 
