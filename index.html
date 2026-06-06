@@ -2708,12 +2708,57 @@
         let itemsHtml = ""
 
         if (items.length > 0) {
-          itemsHtml = items.map(item => `
-        <div class="oline">
-          <span>${item.productName} × ${item.quantity}</span>
-          <span>₺${item.subtotal}</span>
+          itemsHtml = items.map(item => {
+            const product = products.find(p => p.id == item.productId)
+            const imageUrl = product?.imageUrl || ""
+
+            return `
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:8px;
+      margin-bottom:8px;
+    ">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div style="
+          width:46px;
+          height:46px;
+          min-width:46px;
+          border-radius:10px;
+          background:#fff;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          overflow:hidden;
+          border:1px solid var(--border);
+        ">
+          ${imageUrl
+                ? `<img src="${optimizeImage(imageUrl)}" style="width:100%;height:100%;object-fit:contain;padding:3px">`
+                : `<span style="font-size:22px">🛒</span>`
+              }
         </div>
-      `).join("")
+
+        <div style="min-width:0">
+          <div style="font-weight:700;font-size:13px;line-height:1.3">
+            ${item.productName}
+          </div>
+          <div style="font-size:12px;color:var(--text2)">
+            ${item.quantity} adet × ₺${item.price}
+          </div>
+        </div>
+      </div>
+
+      <strong style="white-space:nowrap">
+        ₺${item.subtotal}
+      </strong>
+    </div>
+  `
+          }).join("")
         } else {
           itemsHtml = `<div class="empty-msg">Ürün detayı bulunamadı.</div>`
         }
