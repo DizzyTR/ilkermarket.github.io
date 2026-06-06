@@ -1423,32 +1423,22 @@
       const regionData = list.find(r => r.id === region) || list[0]
       const serviceFee = regionData.fee || 0;
       const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
-      const message = [
-        '🛒 *Yeni Sipariş Talebi*',
-        '',
-        '📦 *Ürünler*',
-        ...lines.map((l, index) =>
-          `${index + 1}. ${l.p.name} × ${l.qty} — ₺${l.sub}`
-        ),
-        '',
-        '🚚 *Teslimat*',
-        `Bölge: ${regionData.name}`,
-        `Servis Ücreti: ₺${serviceFee}`,
-        '',
-        '💰 *Toplam*',
-        `₺${total}`,
-        '',
-        '👤 *Müşteri Bilgileri*',
-        `Ad Soyad: ${name}`,
-        `Telefon: ${phone}`,
-        `Adres: ${address}`,
-        '',
-        '💳 *Ödeme*',
-        paymentMethod,
-        note ? '' : null,
-        note ? '📝 *Not*' : null,
-        note ? note : null
-      ].filter(Boolean).join('\n')
+      const orderId = data.orderId
+
+      const msg = `
+      Merhaba, siparişimi onaylıyorum.
+
+      Sipariş No: #${orderId}
+      Ad Soyad: ${name}
+      Telefon: ${phone}
+      Toplam: ₺${total}
+
+      Sipariş detayları sistemde kayıtlıdır.
+      `
+
+      const whatsappUrl = `https://wa.me/905436325080?text=${encodeURIComponent(msg)}`
+      alert("Siparişiniz oluşturuldu. Onay için açılan WhatsApp mesajını göndermeniz gerekmektedir.")
+      window.open(whatsappUrl, "_blank")
 
       const orderRes = await fetch(`${API_URL}/orders`, {
         method: "POST",
