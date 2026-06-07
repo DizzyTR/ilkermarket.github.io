@@ -732,6 +732,42 @@
       color: var(--text2);
       margin-top: 4px;
     }
+
+    .free-delivery-box {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .free-delivery-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .free-delivery-top strong {
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .free-delivery-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg2);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    #free-delivery-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--green);
+      border-radius: 999px;
+      transition: width .2s ease;
+    }
   </style>
 </head>
 
@@ -772,6 +808,16 @@
     </div>
     <div class="cart-bar" id="cart-bar" style="display:none">
       <div class="cart-inner">
+        <div class="free-delivery-box">
+          <div class="free-delivery-top">
+            <span id="free-delivery-text">1000 TL’ye tamamla, teslimat ücretsiz olsun</span>
+            <strong id="free-delivery-amount">₺0 / ₺1000</strong>
+          </div>
+
+          <div class="free-delivery-track">
+            <div id="free-delivery-fill"></div>
+          </div>
+        </div>
         <div class="cart-info">Sepet: <strong id="cart-count">0 ürün</strong> · <strong id="cart-total">₺0</strong>
         </div>
         <button class="co-btn" id="co-btn" disabled onclick="openOrderSheet()">Siparişi Tamamla</button>
@@ -1035,6 +1081,8 @@
   <script>
     /* ─── VERİ ─── */
     const API_URL = "https://market-backend-production-e1a5.up.railway.app"
+    const FREE_DELIVERY_LIMIT = 1000
+    const SMALL_ORDER_SERVICE_FEE = 70
     let socket = null
     let lastKnownOrderId = null
     let orderCheckStarted = false
@@ -1449,22 +1497,51 @@
       Object.keys(cart).forEach(id => {
         if (!products.find(p => p.id == id)) delete cart[id];
       });
-      const count = Object.values(cart).reduce((a, b) => a + b, 0);
-      const total = Object.entries(cart).reduce((s, [id, qty]) => {
-        const p = products.find(x => x.id == id);
-        return s + (p ? p.price * qty : 0);
-      }, 0);
-      document.getElementById('cart-count').textContent = count + ' ürün';
-      document.getElementById('cart-total').textContent = '₺' + total;
-      document.getElementById('co-btn').disabled = count === 0;
 
-      const cartBar = document.getElementById('cart-bar')
+      const count = Object.values(cart).reduce((a, b) => a + b, 0);
+
+      const baseTotal = calcCartBaseTotal();
+      const serviceFee = calcServiceFee(baseTotal);
+      const finalTotal = baseTotal + serviceFee;
+
+      const cartCount = document.getElementById('cart-count');
+      const cartTotal = document.getElementById('cart-total');
+      const coBtn = document.getElementById('co-btn');
+
+      if (cartCount) cartCount.textContent = count + ' ürün';
+      if (cartTotal) cartTotal.textContent = '₺' + finalTotal;
+      if (coBtn) coBtn.disabled = count === 0;
+
+      const fill = document.getElementById('free-delivery-fill');
+      const text = document.getElementById('free-delivery-text');
+      const amount = document.getElementById('free-delivery-amount');
+
+      const progress = Math.min((baseTotal / FREE_DELIVERY_LIMIT) * 100, 100);
+      const remaining = Math.max(FREE_DELIVERY_LIMIT - baseTotal, 0);
+
+      if (fill) fill.style.width = progress + '%';
+
+      if (amount) {
+        amount.textContent = '₺' + baseTotal + ' / ₺' + FREE_DELIVERY_LIMIT;
+      }
+
+      if (text) {
+        if (count === 0) {
+          text.textContent = '1000 TL’ye tamamla, teslimat ücretsiz olsun';
+        } else if (baseTotal >= FREE_DELIVERY_LIMIT) {
+          text.textContent = 'Teslimat ücretsiz oldu';
+        } else {
+          text.textContent = '₺' + remaining + ' daha ekle, teslimat ücretsiz olsun';
+        }
+      }
+
+      const cartBar = document.getElementById('cart-bar');
 
       if (cartBar) {
         if (!orderCat) {
-          cartBar.style.display = 'none'
+          cartBar.style.display = 'none';
         } else {
-          cartBar.style.display = 'block'
+          cartBar.style.display = 'block';
         }
       }
     }
@@ -1494,25 +1571,105 @@
     function confirmOrder() {
       const lines = Object.entries(cart).map(([id, qty]) => {
         const p = products.find(x => x.id == id);
-        return p ? { p, qty, sub: p.price * qty } : null;
+        return p ? { p, qty, sub: Number(p.price) * qty } : null;
       }).filter(Boolean);
-      const total = lines.reduce((s, l) => s + l.sub, 0);
-      window.currentOrderBaseTotal = total;
-      const linesHtml = lines.map(l => `<div class="oline"><span>${l.p.emoji} ${l.p.name} <span style="color:var(--text2)">×${l.qty}</span></span><span>₺${l.sub}</span></div>`).join('');
+
+      const baseTotal = lines.reduce((s, l) => s + l.sub, 0);
+      const serviceFee = calcServiceFee(baseTotal);
+      const total = baseTotal + serviceFee;
+
+      window.currentOrderBaseTotal = baseTotal;
+
+      const linesHtml = lines.map(l => `
+    <div class="oline">
+      <span>
+        ${l.p.emoji || '🛒'} ${l.p.name}
+        <span style="color:var(--text2)">×${l.qty}</span>
+      </span>
+      <span>₺${l.sub}</span>
+    </div>
+  `).join('');
+
       document.getElementById('sheet').innerHTML = `
-        <h3>Sipariş Bilgileri</h3>
-        <div class="frow"><label>Ad Soyad*</label><input type="text" id="customerName" placeholder="Adınız ve Soyadınız"></div>
-        <div class="frow"><label>Adres*</label><textarea id="customerAddress" placeholder="Adresiniz"></textarea></div>
-        <div class="frow"><label>Bölge*</label><select id="customerRegion" onchange="updateDeliveryFee()">${(regions || DEFAULT_REGIONS).filter(r => r.active).map(r => `<option value="${r.id}">${r.name}${Number(r.fee || 0) ? ` - Servis Ücreti ₺${r.fee}` : ' - Servis Ücreti Yok'}</option>`).join('')}</select></div>
-        <div class="frow"><label>Telefon*</label><input type="text" id="customerPhone" placeholder="05xxxxxxxxx"></div>
-        <div class="frow"><label>Ek Not (Opsiyonel)</label><textarea id="customerNote" placeholder="İsteğe bağlı not"></textarea></div>
-        <div class="frow"><label>Ödeme Şekli*</label><select id="paymentMethod"><option value="Nakit">Nakit</option><option value="Kart">Kart</option></select></div>
-        <div class="frow"><label>Sipariş Özeti</label>${linesHtml}<div class="oline"><span>Servis Ücreti</span><span id="delivery-fee">₺0</span></div><div class="ototal"><span>Toplam</span><span id="delivery-total" style="color:var(--green)">₺${total}</span></div></div>
-        <div class="sheet-actions">
-          <button class="btn" onclick="openOrderSheet()">Geri dön</button>
-          <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
-        </div>`;
-      updateDeliveryFee();
+    <h3>Sipariş Bilgileri</h3>
+
+    <div class="frow">
+      <label>Ad Soyad*</label>
+      <input type="text" id="customerName" placeholder="Adınız ve Soyadınız">
+    </div>
+
+    <div class="frow">
+      <label>Adres*</label>
+      <textarea id="customerAddress" placeholder="Adresiniz"></textarea>
+    </div>
+
+    <div class="frow">
+      <label>Bölge*</label>
+      <select id="customerRegion">
+        ${(regions || DEFAULT_REGIONS).filter(r => r.active).map(r => `
+          <option value="${r.id}">
+            ${r.name}
+          </option>
+        `).join('')}
+      </select>
+    </div>
+
+    <div class="frow">
+      <label>Telefon*</label>
+      <input type="text" id="customerPhone" placeholder="05xxxxxxxxx">
+    </div>
+
+    <div class="frow">
+      <label>Ek Not (Opsiyonel)</label>
+      <textarea id="customerNote" placeholder="İsteğe bağlı not"></textarea>
+    </div>
+
+    <div class="frow">
+      <label>Ödeme Şekli*</label>
+      <select id="paymentMethod">
+        <option value="Nakit">Nakit</option>
+        <option value="Kart">Kart</option>
+      </select>
+    </div>
+
+    <div class="frow">
+      <label>Sipariş Özeti</label>
+
+      ${linesHtml}
+
+      <div class="oline">
+        <span>Ürün Toplamı</span>
+        <span>₺${baseTotal}</span>
+      </div>
+
+      <div class="oline">
+        <span>Servis Ücreti</span>
+        <span id="delivery-fee">₺${serviceFee}</span>
+      </div>
+
+      <div class="ototal">
+        <span>Toplam</span>
+        <span id="delivery-total" style="color:var(--green)">₺${total}</span>
+      </div>
+
+      <div style="
+        margin-top:10px;
+        font-size:12px;
+        color:${baseTotal >= FREE_DELIVERY_LIMIT ? 'var(--green)' : 'var(--text2)'};
+        line-height:1.4;
+      ">
+        ${baseTotal >= FREE_DELIVERY_LIMIT
+          ? 'Siparişiniz 1000 TL üzeri olduğu için teslimat ücretsiz.'
+          : `1000 TL altı siparişlerde ₺${SMALL_ORDER_SERVICE_FEE} servis ücreti uygulanır.`
+        }
+      </div>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn" onclick="openOrderSheet()">Geri dön</button>
+      <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
+    </div>
+  `;
     }
 
     async function sendOrder() {
@@ -1530,8 +1687,9 @@
       const region = document.getElementById('customerRegion').value;
       const list = regions || DEFAULT_REGIONS
       const regionData = list.find(r => r.id === region) || list[0]
-      const serviceFee = regionData.fee || 0;
-      const total = lines.reduce((s, l) => s + l.sub, 0) + serviceFee;
+      const baseTotal = lines.reduce((s, l) => s + l.sub, 0);
+      const serviceFee = calcServiceFee(baseTotal);
+      const total = baseTotal + serviceFee;
 
       const orderRes = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -1578,7 +1736,7 @@
       Sipariş detayları sistemde kayıtlıdır.
       `
 
-      const whatsappUrl = `https://wa.me/905436325080?text=${encodeURIComponent(msg)}`
+      const whatsappUrl = `https://wa.me/905334007017?text=${encodeURIComponent(msg)}`
 
       showOrderSuccess(orderId, total)
 
@@ -1596,20 +1754,15 @@
     }
 
     function updateDeliveryFee() {
-      const region = document.getElementById('customerRegion')
-      if (!region) return
+      const baseTotal = calcCartBaseTotal();
+      const serviceFee = calcServiceFee(baseTotal);
+      const total = baseTotal + serviceFee;
 
-      const list = regions || DEFAULT_REGIONS
-      const regionData = list.find(r => r.id === region.value) || list[0]
+      const feeEl = document.getElementById('delivery-fee');
+      const totalEl = document.getElementById('delivery-total');
 
-      const fee = Number(regionData.fee || 0)
-      const total = (window.currentOrderBaseTotal || 0) + fee
-
-      const feeEl = document.getElementById('delivery-fee')
-      const totalEl = document.getElementById('delivery-total')
-
-      if (feeEl) feeEl.textContent = fee ? `₺${fee}` : '₺0'
-      if (totalEl) totalEl.textContent = `₺${total}`
+      if (feeEl) feeEl.textContent = `₺${serviceFee}`;
+      if (totalEl) totalEl.textContent = `₺${total}`;
     }
 
     function closeSheet() { document.getElementById('sheet-overlay').classList.remove('open'); }
@@ -3083,6 +3236,19 @@
       }).join('')}
     </div>
   `
+    }
+
+    function calcCartBaseTotal() {
+      return Object.entries(cart).reduce((sum, [id, qty]) => {
+        const p = products.find(x => x.id == id)
+        return p ? sum + (Number(p.price) * qty) : sum
+      }, 0)
+    }
+
+    function calcServiceFee(baseTotal) {
+      return baseTotal > 0 && baseTotal < FREE_DELIVERY_LIMIT
+        ? SMALL_ORDER_SERVICE_FEE
+        : 0
     }
 
 
