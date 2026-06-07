@@ -768,6 +768,26 @@
       border-radius: 999px;
       transition: width .2s ease;
     }
+
+    #search-wrap {
+      position: sticky;
+      top: 64px;
+      z-index: 80;
+      padding: 8px 0;
+    }
+
+    #search-wrap input {
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .06);
+    }
+
+    #order-products {
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    #order-products.is-changing {
+      opacity: 0;
+      transform: translateY(6px);
+    }
   </style>
 </head>
 
@@ -789,7 +809,7 @@
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
     <div class="wrap">
-      <div id="search-wrap" style="margin-bottom:14px" display=none>
+      <div id="search-wrap" style="margin-bottom:14px" display:none>
         <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
       width:100%;
       height:42px;
@@ -1361,23 +1381,63 @@
     }
 
     function setOrderCat(id) {
-      orderCat = id
-      orderSubCat = 'hepsi'
+      const productsEl = document.getElementById('order-products')
 
-      const searchInput = document.getElementById('product-search')
-      if (searchInput) searchInput.value = ''
+      if (productsEl) {
+        productsEl.classList.add('is-changing')
+      }
 
-      renderOrderCats()
-      renderOrderSubCats()
-      renderOrderProducts()
-      updateCartBar()
+      setTimeout(() => {
+        orderCat = id
+        orderSubCat = 'hepsi'
+
+        const searchInput = document.getElementById('product-search')
+        if (searchInput) searchInput.value = ''
+
+        renderOrderCats()
+        renderOrderSubCats()
+        renderOrderProducts()
+        updateCartBar()
+
+        if (productsEl) {
+          productsEl.classList.remove('is-changing')
+        }
+
+        const searchWrap = document.getElementById('search-wrap')
+        if (searchWrap) {
+          searchWrap.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 140)
     }
 
     function setOrderSubCat(id) {
-      orderSubCat = id
+      const productsEl = document.getElementById('order-products')
 
-      renderOrderSubCats()
-      renderOrderProducts()
+      if (productsEl) {
+        productsEl.classList.add('is-changing')
+      }
+
+      setTimeout(() => {
+        orderSubCat = id
+
+        renderOrderSubCats()
+        renderOrderProducts()
+
+        if (productsEl) {
+          productsEl.classList.remove('is-changing')
+        }
+
+        const searchWrap = document.getElementById('search-wrap')
+        if (searchWrap) {
+          searchWrap.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 140)
     }
 
     function renderOrderProducts() {
@@ -1447,6 +1507,24 @@
 
         return `
   <div class="card ${!p.active ? 'inactive' : ''}" style="position:relative">
+    ${Number(p.featured || 0) === 1 ? `
+  <div style="
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:var(--green);
+    color:white;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 8px;
+    border-radius:999px;
+    z-index:3;
+    box-shadow:0 4px 12px rgba(0,0,0,.12);
+  ">
+    Öne Çıkan
+  </div>
+` : ''}
+
     ${!p.active ? `
       <div style="
         position:absolute;
