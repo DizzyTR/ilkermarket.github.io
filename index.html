@@ -2092,13 +2092,14 @@
     }
 
     async function saveProd(keepOpen = false) {
+      const oldProduct = products.find(p => p.id == editTarget.id)
 
       const name = document.getElementById('f-name').value.trim()
       const desc = document.getElementById('f-desc').value.trim()
       const price = parseInt(document.getElementById('f-price').value) || 0
       const cat = document.getElementById('f-cat').value
-      const subCat = document.getElementById('f-subcat').value.trim()
-      const imageUrl = document.getElementById('f-image-url').value.trim()
+      const subCat = document.getElementById('f-subcat')?.value.trim() || ""
+      const imageUrl = document.getElementById('f-image-url')?.value.trim() || ""
 
       if (!name) {
         return alert('Ürün adı boş olamaz')
@@ -2110,15 +2111,16 @@
         desc,
         cat,
         subCat,
+        emoji: oldProduct?.emoji || "🛒",
         imageUrl,
-        active,
+        active: editTarget.id === 'new'
+          ? 1
+          : Number(oldProduct?.active ?? 1),
         featured: document.getElementById('f-featured')?.checked ? 1 : 0
       }
 
       try {
-
         if (editTarget.id === 'new') {
-
           await fetch(`${API_URL}/products`, {
             method: "POST",
             headers: {
@@ -2126,9 +2128,7 @@
             },
             body: JSON.stringify(payload)
           })
-
         } else {
-
           await fetch(`${API_URL}/products/${editTarget.id}`, {
             method: "PUT",
             headers: {
@@ -2136,7 +2136,6 @@
             },
             body: JSON.stringify(payload)
           })
-
         }
 
         await loadData()
@@ -2148,11 +2147,8 @@
         }
 
       } catch (err) {
-
         console.log(err)
-
         alert("İşlem başarısız")
-
       }
     }
 
