@@ -1381,6 +1381,15 @@
         return
       }
 
+      list.sort((a, b) => {
+        const af = Number(a.featured || 0)
+        const bf = Number(b.featured || 0)
+
+        if (bf !== af) return bf - af
+
+        return 0
+      })
+
       el.innerHTML = list.map(p => {
         const qty = cart[p.id] || 0
 
@@ -1789,6 +1798,16 @@
             `).join('')}
         </select>
       </div>
+      <div class="frow">
+  <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+    <input
+      type="checkbox"
+      id="f-featured"
+      ${Number(p.featured || 0) === 1 ? 'checked' : ''}
+    >
+    Öne çıkan ürün
+  </label>
+</div>
       <div class="faction">
   <button class="btn" onclick="closeModal()">İptal</button>
 
@@ -1934,13 +1953,14 @@
 
       const payload = {
         name,
-        desc,
         price,
+        desc,
         cat,
         subCat,
-        emoji: "🍽",
+        emoji,
         imageUrl,
-        active: true
+        active,
+        featured: document.getElementById('f-featured')?.checked ? 1 : 0
       }
 
       try {
