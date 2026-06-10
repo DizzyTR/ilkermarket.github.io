@@ -1469,7 +1469,7 @@
           <strong id="cart-total">₺0</strong>
         </div>
 
-        <button id="co-btn" type="button" onclick="confirmOrder()" disabled>
+        <button id="co-btn" type="button" onclick="openOrderSheet()" disabled>
           Siparişi Tamamla
         </button>
       </div>
@@ -2422,7 +2422,11 @@
       <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
     </div>
   `;
-  openOrderSheet();
+      const sheetOverlay = document.getElementById('sheet-overlay');
+
+      if (sheetOverlay) {
+        sheetOverlay.classList.add('open');
+      }
     }
 
     async function sendOrder() {
