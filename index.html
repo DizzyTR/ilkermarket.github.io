@@ -71,6 +71,13 @@
       z-index: 50;
     }
 
+    .topbar,
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
     .logo {
       font-size: 15px;
       font-weight: 500;
@@ -769,15 +776,59 @@
       transition: width .2s ease;
     }
 
-    #search-wrap {
+    #shop-filter-bar {
       position: sticky;
-      top: 64px;
+      top: 52px;
       z-index: 80;
-      padding: 8px 0;
+
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+
+      padding: 10px 0 12px;
+    }
+
+    #shop-filter-bar.is-searching #order-cats::before {
+      content: "🔎 Tüm Ürünler";
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: var(--green);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .10);
+    }
+
+    #shop-filter-bar.is-searching #order-cats .active,
+    #shop-filter-bar.is-searching #order-cats button.active {
+      background: white !important;
+      color: var(--text2) !important;
+      border-color: var(--border) !important;
+      box-shadow: none !important;
+    }
+
+    #shop-filter-bar.is-searching #order-subcats {
+      display: none !important;
+    }
+
+    #search-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 10px;
     }
 
     #search-wrap input {
-      box-shadow: 0 8px 22px rgba(0, 0, 0, .06);
+      background: rgba(255, 255, 255, .92) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    }
+
+    #order-cats,
+    #order-subcats {
+      padding-bottom: 2px;
     }
 
     #order-products {
@@ -787,6 +838,566 @@
     #order-products.is-changing {
       opacity: 0;
       transform: translateY(6px);
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 42px;
+      border-radius: 12px;
+      border: 0.5px solid var(--border2);
+      background: rgba(255, 255, 255, .92);
+      color: var(--text);
+      padding: 0 46px 0 14px;
+      font-size: 14px;
+      outline: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    }
+
+    #clear-search-btn {
+      display: none;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 999px;
+      background: var(--bg2);
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    #shop-filter-bar.is-searching #clear-search-btn {
+      display: flex;
+    }
+
+    #clear-search-btn:hover {
+      background: var(--green);
+      color: white;
+    }
+
+    .home-hero {
+      grid-column: 1 / -1;
+      position: relative;
+      overflow: hidden;
+
+      background:
+        radial-gradient(circle at top right, rgba(20, 163, 105, .18), transparent 35%),
+        linear-gradient(135deg, rgba(255, 255, 255, .96), rgba(247, 247, 242, .92));
+
+      border: 1px solid rgba(0, 0, 0, .07);
+      border-radius: 24px;
+      padding: 18px;
+      margin: 4px 0 16px;
+
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .07);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      background: rgba(20, 163, 105, .10);
+      color: var(--green);
+      border: 1px solid rgba(20, 163, 105, .18);
+
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .home-hero h1 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.15;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .home-hero p {
+      margin: 8px 0 0;
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .hero-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .hero-step {
+      background: rgba(255, 255, 255, .75);
+      border: 1px solid rgba(0, 0, 0, .06);
+      border-radius: 16px;
+      padding: 10px;
+    }
+
+    .hero-step strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .hero-step span {
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    @media (max-width: 600px) {
+      .home-hero {
+        border-radius: 20px;
+        padding: 16px;
+      }
+
+      .home-hero h1 {
+        font-size: 22px;
+      }
+
+      .hero-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trust-strip {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .trust-item {
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid rgba(0, 0, 0, .07);
+      border-radius: 18px;
+      padding: 12px 10px;
+
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .045);
+    }
+
+    .trust-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(20, 163, 105, .10);
+      color: var(--green);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .trust-item strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .trust-item span {
+      display: block;
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 700px) {
+      .trust-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 420px) {
+      .trust-item {
+        padding: 10px 8px;
+      }
+
+      .trust-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+      }
+
+      .trust-item strong {
+        font-size: 12px;
+      }
+
+      .trust-item span {
+        font-size: 10.5px;
+      }
+    }
+
+    #order-products .card.product-card {
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid rgba(0, 0, 0, .07);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .055);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    #order-products .card.product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, .08);
+      border-color: rgba(20, 163, 105, .22);
+    }
+
+    #order-products .card.product-card.inactive {
+      opacity: .72;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      z-index: 4;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: white;
+      font-size: 10.5px;
+      font-weight: 800;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .14);
+    }
+
+    .product-badge.featured {
+      left: 10px;
+      background: var(--green);
+    }
+
+    .product-badge.soldout {
+      right: 10px;
+      background: #A32D2D;
+    }
+
+    #order-products .card-media {
+      width: 100%;
+      height: 132px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(20, 163, 105, .08), transparent 45%),
+        rgba(247, 247, 242, .9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    #order-products .card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+      transition: transform .2s ease;
+    }
+
+    #order-products .card.product-card:hover .card-media img {
+      transform: scale(1.04);
+    }
+
+    #order-products .card-emoji {
+      font-size: 42px;
+    }
+
+    .product-info {
+      min-height: 66px;
+    }
+
+    #order-products .card-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    #order-products .card-desc {
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.35;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    #order-products .card-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 0, 0, .06);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    #order-products .price {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: -.3px;
+    }
+
+    #order-products .add-btn {
+      width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 14px;
+      background: var(--green);
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(20, 163, 105, .24);
+    }
+
+    #order-products .add-btn:active,
+    #order-products .qty-btn:active {
+      transform: scale(.94);
+    }
+
+    #order-products .qty-ctrl {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(20, 163, 105, .10);
+      border: 1px solid rgba(20, 163, 105, .18);
+      border-radius: 14px;
+      padding: 4px;
+    }
+
+    #order-products .qty-btn {
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 10px;
+      background: var(--green);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    #order-products .qty-num {
+      min-width: 18px;
+      text-align: center;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    @media (max-width: 520px) {
+      #order-products .card-media {
+        height: 116px;
+      }
+
+      #order-products .price {
+        font-size: 16px;
+      }
+
+      #order-products .card-name {
+        font-size: 13px;
+      }
+    }
+
+    #cart-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 720px;
+      z-index: 140;
+      pointer-events: auto;
+    }
+
+    .cart-panel {
+      pointer-events: auto;
+
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      border: 1px solid rgba(0, 0, 0, .08);
+      border-radius: 24px;
+      padding: 12px;
+
+      box-shadow: 0 18px 44px rgba(0, 0, 0, .18);
+    }
+
+    .cart-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .cart-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cart-summary span {
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 700;
+    }
+
+    .cart-summary strong {
+      font-size: 22px;
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: -.4px;
+    }
+
+    #co-btn {
+      min-width: 150px;
+      height: 46px;
+      border: none;
+      border-radius: 16px;
+
+      background: var(--green);
+      color: white;
+
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+
+      box-shadow: 0 10px 24px rgba(20, 163, 105, .28);
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+
+    #co-btn:active {
+      transform: scale(.96);
+    }
+
+    #co-btn:disabled {
+      opacity: .42;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .free-delivery-box {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .free-delivery-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 7px;
+    }
+
+    .free-delivery-top span {
+      font-weight: 700;
+    }
+
+    .free-delivery-top strong {
+      color: var(--green);
+      white-space: nowrap;
+      font-weight: 900;
+    }
+
+    .free-delivery-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, .06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    #free-delivery-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), #36c487);
+      border-radius: 999px;
+      transition: width .22s ease;
+    }
+
+    #cart-bar.has-items .cart-panel {
+      animation: cartPop .18s ease;
+    }
+
+    @keyframes cartPop {
+      from {
+        transform: translateY(6px);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    #view-order .wrap {
+      padding-bottom: 150px;
+    }
+
+    @media (max-width: 480px) {
+      #cart-bar {
+        bottom: 10px;
+        width: calc(100% - 18px);
+      }
+
+      .cart-panel {
+        border-radius: 22px;
+        padding: 11px;
+      }
+
+      #co-btn {
+        min-width: 135px;
+        height: 44px;
+        font-size: 13px;
+      }
+
+      .cart-summary strong {
+        font-size: 20px;
+      }
+
+      .free-delivery-top {
+        font-size: 11px;
+      }
     }
   </style>
 </head>
@@ -809,40 +1420,62 @@
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
     <div class="wrap">
-      <div id="search-wrap" style="margin-bottom:14px" display:none>
-        <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
-      width:100%;
-      height:42px;
-      border-radius:12px;
-      border:0.5px solid var(--border2);
-      background:var(--bg2);
-      color:var(--text);
-      padding:0 14px;
-      font-size:14px;
-      outline:none;
-    ">
-      </div>
-      <div class="cats" id="order-cats"></div>
-      <div class="cats" id="order-subcats"></div>
-      <div class="products" id="order-products"></div>
-    </div>
-    <div class="cart-bar" id="cart-bar" style="display:none">
-      <div class="cart-inner">
-        <div class="free-delivery-box">
-          <div class="free-delivery-top">
-            <span id="free-delivery-text">1000 TL’ye tamamla, teslimat ücretsiz olsun</span>
-            <strong id="free-delivery-amount">₺0 / ₺1000</strong>
-          </div>
 
-          <div class="free-delivery-track">
-            <div id="free-delivery-fill"></div>
-          </div>
+      <div id="shop-filter-bar">
+
+        <div id="search-wrap" style="margin-bottom:10px; display:none;">
+          <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
+          width:100%;
+          height:42px;
+          border-radius:12px;
+          border:0.5px solid var(--border2);
+          background:var(--bg2);
+          color:var(--text);
+          padding:0 14px;
+          font-size:14px;
+          outline:none;
+        ">
+          <button id="clear-search-btn" type="button" onclick="clearProductSearch()">
+            ✕
+          </button>
         </div>
-        <div class="cart-info">Sepet: <strong id="cart-count">0 ürün</strong> · <strong id="cart-total">₺0</strong>
-        </div>
-        <button class="co-btn" id="co-btn" disabled onclick="openOrderSheet()">Siparişi Tamamla</button>
+
+        <div class="cats" id="order-cats"></div>
+        <div class="cats" id="order-subcats"></div>
+
       </div>
+
+      <div class="products" id="order-products"></div>
+
     </div>
+  </div>
+  <div id="cart-bar" style="display:none;">
+    <div class="cart-panel">
+
+      <div class="free-delivery-box">
+        <div class="free-delivery-top">
+          <span id="free-delivery-text">1000 TL’ye tamamla, teslimat ücretsiz olsun</span>
+          <strong id="free-delivery-amount">₺0 / ₺1000</strong>
+        </div>
+
+        <div class="free-delivery-track">
+          <div id="free-delivery-fill"></div>
+        </div>
+      </div>
+
+      <div class="cart-main-row">
+        <div class="cart-summary">
+          <span id="cart-count">0 ürün</span>
+          <strong id="cart-total">₺0</strong>
+        </div>
+
+        <button id="co-btn" type="button" onclick="confirmOrder()" disabled>
+          Siparişi Tamamla
+        </button>
+      </div>
+
+    </div>
+  </div>
   </div>
 
   <!-- ══════════ ADMİN PANELİ ══════════ -->
@@ -1424,19 +2057,31 @@
       }, 140)
     }
 
+    function searchText(v) {
+      return String(v || "")
+        .toLocaleLowerCase("tr-TR")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ı/g, "i")
+        .trim();
+    }
+
     function renderOrderProducts() {
       const el = document.getElementById('order-products')
       const searchWrap = document.getElementById('search-wrap')
       const cartBar = document.getElementById('cart-bar')
+      const filterBar = document.getElementById('shop-filter-bar')
 
       if (!orderCat) {
         if (searchWrap) searchWrap.style.display = 'none'
         if (cartBar) cartBar.style.display = 'none'
+        if (filterBar) filterBar.style.display = 'none'
 
         el.innerHTML = renderCategoryHome()
         return
       }
 
+      if (filterBar) filterBar.style.display = 'block'
       if (searchWrap) searchWrap.style.display = 'block'
       if (cartBar) cartBar.style.display = 'block'
 
@@ -1444,32 +2089,70 @@
       if (!Array.isArray(cats)) cats = []
       if (!Array.isArray(subcats)) subcats = []
 
-      const activeCatIds = new Set(cats.filter(c => c.active).map(c => c.id))
+      const activeCatIds = new Set(
+        cats
+          .filter(c => c.active)
+          .map(c => String(c.id))
+      )
 
-      let list = products.filter(p => activeCatIds.has(p.cat))
+      const rawSearch = document.getElementById('product-search')?.value || ''
+      const search = searchText(rawSearch)
 
-      const search = (document.getElementById('product-search')?.value || '').toLowerCase().trim()
-
-      list = list.filter(p => p.cat === orderCat)
-
-      if (orderSubCat && orderSubCat !== 'hepsi') {
-        list = list.filter(p => (p.subCat || '') === orderSubCat)
+      if (filterBar) {
+        filterBar.classList.toggle('is-searching', !!search)
       }
 
-      if (search) {
-        list = list.filter(p => {
-          const sub = subcats.find(s => s.id === p.subCat)
+      let list = products.filter(p => activeCatIds.has(String(p.cat)))
 
-          return (
-            (p.name || '').toLowerCase().includes(search) ||
-            (p.desc || '').toLowerCase().includes(search) ||
-            (sub?.name || '').toLowerCase().includes(search)
-          )
+      let searchInfoHtml = ''
+
+      if (search) {
+        // Arama varsa seçili kategoriye bakma, tüm aktif ürünlerde ara
+        list = list.filter(p => {
+          const cat = cats.find(c => String(c.id) === String(p.cat))
+          const sub = subcats.find(s => String(s.id) === String(p.subCat))
+
+          const haystack = [
+            p.name,
+            p.desc,
+            p.emoji,
+            cat?.name,
+            sub?.name
+          ].map(searchText).join(' ')
+
+          return haystack.includes(search)
         })
+
+        searchInfoHtml = `
+    <div style="
+      grid-column:1/-1;
+      background:var(--bg2);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      margin-bottom:4px;
+      color:var(--text2);
+      font-size:13px;
+    ">
+      <strong style="color:var(--text)">Tüm ürünlerde arama:</strong>
+      "${rawSearch}"
+    </div>
+  `
+      } else {
+        // Arama yoksa normal kategori / alt kategori filtresi
+        list = list.filter(p => String(p.cat) === String(orderCat))
+
+        if (orderSubCat && orderSubCat !== 'hepsi') {
+          list = list.filter(p => String(p.subCat || '').trim() === String(orderSubCat).trim())
+        }
       }
 
       if (!list.length) {
-        el.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">Ürün bulunamadı.</div>`
+        el.innerHTML = searchInfoHtml + `
+    <div class="empty-msg" style="grid-column:1/-1">
+      Ürün bulunamadı.
+    </div>
+    `
         return
       }
 
@@ -1482,71 +2165,77 @@
         return 0
       })
 
-      el.innerHTML = list.map(p => {
+      el.innerHTML = searchInfoHtml + list.map(p => {
         const qty = cart[p.id] || 0
+        const isActive = Number(p.active) === 1
+        const isFeatured = Number(p.featured || 0) === 1
+
+        const priceText = Number(p.price || 0).toLocaleString('tr-TR')
 
         const mediaHtml = p.imageUrl
-          ? `<div class="card-media"><img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" loading="lazy"></div>`
-          : `<div class="card-media"><div class="card-emoji">${p.emoji || '🍽'}</div></div>`
+          ? `
+      <div class="card-media">
+        <img src="${optimizeImage(p.imageUrl)}" alt="${p.name}" loading="lazy">
+      </div>
+    `
+          : `
+      <div class="card-media">
+        <div class="card-emoji">${p.emoji || '🛒'}</div>
+      </div>
+    `
 
         return `
-  <div class="card ${!p.active ? 'inactive' : ''}" style="position:relative">
-    ${Number(p.featured || 0) === 1 ? `
-  <div style="
-    position:absolute;
-    top:10px;
-    left:10px;
-    background:var(--green);
-    color:white;
-    font-size:11px;
-    font-weight:700;
-    padding:4px 8px;
-    border-radius:999px;
-    z-index:3;
-    box-shadow:0 4px 12px rgba(0,0,0,.12);
-  ">
-    Öne Çıkan
-  </div>
-` : ''}
+    <div class="card product-card ${!isActive ? 'inactive' : ''}">
 
-    ${!p.active ? `
-      <div style="
-        position:absolute;
-        top:10px;
-        right:10px;
-        background:#A32D2D;
-        color:white;
-        font-size:11px;
-        font-weight:700;
-        padding:4px 8px;
-        border-radius:999px;
-        z-index:2;
-      ">
-        Kalmadı
-      </div>
-    ` : ''}
-        ${mediaHtml}
+      ${isFeatured ? `
+        <div class="product-badge featured">
+          ⭐ Öne Çıkan
+        </div>
+      ` : ''}
 
+      ${!isActive ? `
+        <div class="product-badge soldout">
+          Kalmadı
+        </div>
+      ` : ''}
+
+      ${mediaHtml}
+
+      <div class="product-info">
         <div class="card-name">${p.name}</div>
         <div class="card-desc">${p.desc || ''}</div>
+      </div>
 
-        <div class="card-footer">
-          <span class="price">₺${p.price}</span>
+      <div class="card-footer">
+        <span class="price">₺${priceText}</span>
 
-          ${!p.active
+        ${!isActive
             ? `<button class="add-btn" disabled style="opacity:.35;cursor:not-allowed">+</button>`
             : qty === 0
               ? `<button class="add-btn" onclick="cartAdd(${p.id})">+</button>`
-              : `<div class="qty-ctrl">
-        <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
-        <span class="qty-num">${qty}</span>
-        <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
-      </div>`
+              : `
+              <div class="qty-ctrl">
+                <button class="qty-btn" onclick="cartRemove(${p.id})">−</button>
+                <span class="qty-num">${qty}</span>
+                <button class="qty-btn" onclick="cartAdd(${p.id})">+</button>
+              </div>
+            `
           }
-        </div>
       </div>
-    `
+
+    </div>
+  `
       }).join('')
+    }
+
+    function clearProductSearch() {
+      const input = document.getElementById('product-search');
+
+      if (!input) return;
+
+      input.value = '';
+      renderOrderProducts();
+      input.focus();
     }
 
     function cartAdd(id) { cart[id] = (cart[id] || 0) + 1; updateCartBar(); renderOrderProducts(); }
@@ -1557,54 +2246,55 @@
 
     function updateCartBar() {
       Object.keys(cart).forEach(id => {
-        if (!products.find(p => p.id == id)) delete cart[id];
-      });
+        if (!products.find(p => p.id == id)) delete cart[id]
+      })
 
-      const count = Object.values(cart).reduce((a, b) => a + b, 0);
+      const count = Object.values(cart).reduce((a, b) => a + b, 0)
 
-      const baseTotal = calcCartBaseTotal();
-      const serviceFee = calcServiceFee(baseTotal);
-      const finalTotal = baseTotal + serviceFee;
+      const baseTotal = calcCartBaseTotal()
+      const serviceFee = calcServiceFee(baseTotal)
+      const finalTotal = baseTotal + serviceFee
 
-      const cartCount = document.getElementById('cart-count');
-      const cartTotal = document.getElementById('cart-total');
-      const coBtn = document.getElementById('co-btn');
+      const cartCount = document.getElementById('cart-count')
+      const cartTotal = document.getElementById('cart-total')
+      const coBtn = document.getElementById('co-btn')
+      const cartBar = document.getElementById('cart-bar')
 
-      if (cartCount) cartCount.textContent = count + ' ürün';
-      if (cartTotal) cartTotal.textContent = '₺' + finalTotal;
-      if (coBtn) coBtn.disabled = count === 0;
+      if (cartCount) cartCount.textContent = count + ' ürün'
+      if (cartTotal) cartTotal.textContent = '₺' + finalTotal.toLocaleString('tr-TR')
+      if (coBtn) coBtn.disabled = count === 0
 
-      const fill = document.getElementById('free-delivery-fill');
-      const text = document.getElementById('free-delivery-text');
-      const amount = document.getElementById('free-delivery-amount');
+      const fill = document.getElementById('free-delivery-fill')
+      const text = document.getElementById('free-delivery-text')
+      const amount = document.getElementById('free-delivery-amount')
 
-      const progress = Math.min((baseTotal / FREE_DELIVERY_LIMIT) * 100, 100);
-      const remaining = Math.max(FREE_DELIVERY_LIMIT - baseTotal, 0);
+      const progress = Math.min((baseTotal / FREE_DELIVERY_LIMIT) * 100, 100)
+      const remaining = Math.max(FREE_DELIVERY_LIMIT - baseTotal, 0)
 
-      if (fill) fill.style.width = progress + '%';
+      if (fill) fill.style.width = progress + '%'
 
       if (amount) {
-        amount.textContent = '₺' + baseTotal + ' / ₺' + FREE_DELIVERY_LIMIT;
+        amount.textContent = '₺' + baseTotal.toLocaleString('tr-TR') + ' / ₺' + FREE_DELIVERY_LIMIT.toLocaleString('tr-TR')
       }
 
       if (text) {
         if (count === 0) {
-          text.textContent = '1000 TL’ye tamamla, teslimat ücretsiz olsun';
+          text.textContent = '1000 TL’ye tamamla, teslimat ücretsiz olsun'
         } else if (baseTotal >= FREE_DELIVERY_LIMIT) {
-          text.textContent = 'Teslimat ücretsiz oldu';
+          text.textContent = 'Teslimat ücretsiz oldu'
         } else {
-          text.textContent = '₺' + remaining + ' daha ekle, teslimat ücretsiz olsun';
+          text.textContent = '₺' + remaining.toLocaleString('tr-TR') + ' daha ekle, teslimat ücretsiz olsun'
         }
       }
 
-      const cartBar = document.getElementById('cart-bar');
-
       if (cartBar) {
         if (!orderCat) {
-          cartBar.style.display = 'none';
+          cartBar.style.display = 'none'
         } else {
-          cartBar.style.display = 'block';
+          cartBar.style.display = 'block'
         }
+
+        cartBar.classList.toggle('has-items', count > 0)
       }
     }
 
@@ -1732,6 +2422,7 @@
       <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
     </div>
   `;
+  openOrderSheet();
     }
 
     async function sendOrder() {
@@ -3269,6 +3960,8 @@
       }
 
       return `
+      ${renderHomeHero()}
+      ${renderTrustStrip()}
     <div style="grid-column:1/-1;text-align:center;margin-bottom:4px">
       <div style="font-size:38px;margin-bottom:8px">🛒</div>
       <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px">
@@ -3293,6 +3986,80 @@
       }).join('')}
     </div>
   `
+    }
+
+    function renderHomeHero() {
+      return `
+    <div class="home-hero">
+      <div class="hero-badge">
+        🛒 Online sipariş sistemi aktif
+      </div>
+
+      <h1>İlker Market kapınızda</h1>
+
+      <p>
+        Atıştırmalık, içecek, dondurma ve market ürünlerini kolayca seçin.
+        Siparişinizi oluşturun, WhatsApp üzerinden onaylayın.
+      </p>
+
+      <div class="hero-steps">
+        <div class="hero-step">
+          <strong>1. Kategori seç</strong>
+          <span>Ürünlere hızlıca ulaş</span>
+        </div>
+
+        <div class="hero-step">
+          <strong>2. Sepete ekle</strong>
+          <span>İhtiyaçlarını tamamla</span>
+        </div>
+
+        <div class="hero-step">
+          <strong>3. Onayla</strong>
+          <span>WhatsApp’tan siparişi gönder</span>
+        </div>
+      </div>
+    </div>
+  `;
+    }
+
+    function renderTrustStrip() {
+      return `
+    <div class="trust-strip">
+
+      <div class="trust-item">
+        <div class="trust-icon">🚚</div>
+        <div>
+          <strong>Hızlı teslimat</strong>
+          <span>Siparişiniz hazırlanır</span>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">💬</div>
+        <div>
+          <strong>WhatsApp onayı</strong>
+          <span>Siparişinizi onaylayın</span>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">🛒</div>
+        <div>
+          <strong>Kolay sipariş</strong>
+          <span>Sepete ekle, gönder</span>
+        </div>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-icon">📍</div>
+        <div>
+          <strong>Çanakkale içi</strong>
+          <span>Yerel market hizmeti</span>
+        </div>
+      </div>
+
+    </div>
+  `;
     }
 
     function calcCartBaseTotal() {
