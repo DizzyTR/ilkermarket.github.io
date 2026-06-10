@@ -1399,6 +1399,31 @@
         font-size: 11px;
       }
     }
+
+    #send-order-btn.is-loading {
+      opacity: .75;
+      cursor: wait;
+      pointer-events: none;
+    }
+
+    #send-order-btn.is-loading::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, .45);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: -2px;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
@@ -2419,9 +2444,10 @@
 
     <div class="sheet-actions">
       <button class="btn" onclick="openOrderSheet()">Geri dön</button>
-      <button class="btn btn-g" onclick="sendOrder()">Siparişi Gönder</button>
-    </div>
+      <button id="send-order-btn" class="btn btn-g" type="button" onclick="sendOrder()">Siparişi Gönder</button>
   `;
+      fillSavedCustomerInfo();
+
       const sheetOverlay = document.getElementById('sheet-overlay');
 
       if (sheetOverlay) {
@@ -2429,7 +2455,28 @@
       }
     }
 
+    let isSendingOrder = false;
+
+    function setSendOrderLoading(isLoading) {
+      const btn = document.getElementById('send-order-btn');
+
+      if (!btn) return;
+
+      if (isLoading) {
+        btn.classList.add('is-loading');
+        btn.textContent = 'Gönderiliyor...';
+      } else {
+        btn.classList.remove('is-loading');
+        btn.textContent = 'Siparişi Gönder';
+      }
+    }
+
     async function sendOrder() {
+      if (isSendingOrder) return;
+
+      isSendingOrder = true;
+      setSendOrderLoading(true);
+
       const name = document.getElementById('customerName').value.trim();
       const address = document.getElementById('customerAddress').value.trim();
       const phone = document.getElementById('customerPhone').value.trim();
@@ -2440,6 +2487,7 @@
         const p = products.find(x => x.id == id);
         return p ? { p, qty, sub: p.price * qty } : null;
       }).filter(Boolean);
+      saveCustomerInfoFromForm();
       if (!lines.length) return alert('Sepetinizde geçerli ürün yok.');
       const region = document.getElementById('customerRegion').value;
       const list = regions || DEFAULT_REGIONS
@@ -2508,6 +2556,52 @@
       updateCartBar();
       closeSheet();
       renderOrderProducts();
+    }
+
+    const CUSTOMER_INFO_KEY = 'ilkerMarketCustomerInfo';
+
+    function getSavedCustomerInfo() {
+      try {
+        return JSON.parse(localStorage.getItem(CUSTOMER_INFO_KEY)) || {};
+      } catch (err) {
+        return {};
+      }
+    }
+
+    function saveCustomerInfoFromForm() {
+      const data = {
+        name: document.getElementById('customerName')?.value.trim() || '',
+        address: document.getElementById('customerAddress')?.value.trim() || '',
+        phone: document.getElementById('customerPhone')?.value.trim() || '',
+        region: document.getElementById('customerRegion')?.value || '',
+        paymentMethod: document.getElementById('paymentMethod')?.value || 'Nakit'
+      };
+
+      localStorage.setItem(CUSTOMER_INFO_KEY, JSON.stringify(data));
+    }
+
+    function fillSavedCustomerInfo() {
+      const saved = getSavedCustomerInfo();
+
+      if (saved.name && document.getElementById('customerName')) {
+        document.getElementById('customerName').value = saved.name;
+      }
+
+      if (saved.address && document.getElementById('customerAddress')) {
+        document.getElementById('customerAddress').value = saved.address;
+      }
+
+      if (saved.phone && document.getElementById('customerPhone')) {
+        document.getElementById('customerPhone').value = saved.phone;
+      }
+
+      if (saved.region && document.getElementById('customerRegion')) {
+        document.getElementById('customerRegion').value = saved.region;
+      }
+
+      if (saved.paymentMethod && document.getElementById('paymentMethod')) {
+        document.getElementById('paymentMethod').value = saved.paymentMethod;
+      }
     }
 
     function updateDeliveryFee() {
