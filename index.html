@@ -4120,46 +4120,6 @@
   `;
     }
 
-    function renderTrustStrip() {
-      return `
-    <div class="trust-strip">
-
-      <div class="trust-item">
-        <div class="trust-icon">🚚</div>
-        <div>
-          <strong>Hızlı teslimat</strong>
-          <span>Siparişiniz hazırlanır</span>
-        </div>
-      </div>
-
-      <div class="trust-item">
-        <div class="trust-icon">💬</div>
-        <div>
-          <strong>WhatsApp onayı</strong>
-          <span>Siparişinizi onaylayın</span>
-        </div>
-      </div>
-
-      <div class="trust-item">
-        <div class="trust-icon">🛒</div>
-        <div>
-          <strong>Kolay sipariş</strong>
-          <span>Sepete ekle, gönder</span>
-        </div>
-      </div>
-
-      <div class="trust-item">
-        <div class="trust-icon">📍</div>
-        <div>
-          <strong>Çanakkale içi</strong>
-          <span>Yerel market hizmeti</span>
-        </div>
-      </div>
-
-    </div>
-  `;
-    }
-
     function calcCartBaseTotal() {
       return Object.entries(cart).reduce((sum, [id, qty]) => {
         const p = products.find(x => x.id == id)
