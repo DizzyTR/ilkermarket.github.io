@@ -977,82 +977,6 @@
       }
     }
 
-    .trust-strip {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 0 0 16px;
-    }
-
-    .trust-item {
-      background: rgba(255, 255, 255, .82);
-      border: 1px solid rgba(0, 0, 0, .07);
-      border-radius: 18px;
-      padding: 12px 10px;
-
-      display: flex;
-      align-items: center;
-      gap: 9px;
-
-      box-shadow: 0 8px 22px rgba(0, 0, 0, .045);
-    }
-
-    .trust-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      background: rgba(20, 163, 105, .10);
-      color: var(--green);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-
-    .trust-item strong {
-      display: block;
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.2;
-    }
-
-    .trust-item span {
-      display: block;
-      font-size: 11px;
-      color: var(--text2);
-      margin-top: 2px;
-    }
-
-    @media (max-width: 700px) {
-      .trust-strip {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 420px) {
-      .trust-item {
-        padding: 10px 8px;
-      }
-
-      .trust-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 15px;
-      }
-
-      .trust-item strong {
-        font-size: 12px;
-      }
-
-      .trust-item span {
-        font-size: 10.5px;
-      }
-    }
-
     #order-products .card.product-card {
       position: relative;
       overflow: hidden;
@@ -1424,6 +1348,160 @@
         transform: rotate(360deg);
       }
     }
+
+    .mobile-bottom-nav {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-bottom-nav {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+
+        width: 100%;
+        max-width: 720px;
+        height: calc(72px + env(safe-area-inset-bottom));
+
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+
+        padding:
+          8px 12px max(8px, env(safe-area-inset-bottom));
+
+        background: rgba(255, 255, 255, .94);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+
+        border-top: 1px solid rgba(0, 0, 0, .08);
+        box-shadow: 0 -12px 32px rgba(0, 0, 0, .10);
+
+        z-index: 500;
+      }
+
+      .bottom-nav-item {
+        position: relative;
+
+        min-width: 0;
+        height: 54px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+
+        border: 0;
+        border-radius: 16px;
+        background: transparent;
+        color: var(--text2);
+
+        font-family: inherit;
+        cursor: pointer;
+
+        transition:
+          color .18s ease,
+          background .18s ease,
+          transform .15s ease;
+      }
+
+      .bottom-nav-item>i,
+      .bottom-cart-icon>i {
+        font-size: 23px;
+      }
+
+      .bottom-nav-item>span:last-child {
+        max-width: 100%;
+        font-size: 10.5px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .bottom-nav-item.active {
+        color: var(--green);
+        background: rgba(20, 163, 105, .09);
+      }
+
+      .bottom-nav-item:active {
+        transform: scale(.94);
+      }
+
+      .bottom-cart-button {
+        width: 72px;
+        height: 64px;
+        justify-self: center;
+
+        margin-top: -23px;
+
+        border: 5px solid var(--bg);
+        border-radius: 22px;
+
+        background: var(--green);
+        color: white;
+
+        box-shadow: 0 10px 26px rgba(20, 163, 105, .32);
+      }
+
+      .bottom-cart-button.active {
+        background: var(--green);
+        color: white;
+      }
+
+      .bottom-cart-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .bottom-cart-count {
+        position: absolute;
+        top: -9px;
+        right: -13px;
+
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 2px solid white;
+        border-radius: 999px;
+
+        background: #A32D2D;
+        color: white;
+
+        font-size: 10px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      /* Eski sepet paneli yeni alt menünün üzerinde dursun */
+      #cart-bar,
+      .cart-bar {
+        bottom: 86px !important;
+      }
+
+      #view-order .wrap {
+        padding-bottom: 230px;
+      }
+
+      #view-track .wrap {
+        padding-bottom: 100px;
+      }
+
+      /* Mobilde üstte tekrar eden butonları kaldır */
+      #nav-order,
+      #nav-track {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -1754,6 +1832,29 @@
     <div class="sheet" id="sheet"></div>
   </div>
 
+  <nav class="mobile-bottom-nav" aria-label="Alt menü">
+
+    <button id="bottom-nav-categories" class="bottom-nav-item active" type="button" onclick="bottomGoCategories()">
+      <i class="ti ti-category"></i>
+      <span>Kategoriler</span>
+    </button>
+
+    <button id="bottom-nav-cart" class="bottom-nav-item bottom-cart-button" type="button" onclick="bottomOpenCart()">
+      <span class="bottom-cart-icon">
+        <i class="ti ti-shopping-cart"></i>
+        <span id="bottom-cart-count" class="bottom-cart-count" hidden>0</span>
+      </span>
+
+      <span>Sepet</span>
+    </button>
+
+    <button id="bottom-nav-track" class="bottom-nav-item" type="button" onclick="bottomGoTrack()">
+      <i class="ti ti-receipt"></i>
+      <span>Sipariş Takip</span>
+    </button>
+
+  </nav>
+
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
   <script>
@@ -1897,12 +1998,73 @@
       if (v === 'order') {
         renderOrderCats()
         renderOrderProducts()
+        setBottomNavActive('categories')
+      }
+
+      if (v === 'track') {
+        setBottomNavActive('track')
       }
 
       if (v === 'admin') {
         renderAdminAll()
         startSocket()
       }
+    }
+
+    function setBottomNavActive(name) {
+      const buttons = {
+        categories: document.getElementById('bottom-nav-categories'),
+        cart: document.getElementById('bottom-nav-cart'),
+        track: document.getElementById('bottom-nav-track')
+      }
+
+      Object.entries(buttons).forEach(([key, button]) => {
+        if (button) {
+          button.classList.toggle('active', key === name)
+        }
+      })
+    }
+
+    function bottomGoCategories() {
+      switchView('order')
+
+      orderCat = null
+      orderSubCat = 'hepsi'
+
+      const searchInput = document.getElementById('product-search')
+      const filterBar = document.getElementById('shop-filter-bar')
+
+      if (searchInput) {
+        searchInput.value = ''
+      }
+
+      if (filterBar) {
+        filterBar.classList.remove('is-searching')
+      }
+
+      renderOrderCats()
+      renderOrderProducts()
+      setBottomNavActive('categories')
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+
+    function bottomOpenCart() {
+      setBottomNavActive('cart')
+      openOrderSheet()
+    }
+
+    function bottomGoTrack() {
+      switchView('track')
+      setBottomNavActive('track')
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
     }
 
     function openAdminLogin() {
@@ -2275,6 +2437,13 @@
       })
 
       const count = Object.values(cart).reduce((a, b) => a + b, 0)
+
+      const bottomCartCount = document.getElementById('bottom-cart-count')
+
+      if (bottomCartCount) {
+        bottomCartCount.textContent = count > 99 ? '99+' : count
+        bottomCartCount.hidden = count === 0
+      }
 
       const baseTotal = calcCartBaseTotal()
       const serviceFee = calcServiceFee(baseTotal)
