@@ -1547,9 +1547,6 @@
     <button class="nav-btn active" id="nav-order" onclick="switchView('order')">
       <i class="ti ti-shopping-cart"></i> Sipariş Ver
     </button>
-    <button class="nav-btn" id="nav-admin" onclick="switchView('admin')">
-      <i class="ti ti-settings"></i> Yönetim
-    </button>
   </div>
 
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
@@ -1613,7 +1610,7 @@
   </div>
   </div>
 
-  <!-- ══════════ ADMİN PANELİ ══════════ -->
+  <!-- ══════════ ADMİN PANELİ ══════════ 
   <div class="view" id="view-admin">
     <div class="wrap" style="padding-bottom:24px">
 
@@ -1643,7 +1640,7 @@
         </button>
       </div>
 
-      <!-- DASHBOARD -->
+       DASHBOARD 
       <div id="asec-dash" class="asec active">
         <div class="panel">
           <div class="stat-row" id="dashboard-stats"></div>
@@ -1670,7 +1667,7 @@
         </div>
       </div>
 
-      <!-- ÜRÜNLER -->
+       ÜRÜNLER 
       <div id="asec-prod" class="asec">
         <div class="panel">
 
@@ -1718,7 +1715,7 @@
         </div>
       </div>
 
-      <!-- KATEGORİLER -->
+      KATEGORİLER 
       <div id="asec-cat" class="asec">
         <div class="panel">
 
@@ -1746,7 +1743,7 @@
         </div>
       </div>
 
-      <!-- ALT GRUPLAR -->
+       ALT GRUPLAR 
       <div id="asec-subcat" class="asec">
         <div class="panel">
 
@@ -1797,7 +1794,7 @@
         </div>
       </div>
 
-      <!-- SİPARİŞLER -->
+       SİPARİŞLER 
       <div id="asec-orders" class="asec">
         <div class="panel">
 
@@ -1828,7 +1825,7 @@
       </div>
 
     </div>
-  </div>
+  </div>-->
 
   <div class="view" id="view-track">
     <div class="wrap">
@@ -2018,12 +2015,7 @@
 
     /* ─── NAVİGASYON ─── */
     function switchView(v) {
-      if (v === 'admin' && !isAdminLoggedIn) {
-        openAdminLogin()
-        return
-      }
-
-      ['order', 'admin', 'track'].forEach(x => {
+      ['order', 'track'].forEach(x => {
         document
           .getElementById('view-' + x)
           ?.classList.toggle('active', x === v)
@@ -2035,7 +2027,6 @@
 
       const cartBar = document.getElementById('cart-bar')
 
-      // Sipariş verme ekranından çıkınca eski sepet panelini gizle
       if (v !== 'order' && cartBar) {
         cartBar.style.display = 'none'
       }
@@ -2048,12 +2039,6 @@
 
       if (v === 'track') {
         setBottomNavActive('track')
-      }
-
-      if (v === 'admin') {
-        setBottomNavActive(null)
-        renderAdminAll()
-        startSocket()
       }
     }
 
@@ -2839,14 +2824,14 @@
     }
 
     function closeSheet() {
-  const sheetOverlay = document.getElementById('sheet-overlay')
+      const sheetOverlay = document.getElementById('sheet-overlay')
 
-  if (sheetOverlay) {
-    sheetOverlay.classList.remove('open')
-  }
+      if (sheetOverlay) {
+        sheetOverlay.classList.remove('open')
+      }
 
-  setBottomNavActive(bottomNavBeforeCart)
-}
+      setBottomNavActive(bottomNavBeforeCart)
+    }
     function sheetBg(e) { if (e.target === document.getElementById('sheet-overlay')) closeSheet(); }
 
     /* ─── ADMİN ─── */
