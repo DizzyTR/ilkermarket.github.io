@@ -1,0 +1,24 @@
+{
+  "id": "/admin/",
+  "name": "İlker Market Yönetim",
+  "short_name": "İlker Yönetim",
+  "description": "İlker Market yönetim uygulaması",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "background_color": "#f5f6f4",
+  "theme_color": "#14a369",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

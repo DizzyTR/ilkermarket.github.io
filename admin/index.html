@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sipariş Uygulaması</title>
   <meta name="color-scheme" content="light">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#1D9E75">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="/admin/manifest.json">
+  <meta name="theme-color" content="#14a369">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     *,
@@ -1554,6 +1554,14 @@
       background: #a32d2d !important;
       color: white !important;
     }
+
+    #overlay.overlay {
+      display: none;
+    }
+
+    #overlay.overlay.open {
+      display: flex;
+    }
   </style>
 </head>
 
@@ -1572,6 +1580,11 @@
       </small>
     </div>
 
+    <button id="admin-install-btn" class="nav-btn" type="button" onclick="installAdminApp()">
+      <i class="ti ti-device-mobile-down"></i>
+      Uygulamayı Yükle
+    </button>
+
     <a href="/" class="nav-btn" style="text-decoration:none">
       <i class="ti ti-external-link"></i>
       Siteye Dön
@@ -1580,6 +1593,7 @@
     <button id="admin-logout-btn" type="button" class="btn danger-btn" onclick="logoutAdmin()">
       Çıkış Yap
     </button>
+
   </div>
 
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
@@ -1713,7 +1727,7 @@
               <option value="">Tüm kategoriler</option>
             </select>
 
-            <button class="btn btn-g" onclick="openModal('prod','new')">
+            <button class="btn btn-g" type="button" onclick="openModal('prod','new')">
               <i class="ti ti-plus"></i> Yeni ürün
             </button>
 
@@ -3226,10 +3240,24 @@
         <button class="btn btn-g" onclick="saveCat()">Kaydet</button>
       </div>`;
       }
-      document.getElementById('overlay').classList.add('open');
+      const overlay = document.getElementById('overlay')
+
+      if (overlay) {
+        overlay.style.removeProperty('display')
+        overlay.classList.add('open')
+      }
     }
 
-    function closeModal() { document.getElementById('overlay').classList.remove('open'); editTarget = null; }
+    function closeModal() {
+      const overlay = document.getElementById('overlay')
+
+      if (overlay) {
+        overlay.classList.remove('open')
+        overlay.style.removeProperty('display')
+      }
+
+      editTarget = null
+    }
     function overlayBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
     function updateProductSubCatOptions() {
@@ -4503,7 +4531,7 @@
       // Giriş penceresini kapat
       if (overlay) {
         overlay.classList.remove('open')
-        overlay.style.display = 'none'
+        overlay.style.removeProperty('display')
       }
 
       // Çıkış butonunu göster
@@ -4515,6 +4543,121 @@
       startSocket()
 
       console.log('Admin panel açıldı')
+    }
+
+    let adminInstallPrompt = null
+
+    function isAdminAppInstalled() {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      )
+    }
+
+    function isIOSDevice() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent)
+    }
+
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault()
+
+      adminInstallPrompt = event
+
+      const button = document.getElementById('admin-install-btn')
+
+      if (button && !isAdminAppInstalled()) {
+        button.style.display = 'inline-flex'
+      }
+    })
+
+    async function installAdminApp() {
+      const button = document.getElementById('admin-install-btn')
+
+      if (isAdminAppInstalled()) {
+        if (button) button.style.display = 'none'
+        return
+      }
+
+      // iPhone ve iPad için manuel kurulum
+      if (isIOSDevice() && !adminInstallPrompt) {
+        alert(
+          'Yönetim uygulamasını yüklemek için Safari’de Paylaş butonuna basın ve “Ana Ekrana Ekle” seçeneğini seçin.'
+        )
+        return
+      }
+
+      if (!adminInstallPrompt) {
+        alert(
+          'Kurulum şu anda hazır değil. Sayfayı yenileyip birkaç saniye sonra tekrar deneyin.'
+        )
+        return
+      }
+
+      adminInstallPrompt.prompt()
+
+      const choice = await adminInstallPrompt.userChoice
+
+      console.log('Admin uygulama kurulum sonucu:', choice.outcome)
+
+      adminInstallPrompt = null
+
+      if (button) {
+        button.style.display = 'none'
+      }
+    }
+
+    window.addEventListener('appinstalled', () => {
+      adminInstallPrompt = null
+
+      const button = document.getElementById('admin-install-btn')
+
+      if (button) {
+        button.style.display = 'none'
+      }
+
+      console.log('İlker Market Yönetim uygulaması yüklendi')
+    })
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const button = document.getElementById('admin-install-btn')
+
+      if (!button || isAdminAppInstalled()) return
+
+      // iOS'ta native kurulum olayı gelmediği için
+      // manuel yönerge butonunu gösteriyoruz.
+      if (isIOSDevice()) {
+        button.style.display = 'inline-flex'
+      }
+    })
+
+    if (
+      'serviceWorker' in navigator &&
+      (
+        location.protocol === 'https:' ||
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1'
+      )
+    ) {
+      window.addEventListener('load', async () => {
+        try {
+          const registration = await navigator.serviceWorker.register(
+            '/admin/sw.js',
+            {
+              scope: '/admin/'
+            }
+          )
+
+          console.log(
+            'Admin Service Worker kayıtlı:',
+            registration.scope
+          )
+        } catch (error) {
+          console.error(
+            'Admin Service Worker hatası:',
+            error
+          )
+        }
+      })
     }
   </script>
 
