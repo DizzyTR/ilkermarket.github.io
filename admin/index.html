@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sipariş Uygulaması</title>
   <meta name="color-scheme" content="light">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1D9E75">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -121,6 +121,10 @@
 
     .view.active {
       display: block;
+    }
+
+    #view-admin.active {
+      display: block !important;
     }
 
     /* ── CONTAINER ── */
@@ -1534,21 +1538,47 @@
       box-shadow: 0 24px 70px rgba(0, 0, 0, .25);
       -webkit-overflow-scrolling: touch;
     }
+
+    #view-order,
+    #view-track,
+    .mobile-bottom-nav,
+    #cart-bar {
+      display: none !important;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .danger-btn {
+      background: #a32d2d !important;
+      color: white !important;
+    }
   </style>
 </head>
 
 <body>
 
   <div class="topbar">
-    <div class="logo">🛒 İlker<span>Market</span></div>
-    <button class="nav-btn" id="nav-track" onclick="switchView('track')">
-      <i class="ti ti-search"></i> Sipariş Takip
-    </button>
-    <button class="nav-btn active" id="nav-order" onclick="switchView('order')">
-      <i class="ti ti-shopping-cart"></i> Sipariş Ver
-    </button>
-    <button class="nav-btn" id="nav-admin" onclick="switchView('admin')">
-      <i class="ti ti-settings"></i> Yönetim
+    <div class="logo">
+      🛒 İlker<span>Market</span>
+      <small style="
+      margin-left:8px;
+      color:var(--text2);
+      font-size:11px;
+      font-weight:600;
+    ">
+        Yönetim
+      </small>
+    </div>
+
+    <a href="/" class="nav-btn" style="text-decoration:none">
+      <i class="ti ti-external-link"></i>
+      Siteye Dön
+    </a>
+
+    <button id="admin-logout-btn" type="button" class="btn danger-btn" onclick="logoutAdmin()">
+      Çıkış Yap
     </button>
   </div>
 
@@ -1917,6 +1947,7 @@
       { id: 'esenler', name: 'Esenler Mahallesi', fee: 150, active: true },
     ]
 
+
     async function loadData() {
 
       try {
@@ -2008,7 +2039,12 @@
       reader.readAsText(file);
     }
 
-    let products, cats, subcats, regions, nextId;
+    let products = []
+    let cats = []
+    let subcats = []
+    let regions = []
+    let orders = []
+    let nextId;
     loadData();
 
     const cart = {};
@@ -2172,23 +2208,70 @@
           return alert(data.message || "Giriş başarısız")
         }
 
+        if (!data.token) {
+          return alert("Sunucudan admin tokenı alınamadı")
+        }
+
+        // Backend’den gelen gerçek tokenı bu cihazda sakla
+        localStorage.setItem("adminToken", data.token)
+
         isAdminLoggedIn = true
-        startSocket()
-        console.log("Admin giriş durumu:", isAdminLoggedIn)
 
-        document.getElementById('overlay').classList.remove('open')
-
-        document.getElementById('view-order').classList.remove('active')
-        document.getElementById('view-admin').classList.add('active')
-
-        document.getElementById('nav-order').classList.remove('active')
-        document.getElementById('nav-admin').classList.add('active')
-
-        renderAdminAll()
+        showAdminPanel()
 
       } catch (err) {
         console.log("Login hatası:", err)
         alert("API bağlantı hatası")
+      }
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('adminToken')
+
+      isAdminLoggedIn = false
+
+      lockAdminPanel()
+      openAdminLogin()
+    }
+
+    async function checkAdminSession() {
+      const token = localStorage.getItem("adminToken")
+
+      lockAdminPanel()
+
+      if (!token) {
+        isAdminLoggedIn = false
+        openAdminLogin()
+        return
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/admin/verify`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!res.ok) {
+          throw new Error("Geçersiz oturum")
+        }
+
+        const data = await res.json()
+
+        if (!data.success) {
+          throw new Error("Oturum doğrulanamadı")
+        }
+
+        isAdminLoggedIn = true
+        showAdminPanel()
+      } catch (error) {
+        console.error("Admin oturum kontrolü:", error)
+
+        localStorage.removeItem("adminToken")
+        isAdminLoggedIn = false
+
+        lockAdminPanel()
+        openAdminLogin()
       }
     }
 
@@ -2839,14 +2922,14 @@
     }
 
     function closeSheet() {
-  const sheetOverlay = document.getElementById('sheet-overlay')
+      const sheetOverlay = document.getElementById('sheet-overlay')
 
-  if (sheetOverlay) {
-    sheetOverlay.classList.remove('open')
-  }
+      if (sheetOverlay) {
+        sheetOverlay.classList.remove('open')
+      }
 
-  setBottomNavActive(bottomNavBeforeCart)
-}
+      setBottomNavActive(bottomNavBeforeCart)
+    }
     function sheetBg(e) { if (e.target === document.getElementById('sheet-overlay')) closeSheet(); }
 
     /* ─── ADMİN ─── */
@@ -3202,19 +3285,13 @@
 
       try {
         if (editTarget.id === 'new') {
-          await fetch(`${API_URL}/products`, {
+          const res = await adminFetch(`${API_URL}/products`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
           })
         } else {
-          await fetch(`${API_URL}/products/${editTarget.id}`, {
+          const res = await adminFetch(`${API_URL}/products/${editTarget.id}`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
           })
         }
@@ -3352,21 +3429,15 @@
 
         if (editTarget.id === 'new') {
 
-          await fetch(`${API_URL}/categories`, {
+          await adminFetch(`${API_URL}/categories`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
           })
 
         } else {
 
-          await fetch(`${API_URL}/categories/${editTarget.id}`, {
+          await adminFetch(`${API_URL}/categories/${editTarget.id}`, {
             method: "PUT",
-            headers: {
-              "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
           })
 
@@ -3507,11 +3578,8 @@
         active: p.active ? 0 : 1
       }
 
-      await fetch(`${API_URL}/products/${id}`, {
+      const res = await adminFetch(`${API_URL}/products/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
       })
 
@@ -3526,7 +3594,7 @@
 
       try {
 
-        await fetch(`${API_URL}/products/${id}`, {
+        const res = await adminFetch(`${API_URL}/products/${id}`, {
           method: "DELETE"
         })
 
@@ -3553,11 +3621,8 @@
         active: c.active ? 0 : 1
       }
 
-      await fetch(`${API_URL}/categories/${id}`, {
+      await adminFetch(`${API_URL}/categories/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
       })
 
@@ -3572,7 +3637,7 @@
 
       try {
 
-        await fetch(`${API_URL}/categories/${id}`, {
+        await adminFetch(`${API_URL}/categories/${id}`, {
           method: "DELETE"
         })
 
@@ -3745,19 +3810,22 @@
 
     async function updateOrderStatus(id, status) {
       try {
-        await fetch(`${API_URL}/orders/${id}/status`, {
+        const res = await adminFetch(`${API_URL}/orders/${id}/status`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
           body: JSON.stringify({ status })
         })
 
-        renderOrders()
+        const data = await res.json()
+
+        if (!res.ok) {
+          throw new Error(data.message || "Sipariş durumu güncellenemedi")
+        }
+
+        await renderOrders()
 
       } catch (err) {
-        console.log(err)
-        alert("Sipariş durumu güncellenemedi")
+        console.error(err)
+        alert(err.message || "Sipariş durumu güncellenemedi")
       }
     }
 
@@ -4252,13 +4320,6 @@
       })
     }
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-          .then(() => console.log("Service Worker kayıt edildi"))
-          .catch(err => console.log("Service Worker hatası:", err))
-      })
-    }
 
     function optimizeImage(url) {
       if (!url) return ""
@@ -4362,9 +4423,99 @@
         : 0
     }
 
+    async function adminFetch(url, options = {}) {
+      const token = localStorage.getItem("adminToken")
+
+      if (!token) {
+        logoutAdmin()
+        throw new Error("Admin oturumu bulunamadı")
+      }
+
+      const headers = new Headers(options.headers || {})
+
+      headers.set("Authorization", `Bearer ${token}`)
+
+      if (
+        options.body &&
+        !(options.body instanceof FormData) &&
+        !headers.has("Content-Type")
+      ) {
+        headers.set("Content-Type", "application/json")
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers
+      })
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("adminToken")
+        isAdminLoggedIn = false
+        lockAdminPanel()
+        openAdminLogin()
+
+        throw new Error("Admin oturumunun süresi doldu")
+      }
+
+      return response
+    }
+
 
     /* ─── BAŞLANGIÇ ─── */
     loadData()
+
+    document.addEventListener("DOMContentLoaded", () => {
+      checkAdminSession()
+    })
+
+    if (isAdminLoggedIn) {
+      renderAdminAll()
+      startSocket()
+    } else {
+      openAdminLogin()
+    }
+
+    function lockAdminPanel() {
+      const panel = document.getElementById('view-admin')
+
+      if (panel) {
+        panel.hidden = true
+        panel.classList.remove('active')
+      }
+    }
+
+    function showAdminPanel() {
+      const panel = document.getElementById('view-admin')
+      const overlay = document.getElementById('overlay')
+      const logoutBtn = document.getElementById('admin-logout-btn')
+
+      if (!panel) {
+        console.error('view-admin bulunamadı')
+        return
+      }
+
+      // Paneli görünür yap
+      panel.hidden = false
+      panel.removeAttribute('hidden')
+      panel.classList.add('active')
+      panel.style.removeProperty('display')
+
+      // Giriş penceresini kapat
+      if (overlay) {
+        overlay.classList.remove('open')
+        overlay.style.display = 'none'
+      }
+
+      // Çıkış butonunu göster
+      if (logoutBtn) {
+        logoutBtn.style.display = ''
+      }
+
+      renderAdminAll()
+      startSocket()
+
+      console.log('Admin panel açıldı')
+    }
   </script>
 
   <audio id="new-order-sound" preload="auto">
