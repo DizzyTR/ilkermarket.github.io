@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sipariş Uygulaması</title>
+  <title>İlkerMarket | Online Sipariş</title>
   <meta name="color-scheme" content="light">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1D9E75">
@@ -1584,60 +1584,975 @@
       margin-top: 5px;
       padding-bottom: 8px;
     }
+
+    /* ===== İLKERMARKET MÜŞTERİ UYGULAMA TASARIMI V2 ===== */
+
+    body {
+      background: #fff;
+    }
+
+    .customer-hidden-nav {
+      display: none !important;
+    }
+
+    .customer-topbar {
+      height: 76px;
+      padding: 0 clamp(16px, 4vw, 34px);
+      justify-content: space-between;
+      background: rgba(255, 255, 255, .97);
+      border-bottom: 1px solid rgba(15, 35, 25, .055);
+      box-shadow: 0 4px 24px rgba(20, 45, 32, .035);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .customer-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      background: transparent;
+      color: #111814;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .customer-brand-icon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .customer-brand-dot {
+      position: absolute;
+      top: -1px;
+      right: -2px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #e03838;
+      border: 2px solid #fff;
+    }
+
+    .customer-brand-text {
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 850;
+      letter-spacing: -.75px;
+    }
+
+    .customer-brand-text > span {
+      color: #079968;
+    }
+
+    .customer-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .customer-topbar-icon {
+      position: relative;
+      width: 43px;
+      height: 43px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: #171d19;
+      font-size: 27px;
+      cursor: pointer;
+    }
+
+    .customer-topbar-icon:active {
+      background: #f1f6f3;
+      transform: scale(.96);
+    }
+
+    .customer-notification-dot {
+      position: absolute;
+      top: 5px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #08a36d;
+      border: 2px solid #fff;
+    }
+
+    #view-order {
+      --customer-green: #08a36d;
+      --customer-green-dark: #07865b;
+      --customer-soft-green: #e9f8f2;
+      --customer-text: #202923;
+      --customer-muted: #757e79;
+      --customer-border: #dee5e1;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(8, 163, 109, .035), transparent 420px),
+        #fff;
+    }
+
+    #view-order .customer-wrap {
+      width: min(1180px, 100%);
+      max-width: none;
+      margin: 0 auto;
+      padding: 22px clamp(14px, 3vw, 30px) 280px;
+    }
+
+    #shop-filter-bar.customer-shop-panel {
+      position: sticky;
+      top: 76px;
+      z-index: 80;
+      display: block;
+      padding: 8px 0 12px;
+      background: rgba(255, 255, 255, .93);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .market-searchbox {
+      position: relative;
+      width: 100%;
+      margin-bottom: 26px;
+    }
+
+    .market-searchbox > i {
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      z-index: 2;
+      transform: translateY(-50%);
+      color: #737c77;
+      font-size: 26px;
+      pointer-events: none;
+    }
+
+    #search-wrap.market-searchbox input {
+      width: 100%;
+      height: 64px;
+      padding: 0 55px 0 58px;
+      border: 1px solid #d9e0dc;
+      border-radius: 19px;
+      outline: 0;
+      background: rgba(255, 255, 255, .98) !important;
+      color: var(--customer-text);
+      font-family: inherit;
+      font-size: 17px;
+      box-shadow:
+        0 5px 18px rgba(20, 45, 32, .045),
+        inset 0 0 0 1px rgba(255, 255, 255, .6) !important;
+    }
+
+    #search-wrap.market-searchbox input::placeholder {
+      color: #a3aaa6;
+    }
+
+    #search-wrap.market-searchbox input:focus {
+      border-color: rgba(8, 163, 109, .48);
+      box-shadow:
+        0 0 0 4px rgba(8, 163, 109, .085),
+        0 8px 24px rgba(20, 45, 32, .06) !important;
+    }
+
+    #clear-search-btn {
+      position: absolute;
+      top: 50%;
+      right: 13px;
+      z-index: 3;
+      width: 36px;
+      height: 36px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-50%);
+      border: 0;
+      border-radius: 50%;
+      background: #eef2f0;
+      color: #5c6661;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #shop-filter-bar.is-searching #clear-search-btn {
+      display: flex;
+    }
+
+    .market-filter-section {
+      width: 100%;
+    }
+
+    .market-filter-header {
+      min-height: 34px;
+      margin-bottom: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .market-filter-header h2 {
+      margin: 0;
+      color: #252d29;
+      font-size: 17px;
+      font-weight: 850;
+      letter-spacing: -.25px;
+    }
+
+    .filter-discover {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #929a96;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .filter-discover i {
+      font-size: 19px;
+    }
+
+    .filter-scroll-shell {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #view-order .filter-scroll {
+      width: 100%;
+      display: flex !important;
+      align-items: center;
+      justify-content: flex-start !important;
+      flex-wrap: nowrap !important;
+      gap: 10px;
+      margin: 0 !important;
+      padding: 2px 58px 9px 0 !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    #view-order .filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    #view-order .filter-scroll .cat-btn {
+      flex: 0 0 auto !important;
+      min-height: 46px;
+      padding: 0 19px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid #d7ded9;
+      border-radius: 999px;
+      background: #fff;
+      color: #424b46;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 650;
+      white-space: nowrap;
+      scroll-snap-align: start;
+      box-shadow: 0 3px 10px rgba(20, 45, 33, .025);
+      transition:
+        color .18s ease,
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+    }
+
+    #view-order .filter-scroll .cat-btn:active {
+      transform: scale(.97);
+    }
+
+    #view-order .filter-scroll .cat-btn.active {
+      border-color: var(--customer-green);
+      background: linear-gradient(135deg, #0caf77, #069361);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(8, 163, 109, .21);
+    }
+
+    .filter-scroll-shell::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      width: 66px;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, .90) 47%,
+        #fff 82%
+      );
+      pointer-events: none;
+    }
+
+    .filter-next-btn {
+      position: absolute;
+      top: 50%;
+      right: 1px;
+      z-index: 4;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-56%);
+      border: 1px solid #dfe4e1;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .98);
+      color: #3f4743;
+      font-size: 21px;
+      cursor: pointer;
+      box-shadow: 0 5px 16px rgba(17, 37, 27, .09);
+    }
+
+    .market-filter-divider {
+      width: 100%;
+      height: 1px;
+      margin: 16px 0 18px;
+      background: #edf0ee;
+    }
+
+    #subcategory-section[hidden] {
+      display: none !important;
+    }
+
+    #shop-filter-bar.is-searching #subcategory-section {
+      display: none !important;
+    }
+
+    #shop-filter-bar.is-searching #order-cats::before {
+      content: "🔎 Tüm Ürünler";
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 0 19px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0caf77, #069361);
+      color: white;
+      font-size: 14px;
+      font-weight: 750;
+      box-shadow: 0 8px 20px rgba(8, 163, 109, .21);
+    }
+
+    #view-order .customer-product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    #view-order .customer-product-grid.is-changing {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    #view-order .customer-product-grid .card.product-card {
+      min-width: 0;
+      padding: 11px;
+      gap: 7px;
+      border: 1px solid #e0e6e2;
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 9px 28px rgba(22, 47, 34, .05);
+      overflow: hidden;
+    }
+
+    #view-order .customer-product-grid .card.product-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(8, 163, 109, .28);
+      box-shadow: 0 13px 34px rgba(22, 47, 34, .08);
+    }
+
+    #view-order .customer-product-grid .card-media {
+      width: 100%;
+      height: 170px;
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fff;
+      margin-bottom: 8px;
+    }
+
+    #view-order .customer-product-grid .card-media img {
+      width: 100%;
+      height: 100%;
+      padding: 7px;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 12px;
+    }
+
+    #view-order .customer-product-grid .product-info {
+      min-height: 58px;
+    }
+
+    #view-order .customer-product-grid .card-name {
+      min-height: 38px;
+      display: -webkit-box;
+      overflow: hidden;
+      color: #29312d;
+      font-size: 14px;
+      font-weight: 760;
+      line-height: 1.36;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+
+    #view-order .customer-product-grid .card-desc {
+      min-height: 16px;
+      margin-top: 3px;
+      display: -webkit-box;
+      overflow: hidden;
+      color: #7a837e;
+      font-size: 11px;
+      line-height: 1.35;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+    }
+
+    #view-order .customer-product-grid .card-footer {
+      margin-top: auto;
+      padding-top: 7px;
+      border-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #view-order .customer-product-grid .price {
+      color: var(--customer-green);
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -.25px;
+    }
+
+    #view-order .customer-product-grid .add-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b279, #078f60);
+      color: #fff;
+      font-size: 25px;
+      font-weight: 500;
+      box-shadow: 0 7px 17px rgba(8, 163, 109, .24);
+    }
+
+    #view-order .customer-product-grid .qty-ctrl {
+      padding: 3px;
+      gap: 4px;
+      border-radius: 999px;
+      background: var(--customer-soft-green);
+      border: 0;
+    }
+
+    #view-order .customer-product-grid .qty-btn {
+      width: 31px;
+      height: 31px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--customer-green);
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    #view-order .customer-product-grid .qty-num {
+      min-width: 24px;
+      color: var(--customer-green-dark);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    #cart-bar {
+      position: fixed;
+      left: 50%;
+      right: auto;
+      bottom: calc(82px + env(safe-area-inset-bottom));
+      z-index: 840;
+      width: min(1120px, calc(100% - 28px));
+      max-width: none;
+      padding: 0;
+      transform: translateX(-50%);
+      pointer-events: auto;
+    }
+
+    #cart-bar .customer-cart-panel {
+      padding: 16px 22px;
+      border: 1px solid #dde4df;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, .97);
+      box-shadow: 0 18px 50px rgba(17, 41, 28, .15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    #cart-bar .free-delivery-box {
+      margin-bottom: 0;
+    }
+
+    #cart-bar .free-delivery-top {
+      margin-bottom: 9px;
+      font-size: 13px;
+    }
+
+    #cart-bar .free-delivery-top span {
+      color: #525b56;
+      font-weight: 800;
+    }
+
+    #cart-bar .free-delivery-top strong {
+      color: var(--customer-green);
+      font-weight: 900;
+    }
+
+    #cart-bar .free-delivery-track {
+      height: 8px;
+      border: 1px solid #d6dcd8;
+      background: #eff2f0;
+    }
+
+    #cart-bar #free-delivery-fill {
+      background: linear-gradient(90deg, #0cb47a, #078d60);
+    }
+
+    #cart-bar .cart-main-row {
+      margin-top: 13px;
+      gap: 20px;
+    }
+
+    .customer-cart-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .customer-cart-bag {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #535d58;
+      font-size: 29px;
+    }
+
+    #cart-bar .cart-summary span {
+      margin-bottom: 1px;
+      color: #727b76;
+      font-size: 12px;
+    }
+
+    #cart-bar .cart-summary strong {
+      color: #151b18;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    #cart-bar #co-btn {
+      min-width: 245px;
+      min-height: 55px;
+      padding: 0 25px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0daf75, #078e5f);
+      font-size: 17px;
+      font-weight: 850;
+      box-shadow: 0 10px 23px rgba(8, 163, 109, .19);
+    }
+
+    .mobile-bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 900;
+      width: min(1180px, 100%);
+      max-width: none;
+      height: calc(78px + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      transform: translateX(-50%);
+      padding: 7px 12px max(8px, env(safe-area-inset-bottom));
+      border-top: 1px solid #e3e8e5;
+      border-radius: 24px 24px 0 0;
+      background: rgba(255, 255, 255, .97);
+      box-shadow: 0 -10px 34px rgba(17, 39, 27, .09);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    .mobile-bottom-nav .bottom-nav-item {
+      min-width: 0;
+      height: 61px;
+      border-radius: 16px;
+      color: #565f5a;
+      background: transparent;
+    }
+
+    .mobile-bottom-nav .bottom-nav-item > i,
+    .mobile-bottom-nav .bottom-cart-icon > i {
+      font-size: 26px;
+    }
+
+    .mobile-bottom-nav .bottom-nav-item > span:last-child {
+      font-size: 11px;
+      font-weight: 780;
+    }
+
+    .mobile-bottom-nav .bottom-nav-item.active {
+      color: var(--customer-green);
+      background: transparent;
+    }
+
+    .mobile-bottom-nav .bottom-cart-button {
+      position: relative;
+      width: 82px;
+      height: 82px;
+      margin-top: -35px;
+      border: 6px solid #fff;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #11b67c, #078c5e);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(8, 163, 109, .30);
+    }
+
+    .mobile-bottom-nav .bottom-cart-button > span:last-child {
+      margin-top: 2px;
+      color: #fff;
+      font-weight: 850;
+    }
+
+    .mobile-bottom-nav .bottom-cart-icon > i {
+      font-size: 34px;
+    }
+
+    .mobile-bottom-nav .bottom-cart-count {
+      top: -7px;
+      right: -12px;
+      min-width: 24px;
+      height: 24px;
+      border: 3px solid #fff;
+      background: #d93434;
+      font-size: 11px;
+    }
+
+    @media (min-width: 769px) {
+      .mobile-bottom-nav {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 900px) {
+      #view-order .customer-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .customer-topbar {
+        height: 62px;
+        padding: 0 14px;
+      }
+
+      .customer-brand-icon {
+        font-size: 24px;
+      }
+
+      .customer-brand-text {
+        font-size: 19px;
+      }
+
+      .customer-topbar-icon {
+        width: 37px;
+        height: 37px;
+        font-size: 23px;
+      }
+
+      #view-order .customer-wrap {
+        padding: 12px 11px 270px;
+      }
+
+      #shop-filter-bar.customer-shop-panel {
+        top: 62px;
+        padding-top: 5px;
+      }
+
+      .market-searchbox {
+        margin-bottom: 18px;
+      }
+
+      #search-wrap.market-searchbox input {
+        height: 52px;
+        padding-left: 48px;
+        border-radius: 15px;
+        font-size: 14px;
+      }
+
+      .market-searchbox > i {
+        left: 15px;
+        font-size: 21px;
+      }
+
+      .market-filter-header h2 {
+        font-size: 14px;
+      }
+
+      .filter-discover {
+        font-size: 10px;
+      }
+
+      #view-order .filter-scroll .cat-btn {
+        min-height: 39px;
+        padding: 0 15px;
+        font-size: 12px;
+      }
+
+      .filter-next-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+      }
+
+      #view-order .customer-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      #view-order .customer-product-grid .card.product-card {
+        padding: 9px;
+        border-radius: 16px;
+      }
+
+      #view-order .customer-product-grid .card-media {
+        height: 125px;
+        min-height: 125px;
+      }
+
+      #view-order .customer-product-grid .product-info {
+        min-height: 52px;
+      }
+
+      #view-order .customer-product-grid .card-name {
+        min-height: 34px;
+        font-size: 12px;
+      }
+
+      #view-order .customer-product-grid .card-desc {
+        font-size: 10px;
+      }
+
+      #view-order .customer-product-grid .price {
+        font-size: 15px;
+      }
+
+      #view-order .customer-product-grid .add-btn {
+        width: 37px;
+        height: 37px;
+        font-size: 22px;
+      }
+
+      #cart-bar {
+        bottom: calc(75px + env(safe-area-inset-bottom));
+        width: calc(100% - 20px);
+      }
+
+      #cart-bar .customer-cart-panel {
+        padding: 12px 13px;
+        border-radius: 21px;
+      }
+
+      #cart-bar .free-delivery-top {
+        font-size: 10px;
+        gap: 7px;
+      }
+
+      #cart-bar .cart-main-row {
+        gap: 10px;
+      }
+
+      .customer-cart-bag {
+        display: none;
+      }
+
+      #cart-bar .cart-summary strong {
+        font-size: 22px;
+      }
+
+      #cart-bar #co-btn {
+        min-width: 0;
+        min-height: 48px;
+        padding: 0 17px;
+        border-radius: 15px;
+        font-size: 13px;
+      }
+
+      .mobile-bottom-nav {
+        height: calc(72px + env(safe-area-inset-bottom));
+      }
+
+      .mobile-bottom-nav .bottom-cart-button {
+        width: 74px;
+        height: 74px;
+        margin-top: -30px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .filter-discover {
+        display: none;
+      }
+
+      #cart-bar .free-delivery-top span {
+        max-width: 190px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
 
-  <div class="topbar">
-    <div class="logo">🛒 İlker<span>Market</span></div>
-    <button class="nav-btn" id="nav-track" onclick="switchView('track')">
-      <i class="ti ti-search"></i> Sipariş Takip
+  <div class="topbar customer-topbar">
+    <button class="customer-brand" type="button" onclick="bottomGoCategories()" aria-label="İlkerMarket ana sayfa">
+      <span class="customer-brand-icon">
+        <i class="ti ti-shopping-cart"></i>
+        <span class="customer-brand-dot"></span>
+      </span>
+      <span class="customer-brand-text">İlker<span>Market</span></span>
     </button>
-    <button class="nav-btn active" id="nav-order" onclick="switchView('order')">
-      <i class="ti ti-shopping-cart"></i> Sipariş Ver
+
+    <div class="customer-topbar-actions">
+      <button class="customer-topbar-icon" type="button" aria-label="Bildirimler">
+        <i class="ti ti-bell"></i>
+        <span class="customer-notification-dot"></span>
+      </button>
+
+      <button class="customer-topbar-icon" type="button" onclick="switchView('track')" aria-label="Sipariş takip">
+        <i class="ti ti-user"></i>
+      </button>
+    </div>
+
+    <!-- Mevcut JavaScript uyumluluğu için görünmez bırakıldı -->
+    <button class="nav-btn active customer-hidden-nav" id="nav-order" type="button" onclick="switchView('order')">
+      Sipariş Ver
+    </button>
+    <button class="nav-btn customer-hidden-nav" id="nav-track" type="button" onclick="switchView('track')">
+      Sipariş Takip
     </button>
   </div>
 
   <!-- ══════════ SİPARİŞ SAYFASI ══════════ -->
   <div class="view active" id="view-order">
-    <div class="wrap">
+    <div class="wrap customer-wrap">
 
-      <div id="shop-filter-bar">
+      <div id="shop-filter-bar" class="customer-shop-panel">
 
-        <div id="search-wrap" style="margin-bottom:10px; display:none;">
-          <input id="product-search" type="text" placeholder="Ürün ara..." oninput="renderOrderProducts()" style="
-          width:100%;
-          height:42px;
-          border-radius:12px;
-          border:0.5px solid var(--border2);
-          background:var(--bg2);
-          color:var(--text);
-          padding:0 14px;
-          font-size:14px;
-          outline:none;
-        ">
-          <button id="clear-search-btn" type="button" onclick="clearProductSearch()">
-            ✕
+        <div id="search-wrap" class="market-searchbox">
+          <i class="ti ti-search" aria-hidden="true"></i>
+
+          <input
+            id="product-search"
+            type="text"
+            placeholder="Ürün ara..."
+            autocomplete="off"
+            oninput="renderOrderProducts()"
+          >
+
+          <button id="clear-search-btn" type="button" onclick="clearProductSearch()" aria-label="Aramayı temizle">
+            <i class="ti ti-x"></i>
           </button>
         </div>
 
-        <div id="order-cats" class="filter-scroll category-scroll"></div>
-        <div id="order-subcats" class="filter-scroll subcategory-scroll"></div>
+        <section class="market-filter-section">
+          <div class="market-filter-header">
+            <h2>Ana Kategoriler</h2>
+
+            <button class="filter-discover" type="button" onclick="scrollFilterRow('order-cats')">
+              Kaydırarak keşfet
+              <i class="ti ti-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="filter-scroll-shell">
+            <div id="order-cats" class="filter-scroll category-scroll"></div>
+
+            <button
+              class="filter-next-btn"
+              type="button"
+              onclick="scrollFilterRow('order-cats')"
+              aria-label="Ana kategorileri sağa kaydır"
+            >
+              <i class="ti ti-chevron-right"></i>
+            </button>
+          </div>
+        </section>
+
+        <div class="market-filter-divider"></div>
+
+        <section class="market-filter-section" id="subcategory-section">
+          <div class="market-filter-header">
+            <h2>Alt Kategoriler</h2>
+
+            <button class="filter-discover" type="button" onclick="scrollFilterRow('order-subcats')">
+              Kaydırarak keşfet
+              <i class="ti ti-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="filter-scroll-shell">
+            <div id="order-subcats" class="filter-scroll subcategory-scroll"></div>
+
+            <button
+              class="filter-next-btn"
+              type="button"
+              onclick="scrollFilterRow('order-subcats')"
+              aria-label="Alt kategorileri sağa kaydır"
+            >
+              <i class="ti ti-chevron-right"></i>
+            </button>
+          </div>
+        </section>
 
       </div>
 
-      <div class="products" id="order-products"></div>
+      <div class="products customer-product-grid" id="order-products"></div>
 
     </div>
   </div>
+
   <div id="cart-bar" style="display:none;">
-    <div class="cart-panel">
+    <div class="cart-panel customer-cart-panel">
 
       <div class="free-delivery-box">
         <div class="free-delivery-top">
           <span id="free-delivery-text">1000 TL’ye tamamla, teslimat ücretsiz olsun</span>
-          <strong id="free-delivery-amount">₺0 / ₺1000</strong>
+          <strong id="free-delivery-amount">₺0 / ₺1.000</strong>
         </div>
 
         <div class="free-delivery-track">
@@ -1646,9 +2561,15 @@
       </div>
 
       <div class="cart-main-row">
-        <div class="cart-summary">
-          <span id="cart-count">0 ürün</span>
-          <strong id="cart-total">₺0</strong>
+        <div class="customer-cart-left">
+          <span class="customer-cart-bag">
+            <i class="ti ti-shopping-bag"></i>
+          </span>
+
+          <div class="cart-summary">
+            <span id="cart-count">0 ürün</span>
+            <strong id="cart-total">₺0</strong>
+          </div>
         </div>
 
         <button id="co-btn" type="button" onclick="openOrderSheet()" disabled>
@@ -1657,7 +2578,6 @@
       </div>
 
     </div>
-  </div>
   </div>
 
   <!-- ══════════ ADMİN PANELİ ══════════ 
@@ -1982,6 +2902,15 @@
 
         nextId = products.reduce((m, p) => Math.max(m, p.id), 0) + 1
 
+        if (!orderCat) {
+          const preferredCategory = cats.find(c =>
+            c.active && /atıştır/i.test(String(c.name || ''))
+          ) || cats.find(c => c.active)
+
+          orderCat = preferredCategory?.id || null
+          orderSubCat = 'hepsi'
+        }
+
         renderOrderCats()
         renderOrderSubCats()
         renderOrderProducts()
@@ -2083,7 +3012,9 @@
 
       if (v === 'order') {
         renderOrderCats()
+        renderOrderSubCats()
         renderOrderProducts()
+        updateCartBar()
         setBottomNavActive('categories')
       }
 
@@ -2109,7 +3040,14 @@
     function bottomGoCategories() {
       switchView('order')
 
-      orderCat = null
+      if (!orderCat && Array.isArray(cats)) {
+        const preferredCategory = cats.find(c =>
+          c.active && /atıştır/i.test(String(c.name || ''))
+        ) || cats.find(c => c.active)
+
+        orderCat = preferredCategory?.id || null
+      }
+
       orderSubCat = 'hepsi'
 
       const searchInput = document.getElementById('product-search')
@@ -2124,7 +3062,9 @@
       }
 
       renderOrderCats()
+      renderOrderSubCats()
       renderOrderProducts()
+      updateCartBar()
       setBottomNavActive('categories')
 
       window.scrollTo({
@@ -2258,8 +3198,10 @@
 
       el.innerHTML =
         activeCats.map(c =>
-          `<button class="cat-btn${orderCat === c.id ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
+          `<button class="cat-btn${String(orderCat) === String(c.id) ? ' active' : ''}" onclick="setOrderCat('${c.id}')">${c.emoji} ${c.name}</button>`
         ).join('')
+
+      scrollActiveFilterIntoView('order-cats')
     }
 
 
@@ -2267,25 +3209,33 @@
       if (!Array.isArray(subcats)) subcats = []
 
       const el = document.getElementById('order-subcats')
+      const section = document.getElementById('subcategory-section')
+
       if (!el) return
 
       if (!orderCat) {
         el.innerHTML = ''
+        if (section) section.hidden = true
         return
       }
 
-      const list = subcats.filter(s => s.active && s.catId === orderCat)
+      const list = subcats.filter(s => s.active && String(s.catId) === String(orderCat))
 
       if (!list.length) {
         el.innerHTML = ''
+        if (section) section.hidden = true
         return
       }
+
+      if (section) section.hidden = false
 
       el.innerHTML =
         `<button class="cat-btn${orderSubCat === 'hepsi' ? ' active' : ''}" onclick="setOrderSubCat('hepsi')">Tümü</button>` +
         list.map(s =>
-          `<button class="cat-btn${orderSubCat === s.id ? ' active' : ''}" onclick="setOrderSubCat('${s.id}')">${s.name}</button>`
+          `<button class="cat-btn${String(orderSubCat) === String(s.id) ? ' active' : ''}" onclick="setOrderSubCat('${s.id}')">${s.name}</button>`
         ).join('')
+
+      scrollActiveFilterIntoView('order-subcats')
     }
 
     function setOrderCat(id) {
@@ -2348,7 +3298,7 @@
       const filterBar = document.getElementById('shop-filter-bar')
 
       if (!orderCat) {
-        if (searchWrap) searchWrap.style.display = 'none'
+        if (searchWrap) searchWrap.style.display = 'block'
         if (cartBar) cartBar.style.display = 'none'
         if (filterBar) filterBar.style.display = 'none'
 
@@ -4404,6 +5354,36 @@
         behavior: 'smooth',
         block: 'nearest',
         inline: 'center'
+      })
+    }
+
+    function scrollFilterRow(containerId) {
+      const container = document.getElementById(containerId)
+      if (!container) return
+
+      const maxScroll = Math.max(0, container.scrollWidth - container.clientWidth)
+      const nearEnd = container.scrollLeft >= maxScroll - 15
+
+      container.scrollTo({
+        left: nearEnd
+          ? 0
+          : Math.min(
+              maxScroll,
+              container.scrollLeft + Math.max(180, Math.floor(container.clientWidth * .72))
+            ),
+        behavior: 'smooth'
+      })
+    }
+
+    function scrollActiveFilterIntoView(containerId) {
+      requestAnimationFrame(() => {
+        const activeButton = document.querySelector(`#${containerId} .cat-btn.active`)
+
+        activeButton?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        })
       })
     }
 
