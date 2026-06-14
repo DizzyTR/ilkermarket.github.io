@@ -134,7 +134,7 @@
     .cats {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
+      /*flex-wrap: wrap;*/
       margin-bottom: 1.5rem;
     }
 
@@ -1534,6 +1534,56 @@
       box-shadow: 0 24px 70px rgba(0, 0, 0, .25);
       -webkit-overflow-scrolling: touch;
     }
+
+    /* Kategori ve alt grup yatay kaydırma */
+
+    .filter-scroll {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      padding: 4px 15px 9px;
+
+      white-space: nowrap;
+      scroll-behavior: smooth;
+      scroll-snap-type: x proximity;
+
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    /* Butonlar alt satıra geçmesin */
+    .filter-scroll button,
+    .filter-scroll .cat-btn,
+    .filter-scroll .subcat-btn {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      scroll-snap-align: start;
+    }
+
+    /* Chrome, Safari ve mobilde scrollbar gizle */
+    .filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Firefox */
+    .filter-scroll {
+      scrollbar-width: none;
+    }
+
+    /* Kategori ile alt grup arasındaki boşluk */
+    .category-scroll {
+      margin-top: 7px;
+    }
+
+    .subcategory-scroll {
+      margin-top: 5px;
+      padding-bottom: 8px;
+    }
   </style>
 </head>
 
@@ -1572,8 +1622,8 @@
           </button>
         </div>
 
-        <div class="cats" id="order-cats"></div>
-        <div class="cats" id="order-subcats"></div>
+        <div id="order-cats" class="filter-scroll category-scroll"></div>
+        <div id="order-subcats" class="filter-scroll subcategory-scroll"></div>
 
       </div>
 
@@ -4347,6 +4397,15 @@
         : 0
     }
 
+    function keepActiveFilterVisible(button) {
+      if (!button) return
+
+      button.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      })
+    }
 
     /* ─── BAŞLANGIÇ ─── */
     loadData()
