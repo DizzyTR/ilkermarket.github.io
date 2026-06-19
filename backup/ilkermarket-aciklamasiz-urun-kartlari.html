@@ -1600,24 +1600,6 @@
       }
     }
 
-
-    /* Mobil sepet özeti, alttaki Sepet düğmesiyle açılır */
-    #cart-bar.cart-panel-visible .cart-panel {
-      animation: cartPanelReveal .2s ease-out;
-    }
-
-    @keyframes cartPanelReveal {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(.985);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
   </style>
 </head>
 
@@ -1980,7 +1962,6 @@
     let orderCheckStarted = false
     let isAdminLoggedIn = false
     let bottomNavBeforeCart = 'categories'
-    let isCartPanelOpen = false
     const DEFAULT_PRODUCTS = [
       { id: 1, name: 'Nescafe Xpress 250ml', desc: 'Hazır kahve, lezzetli', price: 75, cat: 'icecek', emoji: '☕', active: true },
       { id: 2, name: 'Red Bull 250ml', desc: 'Enerji içeceği', price: 80, cat: 'icecek', emoji: '🥤', active: true },
@@ -2100,10 +2081,6 @@
 
     /* ─── NAVİGASYON ─── */
     function switchView(v) {
-      if (v !== 'order') {
-        isCartPanelOpen = false
-      }
-
       ['order', 'track'].forEach(x => {
         document
           .getElementById('view-' + x)
@@ -2129,8 +2106,6 @@
       if (v === 'track') {
         setBottomNavActive('track')
       }
-
-      syncCartPanelVisibility()
     }
 
     function setBottomNavActive(name) {
@@ -2147,39 +2122,7 @@
       })
     }
 
-    function isMobileCartPanelMode() {
-      return window.matchMedia('(max-width: 768px)').matches
-    }
-
-    function syncCartPanelVisibility() {
-      const cartBar = document.getElementById('cart-bar')
-      const orderView = document.getElementById('view-order')
-
-      if (!cartBar) return
-
-      const orderViewIsActive =
-        orderView?.classList.contains('active')
-
-      /*
-        Telefonda panel yalnızca alttaki Sepet düğmesine
-        basıldığında görünür. Bilgisayardaki mevcut davranış korunur.
-      */
-      const shouldShow = isMobileCartPanelMode()
-        ? Boolean(isCartPanelOpen && orderViewIsActive)
-        : Boolean(orderCat && orderViewIsActive)
-
-      cartBar.style.display = shouldShow
-        ? 'block'
-        : 'none'
-
-      cartBar.classList.toggle(
-        'cart-panel-visible',
-        shouldShow
-      )
-    }
-
     function bottomGoCategories() {
-      isCartPanelOpen = false
       switchView('order')
 
       orderCat = null
@@ -2198,7 +2141,6 @@
 
       renderOrderCats()
       renderOrderProducts()
-      syncCartPanelVisibility()
       setBottomNavActive('categories')
 
       window.scrollTo({
@@ -2209,30 +2151,17 @@
 
     function bottomOpenCart() {
       const trackView = document.getElementById('view-track')
-      const isTrackOpen =
-        trackView?.classList.contains('active')
+      const isTrackOpen = trackView?.classList.contains('active')
 
       bottomNavBeforeCart = isTrackOpen
         ? 'track'
         : 'categories'
 
-      if (isTrackOpen) {
-        switchView('order')
-      }
-
-      isCartPanelOpen = !isCartPanelOpen
-
-      syncCartPanelVisibility()
-
-      setBottomNavActive(
-        isCartPanelOpen
-          ? 'cart'
-          : 'categories'
-      )
+      setBottomNavActive('cart')
+      openOrderSheet()
     }
 
     function bottomGoTrack() {
-      isCartPanelOpen = false
       switchView('track')
       setBottomNavActive('track')
 
@@ -2436,16 +2365,16 @@
 
       if (!orderCat) {
         if (searchWrap) searchWrap.style.display = 'none'
+        if (cartBar) cartBar.style.display = 'none'
         if (filterBar) filterBar.style.display = 'none'
 
         el.innerHTML = renderCategoryHome()
-        syncCartPanelVisibility()
         return
       }
 
       if (filterBar) filterBar.style.display = 'block'
       if (searchWrap) searchWrap.style.display = 'block'
-      syncCartPanelVisibility()
+      if (cartBar) cartBar.style.display = 'block'
 
       if (!Array.isArray(products)) products = []
       if (!Array.isArray(cats)) cats = []
@@ -2656,10 +2585,14 @@
       }
 
       if (cartBar) {
+        if (!orderCat) {
+          cartBar.style.display = 'none'
+        } else {
+          cartBar.style.display = 'block'
+        }
+
         cartBar.classList.toggle('has-items', count > 0)
       }
-
-      syncCartPanelVisibility()
     }
 
     function openOrderSheet() {
@@ -2962,11 +2895,7 @@
         sheetOverlay.classList.remove('open')
       }
 
-      setBottomNavActive(
-        isCartPanelOpen
-          ? 'cart'
-          : bottomNavBeforeCart
-      )
+      setBottomNavActive(bottomNavBeforeCart)
     }
     function sheetBg(e) { if (e.target === document.getElementById('sheet-overlay')) closeSheet(); }
 
@@ -4494,11 +4423,6 @@
     }
 
     /* ─── BAŞLANGIÇ ─── */
-    window.addEventListener(
-      'resize',
-      syncCartPanelVisibility
-    )
-
     loadData()
   </script>
 
