@@ -1618,6 +1618,426 @@
       }
     }
 
+
+    /* =========================================================
+       ANA SAYFA GENEL ÜRÜN ARAMASI
+    ========================================================= */
+
+    .home-search-section {
+      grid-column: 1 / -1;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .home-search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .home-search-box > i {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      z-index: 2;
+
+      transform: translateY(-50%);
+
+      color: #727b76;
+      font-size: 22px;
+      pointer-events: none;
+    }
+
+    .home-search-box input {
+      width: 100%;
+      height: 54px;
+      padding: 0 50px 0 50px;
+
+      border: 1px solid rgba(0, 0, 0, .12);
+      border-radius: 16px;
+      outline: 0;
+
+      background: rgba(255, 255, 255, .96);
+      color: var(--text);
+
+      font-family: inherit;
+      font-size: 14px;
+
+      box-shadow: 0 9px 25px rgba(0, 0, 0, .065);
+
+      transition:
+        border-color .18s ease,
+        box-shadow .18s ease;
+    }
+
+    .home-search-box input::placeholder {
+      color: var(--text3);
+    }
+
+    .home-search-box input:focus {
+      border-color: rgba(29, 158, 117, .50);
+
+      box-shadow:
+        0 0 0 4px rgba(29, 158, 117, .09),
+        0 11px 29px rgba(0, 0, 0, .075);
+    }
+
+    #home-search-clear {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      z-index: 3;
+
+      width: 34px;
+      height: 34px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      transform: translateY(-50%);
+
+      border: 0;
+      border-radius: 50%;
+
+      background: var(--bg2);
+      color: var(--text2);
+
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    #home-search-clear[hidden] {
+      display: none;
+    }
+
+    .home-search-help {
+      margin-top: 7px;
+      padding-left: 4px;
+
+      color: var(--text3);
+      font-size: 11px;
+    }
+
+    .home-default-content {
+      grid-column: 1 / -1;
+
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .home-default-content[hidden],
+    .home-search-results[hidden] {
+      display: none !important;
+    }
+
+    .home-category-intro {
+      grid-column: 1 / -1;
+      margin-bottom: 4px;
+
+      text-align: center;
+    }
+
+    .home-category-intro-icon {
+      margin-bottom: 8px;
+      font-size: 38px;
+    }
+
+    .home-category-intro-title {
+      margin-bottom: 5px;
+
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .home-category-intro-text {
+      margin-bottom: 16px;
+
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    .home-search-results {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .home-search-summary {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+
+      border: 1px solid var(--border);
+      border-radius: 13px;
+
+      background: var(--bg2);
+      color: var(--text2);
+
+      font-size: 12px;
+    }
+
+    .home-search-summary strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .home-search-product-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .home-search-product-card {
+      position: relative;
+      min-width: 0;
+      padding: 10px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      overflow: hidden;
+
+      border: 1px solid rgba(0, 0, 0, .07);
+      border-radius: 19px;
+
+      background: rgba(255, 255, 255, .96);
+
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .055);
+    }
+
+    .home-search-featured {
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      z-index: 3;
+
+      min-height: 23px;
+      padding: 0 8px;
+
+      display: inline-flex;
+      align-items: center;
+
+      border-radius: 999px;
+
+      background: var(--green);
+      color: #fff;
+
+      font-size: 9.5px;
+      font-weight: 850;
+
+      box-shadow: 0 5px 14px rgba(29, 158, 117, .22);
+    }
+
+    .home-search-product-media {
+      width: 100%;
+      height: 132px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+
+      border-radius: 15px;
+
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(29, 158, 117, .08),
+          transparent 48%
+        ),
+        var(--bg2);
+    }
+
+    .home-search-product-media img {
+      width: 100%;
+      height: 100%;
+      padding: 8px;
+
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .home-search-product-emoji {
+      font-size: 43px;
+    }
+
+    .home-search-product-name {
+      min-height: 36px;
+
+      display: -webkit-box;
+      overflow: hidden;
+
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+
+    .home-search-product-footer {
+      margin-top: auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .home-search-product-price {
+      color: var(--green);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .home-search-add {
+      width: 38px;
+      height: 38px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: var(--green);
+      color: #fff;
+
+      font-size: 22px;
+      font-weight: 850;
+      cursor: pointer;
+
+      box-shadow: 0 7px 18px rgba(29, 158, 117, .24);
+    }
+
+    .home-search-qty {
+      min-height: 38px;
+      padding: 3px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+
+      border: 1px solid rgba(29, 158, 117, .16);
+      border-radius: 999px;
+
+      background: rgba(29, 158, 117, .10);
+    }
+
+    .home-search-qty button {
+      width: 30px;
+      height: 30px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: #fff;
+      color: var(--green);
+
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .home-search-qty span {
+      min-width: 21px;
+
+      color: var(--green3);
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .home-search-empty {
+      min-height: 220px;
+      padding: 30px 18px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      border: 1px dashed rgba(0, 0, 0, .13);
+      border-radius: 18px;
+
+      background: rgba(255, 255, 255, .72);
+      color: var(--text2);
+
+      text-align: center;
+    }
+
+    .home-search-empty i {
+      margin-bottom: 4px;
+
+      color: var(--green);
+      font-size: 35px;
+    }
+
+    .home-search-empty strong {
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .home-search-empty span {
+      font-size: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .home-search-box input {
+        height: 50px;
+        border-radius: 15px;
+      }
+
+      .home-search-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .home-search-product-card {
+        padding: 9px;
+        border-radius: 16px;
+      }
+
+      .home-search-product-media {
+        height: 116px;
+      }
+
+      .home-search-product-name {
+        min-height: 34px;
+        font-size: 12px;
+      }
+
+      .home-search-product-price {
+        font-size: 15px;
+      }
+
+      .home-search-add {
+        width: 36px;
+        height: 36px;
+      }
+
+      .home-search-summary {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 2px;
+      }
+    }
+
   </style>
 </head>
 
@@ -1981,6 +2401,7 @@
     let isAdminLoggedIn = false
     let bottomNavBeforeCart = 'categories'
     let isCartPanelOpen = false
+    let homeSearchQuery = ''
     const DEFAULT_PRODUCTS = [
       { id: 1, name: 'Nescafe Xpress 250ml', desc: 'Hazır kahve, lezzetli', price: 75, cat: 'icecek', emoji: '☕', active: true },
       { id: 2, name: 'Red Bull 250ml', desc: 'Enerji içeceği', price: 80, cat: 'icecek', emoji: '🥤', active: true },
@@ -2180,6 +2601,7 @@
 
     function bottomGoCategories() {
       isCartPanelOpen = false
+      homeSearchQuery = ''
       switchView('order')
 
       orderCat = null
@@ -2383,6 +2805,7 @@
       }
 
       setTimeout(() => {
+        homeSearchQuery = ''
         orderCat = id
         orderSubCat = 'hepsi'
 
@@ -2599,21 +3022,10 @@
       input.focus();
     }
 
-    function cartAdd(id) { 
-      const scrollY = window.scrollY;
-      cart[id] = (cart[id] || 0) + 1; 
-      updateCartBar(); 
-      renderOrderProducts();
-      window.scrollTo(0, scrollY);
-    }
-    
+    function cartAdd(id) { cart[id] = (cart[id] || 0) + 1; updateCartBar(); renderOrderProducts(); }
     function cartRemove(id) {
-      const scrollY = window.scrollY;
-      if (cart[id] > 1) cart[id]--; 
-      else delete cart[id];
-      updateCartBar(); 
-      renderOrderProducts();
-      window.scrollTo(0, scrollY);
+      if (cart[id] > 1) cart[id]--; else delete cart[id];
+      updateCartBar(); renderOrderProducts();
     }
 
     function updateCartBar() {
@@ -2673,108 +3085,6 @@
       syncCartPanelVisibility()
     }
 
-    function removeFromCartSheet(productId) {
-      delete cart[productId];
-      updateCartBar();
-      
-      // Checkout sayfasında mıyız?
-      if (document.getElementById('checkout-summary')) {
-        updateCheckoutSummary();
-      } else {
-        // Sepet özeti sayfasında
-        openOrderSheet();
-      }
-    }
-
-    function increaseQtyInCart(productId) {
-      cart[productId] = (cart[productId] || 0) + 1;
-      updateCartBar();
-      
-      // Checkout sayfasında mıyız?
-      if (document.getElementById('checkout-summary')) {
-        updateCheckoutSummary();
-      } else {
-        // Sepet özeti sayfasında
-        openOrderSheet();
-      }
-    }
-
-    function decreaseQtyInCart(productId) {
-      if (cart[productId] > 1) {
-        cart[productId]--;
-      } else {
-        delete cart[productId];
-      }
-      updateCartBar();
-      
-      // Checkout sayfasında mıyız?
-      if (document.getElementById('checkout-summary')) {
-        updateCheckoutSummary();
-      } else {
-        // Sepet özeti sayfasında
-        openOrderSheet();
-      }
-    }
-
-    function updateCheckoutSummary() {
-      const lines = Object.entries(cart).map(([id, qty]) => {
-        const p = products.find(x => x.id == id);
-        return p ? { p, qty, sub: Number(p.price) * qty } : null;
-      }).filter(Boolean);
-
-      const baseTotal = lines.reduce((s, l) => s + l.sub, 0);
-      const serviceFee = calcServiceFee(baseTotal);
-      const total = baseTotal + serviceFee;
-
-      const linesHtml = lines.map(l => `
-    <div class="oline">
-      <span>${l.p.emoji || '🛒'} ${l.p.name}</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div style="display:flex;align-items:center;gap:4px">
-          <button class="qty-btn" onclick="decreaseQtyInCart(${l.p.id})">−</button>
-          <span class="qty-num" style="min-width:14px;text-align:center">${l.qty}</span>
-          <button class="qty-btn" onclick="increaseQtyInCart(${l.p.id})">+</button>
-        </div>
-        <span style="min-width:50px;text-align:right">₺${l.sub}</span>
-      </div>
-    </div>
-  `).join('');
-
-      const summaryContainer = document.getElementById('checkout-summary');
-      if (summaryContainer) {
-        summaryContainer.innerHTML = `
-      ${linesHtml}
-
-      <div class="oline">
-        <span>Ürün Toplamı</span>
-        <span>₺${baseTotal}</span>
-      </div>
-
-      <div class="oline">
-        <span>Servis Ücreti</span>
-        <span id="delivery-fee">₺${serviceFee}</span>
-      </div>
-
-      <div class="ototal">
-        <span>Toplam</span>
-        <span id="delivery-total" style="color:var(--green)">₺${total}</span>
-      </div>
-
-      <div style="
-        margin-top:10px;
-        font-size:12px;
-        color:${baseTotal >= FREE_DELIVERY_LIMIT ? 'var(--green)' : 'var(--text2)'};
-        line-height:1.4;
-      ">
-        ${baseTotal >= FREE_DELIVERY_LIMIT
-          ? 'Siparişiniz 1000 TL üzeri olduğu için teslimat ücretsiz.'
-          : `1000 TL altı siparişlerde ₺${SMALL_ORDER_SERVICE_FEE} servis ücreti uygulanır.`
-        }
-      </div>
-        `;
-      }
-    }
-
     function openOrderSheet() {
       const lines = Object.entries(cart).map(([id, qty]) => {
         const p = products.find(x => x.id == id);
@@ -2788,7 +3098,7 @@
       }
       document.getElementById('sheet').innerHTML = `
     <h3>Sipariş özeti</h3>
-    ${lines.map(l => `<div class="oline"><span>${l.p.emoji} ${l.p.name}</span><div style="display:flex;gap:8px;align-items:center"><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" onclick="decreaseQtyInCart(${l.p.id})">−</button><span class="qty-num" style="min-width:14px;text-align:center">${l.qty}</span><button class="qty-btn" onclick="increaseQtyInCart(${l.p.id})">+</button></div><span style="min-width:50px;text-align:right">₺${l.sub}</span></div></div>`).join('')}
+    ${lines.map(l => `<div class="oline"><span>${l.p.emoji} ${l.p.name} <span style="color:var(--text2)">×${l.qty}</span></span><span>₺${l.sub}</span></div>`).join('')}
     <div class="ototal"><span>Toplam</span><span style="color:var(--green)">₺${total}</span></div>
     <div class="sheet-actions">
       <button class="btn" onclick="closeSheet()">Geri dön</button>
@@ -2808,20 +3118,14 @@
       const total = baseTotal + serviceFee;
 
       window.currentOrderBaseTotal = baseTotal;
-      window.currentOrderServiceFee = serviceFee;
-      window.currentOrderTotal = total;
 
       const linesHtml = lines.map(l => `
     <div class="oline">
-      <span>${l.p.emoji || '🛒'} ${l.p.name}</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div style="display:flex;align-items:center;gap:4px">
-          <button class="qty-btn" onclick="decreaseQtyInCart(${l.p.id})">−</button>
-          <span class="qty-num" style="min-width:14px;text-align:center">${l.qty}</span>
-          <button class="qty-btn" onclick="increaseQtyInCart(${l.p.id})">+</button>
-        </div>
-        <span style="min-width:50px;text-align:right">₺${l.sub}</span>
-      </div>
+      <span>
+        ${l.p.emoji || '🛒'} ${l.p.name}
+        <span style="color:var(--text2)">×${l.qty}</span>
+      </span>
+      <span>₺${l.sub}</span>
     </div>
   `).join('');
 
@@ -2869,7 +3173,35 @@
 
     <div class="frow">
       <label>Sipariş Özeti</label>
-      <div id="checkout-summary"></div>
+
+      ${linesHtml}
+
+      <div class="oline">
+        <span>Ürün Toplamı</span>
+        <span>₺${baseTotal}</span>
+      </div>
+
+      <div class="oline">
+        <span>Servis Ücreti</span>
+        <span id="delivery-fee">₺${serviceFee}</span>
+      </div>
+
+      <div class="ototal">
+        <span>Toplam</span>
+        <span id="delivery-total" style="color:var(--green)">₺${total}</span>
+      </div>
+
+      <div style="
+        margin-top:10px;
+        font-size:12px;
+        color:${baseTotal >= FREE_DELIVERY_LIMIT ? 'var(--green)' : 'var(--text2)'};
+        line-height:1.4;
+      ">
+        ${baseTotal >= FREE_DELIVERY_LIMIT
+          ? 'Siparişiniz 1000 TL üzeri olduğu için teslimat ücretsiz.'
+          : `1000 TL altı siparişlerde ₺${SMALL_ORDER_SERVICE_FEE} servis ücreti uygulanır.`
+        }
+      </div>
     </div>
 
     <div class="sheet-actions">
@@ -2877,7 +3209,6 @@
       <button id="send-order-btn" class="btn btn-g" type="button" onclick="sendOrder()">Siparişi Gönder</button>
   `;
       fillSavedCustomerInfo();
-      updateCheckoutSummary();
 
       const sheetOverlay = document.getElementById('sheet-overlay');
 
@@ -2923,10 +3254,9 @@
       const region = document.getElementById('customerRegion').value;
       const list = regions || DEFAULT_REGIONS
       const regionData = list.find(r => r.id === region) || list[0]
-      
-      const baseTotal = window.currentOrderBaseTotal || 0;
-      const serviceFee = window.currentOrderServiceFee || 0;
-      const total = window.currentOrderTotal || 0;
+      const baseTotal = lines.reduce((s, l) => s + l.sub, 0);
+      const serviceFee = calcServiceFee(baseTotal);
+      const total = baseTotal + serviceFee;
 
       const orderRes = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -4492,9 +4822,13 @@
       if (!Array.isArray(products)) products = []
 
       const activeCats = cats.filter(c => c.active)
+      const normalizedHomeSearch = searchText(homeSearchQuery)
+      const hasHomeSearch = Boolean(normalizedHomeSearch)
 
       if (!activeCats.length) {
         return `
+      ${renderHomeSearchBox()}
+
       <div style="grid-column:1/-1" class="empty-msg">
         Kategori bulunamadı.
       </div>
@@ -4502,31 +4836,330 @@
       }
 
       return `
-      ${renderHomeHero()}
-    <div style="grid-column:1/-1;text-align:center;margin-bottom:4px">
-      <div style="font-size:38px;margin-bottom:8px">🛒</div>
-      <div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px">
-        Alışverişe başlamak için kategori seçin
-      </div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">
-        Ürünler kategori seçtikten sonra listelenecek.
-      </div>
-    </div>
+      ${renderHomeSearchBox()}
 
-    <div class="category-home">
-      ${activeCats.map(c => {
-        const count = products.filter(p => p.active && p.cat === c.id).length
+      <div
+        id="home-search-results"
+        class="home-search-results"
+        ${hasHomeSearch ? '' : 'hidden'}
+      >
+        ${hasHomeSearch
+          ? renderHomeSearchResultsHtml(homeSearchQuery)
+          : ''
+        }
+      </div>
 
+      <div
+        id="home-default-content"
+        class="home-default-content"
+        ${hasHomeSearch ? 'hidden' : ''}
+      >
+        ${renderHomeHero()}
+
+        <div class="home-category-intro">
+          <div class="home-category-intro-icon">🛒</div>
+
+          <div class="home-category-intro-title">
+            Alışverişe başlamak için kategori seçin
+          </div>
+
+          <div class="home-category-intro-text">
+            Ürünler kategori seçtikten sonra listelenecek.
+          </div>
+        </div>
+
+        <div class="category-home">
+          ${activeCats.map(c => {
+            const count = products.filter(p =>
+              Number(p.active) === 1 &&
+              String(p.cat) === String(c.id)
+            ).length
+
+            return `
+              <div
+                class="category-card"
+                onclick="setOrderCat(${JSON.stringify(String(c.id))})"
+              >
+                <div class="category-card-emoji">
+                  ${escapeCustomerHtml(c.emoji || '🛒')}
+                </div>
+
+                <div class="category-card-name">
+                  ${escapeCustomerHtml(c.name)}
+                </div>
+
+                <div class="category-card-info">
+                  ${count} ürün
+                </div>
+              </div>
+            `
+          }).join('')}
+        </div>
+      </div>
+    `
+    }
+
+    function renderHomeSearchBox() {
+      const query = escapeCustomerHtml(homeSearchQuery)
+
+      return `
+        <section class="home-search-section">
+          <div class="home-search-box">
+            <i class="ti ti-search" aria-hidden="true"></i>
+
+            <input
+              id="home-product-search"
+              type="search"
+              value="${query}"
+              placeholder="Tüm ürünlerde ara..."
+              autocomplete="off"
+              enterkeyhint="search"
+              oninput="handleHomeProductSearch(this.value)"
+            >
+
+            <button
+              id="home-search-clear"
+              type="button"
+              aria-label="Aramayı temizle"
+              onclick="clearHomeProductSearch()"
+              ${homeSearchQuery ? '' : 'hidden'}
+            >
+              <i class="ti ti-x"></i>
+            </button>
+          </div>
+
+          <div class="home-search-help">
+            Ürün adı, kategori veya alt kategori yazabilirsiniz.
+          </div>
+        </section>
+      `
+    }
+
+    function handleHomeProductSearch(value) {
+      homeSearchQuery = String(value || '')
+
+      const clearButton =
+        document.getElementById('home-search-clear')
+
+      const results =
+        document.getElementById('home-search-results')
+
+      const defaultContent =
+        document.getElementById('home-default-content')
+
+      const hasSearch = Boolean(
+        searchText(homeSearchQuery)
+      )
+
+      if (clearButton) {
+        clearButton.hidden = !homeSearchQuery
+      }
+
+      if (results) {
+        results.hidden = !hasSearch
+        results.innerHTML = hasSearch
+          ? renderHomeSearchResultsHtml(homeSearchQuery)
+          : ''
+      }
+
+      if (defaultContent) {
+        defaultContent.hidden = hasSearch
+      }
+    }
+
+    function clearHomeProductSearch() {
+      homeSearchQuery = ''
+
+      const input =
+        document.getElementById('home-product-search')
+
+      if (input) {
+        input.value = ''
+      }
+
+      handleHomeProductSearch('')
+
+      input?.focus()
+    }
+
+    function renderHomeSearchResultsHtml(query) {
+      if (!Array.isArray(products)) products = []
+      if (!Array.isArray(cats)) cats = []
+      if (!Array.isArray(subcats)) subcats = []
+
+      const normalizedQuery = searchText(query)
+
+      if (!normalizedQuery) return ''
+
+      const activeCategoryIds = new Set(
+        cats
+          .filter(c => c.active)
+          .map(c => String(c.id))
+      )
+
+      const list = products
+        .filter(p =>
+          Number(p.active) === 1 &&
+          activeCategoryIds.has(String(p.cat))
+        )
+        .filter(p => {
+          const category = cats.find(
+            c => String(c.id) === String(p.cat)
+          )
+
+          const subcategory = subcats.find(
+            s => String(s.id) === String(p.subCat)
+          )
+
+          const haystack = [
+            p.name,
+            p.desc,
+            p.emoji,
+            category?.name,
+            subcategory?.name
+          ]
+            .map(searchText)
+            .join(' ')
+
+          return haystack.includes(normalizedQuery)
+        })
+        .sort((a, b) => {
+          const featuredDifference =
+            Number(b.featured || 0) -
+            Number(a.featured || 0)
+
+          if (featuredDifference !== 0) {
+            return featuredDifference
+          }
+
+          return String(a.name || '').localeCompare(
+            String(b.name || ''),
+            'tr'
+          )
+        })
+
+      const safeQuery = escapeCustomerHtml(query)
+
+      if (!list.length) {
         return `
-          <div class="category-card" onclick="setOrderCat('${c.id}')">
-            <div class="category-card-emoji">${c.emoji || '🛒'}</div>
-            <div class="category-card-name">${c.name}</div>
-            <div class="category-card-info">${count} ürün</div>
+          <div class="home-search-summary">
+            “${safeQuery}” için sonuç bulunamadı.
+          </div>
+
+          <div class="home-search-empty">
+            <i class="ti ti-search-off"></i>
+            <strong>Ürün bulunamadı</strong>
+            <span>
+              Farklı bir ürün adı veya kategori deneyin.
+            </span>
           </div>
         `
-      }).join('')}
-    </div>
-  `
+      }
+
+      return `
+        <div class="home-search-summary">
+          <strong>${list.length} ürün bulundu</strong>
+          <span>“${safeQuery}” araması</span>
+        </div>
+
+        <div class="home-search-product-grid">
+          ${list.map(renderHomeSearchProductCard).join('')}
+        </div>
+      `
+    }
+
+    function renderHomeSearchProductCard(product) {
+      const quantity = Number(cart[product.id] || 0)
+      const productId = JSON.stringify(product.id)
+      const safeName = escapeCustomerHtml(product.name)
+      const price = Number(product.price || 0)
+        .toLocaleString('tr-TR')
+
+      const media = product.imageUrl
+        ? `
+          <div class="home-search-product-media">
+            <img
+              src="${optimizeImage(product.imageUrl)}"
+              alt="${safeName}"
+              loading="lazy"
+            >
+          </div>
+        `
+        : `
+          <div class="home-search-product-media">
+            <span class="home-search-product-emoji">
+              ${escapeCustomerHtml(product.emoji || '🛒')}
+            </span>
+          </div>
+        `
+
+      return `
+        <article class="home-search-product-card">
+          ${Number(product.featured || 0) === 1
+            ? `
+              <span class="home-search-featured">
+                ⭐ Öne Çıkan
+              </span>
+            `
+            : ''
+          }
+
+          ${media}
+
+          <div class="home-search-product-name">
+            ${safeName}
+          </div>
+
+          <div class="home-search-product-footer">
+            <span class="home-search-product-price">
+              ₺${price}
+            </span>
+
+            ${quantity === 0
+              ? `
+                <button
+                  type="button"
+                  class="home-search-add"
+                  onclick="cartAdd(${productId})"
+                  aria-label="${safeName} sepete ekle"
+                >
+                  +
+                </button>
+              `
+              : `
+                <div class="home-search-qty">
+                  <button
+                    type="button"
+                    onclick="cartRemove(${productId})"
+                    aria-label="Azalt"
+                  >
+                    −
+                  </button>
+
+                  <span>${quantity}</span>
+
+                  <button
+                    type="button"
+                    onclick="cartAdd(${productId})"
+                    aria-label="Artır"
+                  >
+                    +
+                  </button>
+                </div>
+              `
+            }
+          </div>
+        </article>
+      `
+    }
+
+    function escapeCustomerHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
     }
 
     function renderHomeHero() {
