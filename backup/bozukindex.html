@@ -10,9 +10,6 @@
   <meta name="theme-color" content="#1D9E75">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *,
     *::before,
@@ -34,15 +31,11 @@
       --green: #10b981;
       --green-light: #d1fae5;
       --green-dark: #059669;
-      /* rozet / durum etiketi tonları (b-active, sipariş takip pili, not kutusu) */
-      --green2: #d1fae5;
-      --green3: #065f46;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
       --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
       --rmd: 8px;
       --rlg: 12px;
-      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     /*@media (prefers-color-scheme: dark) {
@@ -61,7 +54,7 @@
     }*/
 
     body {
-      font-family: var(--font);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg3);
       color: var(--text);
       min-height: 100vh;
@@ -70,15 +63,16 @@
     /* ── TOPBAR ── */
     .topbar {
       background: var(--bg);
-      border-bottom: 0.5px solid var(--border2);
+      border-bottom: 1px solid var(--border);
       padding: 0 20px;
       display: flex;
       align-items: center;
-      height: 52px;
+      height: 56px;
       gap: 0;
       position: sticky;
       top: 0;
       z-index: 50;
+      box-shadow: var(--shadow-sm);
     }
 
     .topbar,
@@ -89,61 +83,48 @@
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+      font-size: 16px;
+      font-weight: 700;
       margin-right: auto;
+      background: linear-gradient(135deg, var(--text) 0%, var(--green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .logo-mark {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: linear-gradient(145deg, var(--green), var(--green-dark));
-      font-size: 15px;
-      box-shadow: 0 4px 10px rgba(16, 185, 129, .30);
-      flex-shrink: 0;
-    }
-
-    .logo-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      color: var(--text);
-    }
-
-    .logo-text span {
+    .logo span {
       color: var(--green);
-      font-weight: 800;
     }
 
     .nav-btn {
-      height: 52px;
+      height: 56px;
       padding: 0 16px;
       border: none;
       background: transparent;
       color: var(--text2);
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       border-bottom: 2px solid transparent;
       font-family: inherit;
-      transition: color 0.15s;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      color: var(--green);
     }
 
     .nav-btn.active {
       color: var(--green);
       border-bottom-color: var(--green);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .nav-btn i {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     /* ── VIEWS ── */
@@ -196,40 +177,60 @@
     .products {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 12px;
+      gap: 16px;
     }
 
     .card {
       background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--rlg);
-      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      transition: border-color 0.12s;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
 
     .card:hover {
-      border-color: var(--border2);
+      border-color: var(--green-light);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .card:hover::before {
+      opacity: 1;
     }
 
     .card.inactive {
-      opacity: 0.65;
+      opacity: 0.6;
     }
 
     .card.inactive .card-media img {
-      filter: grayscale(35%);
+      filter: grayscale(50%);
     }
 
     .card-media {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 180px;
+      min-height: 160px;
       overflow: hidden;
-      border-radius: 16px;
-      background: var(--bg2);
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+      position: relative;
     }
 
     .card-media img {
@@ -237,18 +238,24 @@
       height: 100%;
       object-fit: cover;
       border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-media img {
+      transform: scale(1.05);
     }
 
     .card-emoji {
-      font-size: 30px;
+      font-size: 48px;
       text-align: center;
-      padding: 6px 0;
+      padding: 10px 0;
     }
 
     .card-name {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text);
+      line-height: 1.4;
     }
 
     .card-desc {
@@ -262,60 +269,88 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 4px;
+      margin-top: 6px;
+      gap: 8px;
     }
 
     .price {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 16px;
+      font-weight: 600;
       color: var(--green);
     }
 
     .add-btn {
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--green);
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
       border: none;
       color: #fff;
-      font-size: 18px;
+      font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.1s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      flex-shrink: 0;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     }
 
     .add-btn:active {
-      transform: scale(0.88);
+      transform: scale(0.95);
+    }
+
+    .add-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .qty-ctrl {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 8px;
+      background: var(--bg2);
+      border-radius: 20px;
+      padding: 4px 8px;
     }
 
     .qty-btn {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      border: 0.5px solid var(--border2);
-      background: var(--bg2);
-      color: var(--text);
-      font-size: 14px;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .qty-btn:hover {
+      background: var(--green-dark);
+      transform: scale(1.05);
+    }
+
+    .qty-btn:active {
+      transform: scale(0.95);
     }
 
     .qty-num {
-      font-size: 13px;
-      font-weight: 500;
-      min-width: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      min-width: 24px;
       text-align: center;
+      color: var(--text);
     }
 
     /* ── SEPET ÇUBUĞU ── */
@@ -472,57 +507,64 @@
     }
 
     .btn {
-      height: 34px;
-      padding: 0 12px;
-      border-radius: var(--rmd);
-      border: 0.5px solid var(--border2);
-      background: var(--bg);
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--bg2);
       color: var(--text);
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       white-space: nowrap;
       font-family: inherit;
-      transition: transform 0.1s;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
     }
 
     .btn:hover {
-      background: var(--bg2);
+      background: var(--bg3);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
     .btn:active {
-      transform: scale(0.97);
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-g {
-      background: var(--green);
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
       color: #fff;
-      border-color: var(--green);
+      border: none;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
 
     .btn-g:hover {
-      background: #0F6E56;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-g:active {
+      transform: translateY(0);
     }
 
     .btn-r {
-      background: #FCEBEB;
-      color: #A32D2D;
-      border-color: #F09595;
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
     }
 
-    @media (prefers-color-scheme: dark) {
-      .btn-r {
-        background: #3a1515;
-        color: #F09595;
-        border-color: #791F1F;
-      }
+    .btn-r:hover {
+      background: #fecaca;
     }
 
     .btn-sm {
-      height: 28px;
-      padding: 0 8px;
+      height: 32px;
+      padding: 0 10px;
       font-size: 12px;
     }
 
@@ -723,72 +765,6 @@
       font-size: 13px;
     }
 
-    /* ── TOAST BİLDİRİM ── */
-    #toast-stack {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 6000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: min(92%, 380px);
-      pointer-events: none;
-    }
-
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--text);
-      color: #fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.4;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, .22);
-      animation: toastIn .22s ease;
-    }
-
-    .toast.toast-error {
-      background: #A32D2D;
-    }
-
-    .toast.toast-success {
-      background: var(--green-dark);
-    }
-
-    .toast i {
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-
-    .toast.toast-out {
-      animation: toastOut .18s ease forwards;
-    }
-
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px) scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes toastOut {
-      to {
-        opacity: 0;
-        transform: translateY(-8px) scale(.97);
-      }
-    }
-
     /* kategori renk badge'leri */
     .cb {
       display: inline-block;
@@ -822,14 +798,8 @@
     }
 
     .category-card-emoji {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 10px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
+      font-size: 34px;
+      margin-bottom: 8px;
     }
 
     .category-card-name {
@@ -1052,22 +1022,6 @@
       border: 1px solid rgba(0, 0, 0, .06);
       border-radius: 16px;
       padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hero-step-icon {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(20, 163, 105, .12);
-      color: var(--green-dark);
-      font-size: 16px;
     }
 
     .hero-step strong {
@@ -1337,25 +1291,27 @@
       min-width: 150px;
       height: 46px;
       border: none;
-      border-radius: 16px;
-
-      background: var(--green);
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
       color: white;
-
-      font-size: 14px;
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 600;
       cursor: pointer;
-
-      box-shadow: 0 10px 24px rgba(20, 163, 105, .28);
-      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      transition: all 0.3s ease;
     }
 
-    #co-btn:active {
-      transform: scale(.96);
+    #co-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(16, 185, 129, 0.4);
+    }
+
+    #co-btn:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     #co-btn:disabled {
-      opacity: .42;
+      opacity: 0.5;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -1469,11 +1425,94 @@
       }
     }
 
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .card {
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .btn-g {
+      animation: slideIn 0.3s ease-out;
+    }
+
     .mobile-bottom-nav {
       display: none;
     }
 
     @media (max-width: 768px) {
+      .products {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      .card-media {
+        min-height: 130px;
+      }
+
+      .card-name {
+        font-size: 13px;
+      }
+
+      .price {
+        font-size: 15px;
+      }
+
+      .add-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+      }
+
+      .qty-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+      }
+
+      .btn {
+        height: 38px;
+        font-size: 13px;
+        padding: 0 12px;
+      }
+
+      .btn-g, #co-btn {
+        font-size: 14px;
+      }
+
       .mobile-bottom-nav {
         position: fixed;
         left: 50%;
@@ -1743,13 +1782,8 @@
 
 <body>
 
-  <div id="toast-stack"></div>
-
   <div class="topbar">
-    <div class="logo">
-      <span class="logo-mark">🛒</span>
-      <span class="logo-text">İlker<span>Market</span></span>
-    </div>
+    <div class="logo">🛒 İlker<span>Market</span></div>
     <button class="nav-btn" id="nav-track" onclick="switchView('track')">
       <i class="ti ti-search"></i> Sipariş Takip
     </button>
@@ -2156,25 +2190,6 @@
 
     function save() {
       console.log("Save artık API üzerinden olacak")
-    }
-
-    /* ── TOAST BİLDİRİM ── */
-    function showToast(message, type = 'info', duration = 3200) {
-      const stack = document.getElementById('toast-stack')
-      if (!stack) return alert(message)
-
-      const icon = type === 'error' ? 'ti-alert-circle' : type === 'success' ? 'ti-circle-check' : 'ti-info-circle'
-
-      const el = document.createElement('div')
-      el.className = `toast ${type === 'error' ? 'toast-error' : type === 'success' ? 'toast-success' : ''}`
-      el.innerHTML = `<i class="ti ${icon}"></i><span>${message}</span>`
-
-      stack.appendChild(el)
-
-      setTimeout(() => {
-        el.classList.add('toast-out')
-        setTimeout(() => el.remove(), 200)
-      }, duration)
     }
 
     function exportData() {
@@ -3066,23 +3081,13 @@
       const phone = document.getElementById('customerPhone').value.trim();
       const note = document.getElementById('customerNote').value.trim();
       const paymentMethod = document.getElementById('paymentMethod').value;
-      if (!name || !address || !phone) {
-        showToast('Lütfen Ad Soyad, Adres ve Telefon bilgilerini doldurun.', 'error');
-        isSendingOrder = false;
-        setSendOrderLoading(false);
-        return;
-      }
+      if (!name || !address || !phone) return alert('Lütfen Ad Soyad, Adres ve Telefon bilgilerini doldurun.');
       const lines = Object.entries(cart).map(([id, qty]) => {
         const p = products.find(x => x.id == id);
         return p ? { p, qty, sub: p.price * qty } : null;
       }).filter(Boolean);
       saveCustomerInfoFromForm();
-      if (!lines.length) {
-        showToast('Sepetinizde geçerli ürün yok.', 'error');
-        isSendingOrder = false;
-        setSendOrderLoading(false);
-        return;
-      }
+      if (!lines.length) return alert('Sepetinizde geçerli ürün yok.');
       const region = document.getElementById('customerRegion').value;
       const list = regions || DEFAULT_REGIONS
       const regionData = list.find(r => r.id === region) || list[0]
@@ -3119,9 +3124,7 @@
 
       if (!orderRes.ok) {
         console.log("Sipariş kayıt hatası:", orderData)
-        showToast("Sipariş kaydedilemedi", 'error')
-        isSendingOrder = false;
-        setSendOrderLoading(false);
+        alert("Sipariş kaydedilemedi")
         return
       }
 
@@ -4179,8 +4182,6 @@
 
     function finishOrderSuccess() {
       Object.keys(cart).forEach(k => delete cart[k])
-      isSendingOrder = false
-      setSendOrderLoading(false)
       updateCartBar()
       closeSheet()
       renderOrderProducts()
@@ -4192,7 +4193,7 @@
       const resultEl = document.getElementById('track-result')
 
       if (!orderId || !phone) {
-        return showToast("Sipariş no ve telefon gerekli", 'error')
+        return alert("Sipariş no ve telefon gerekli")
       }
 
       try {
@@ -4304,7 +4305,7 @@
 
       } catch (err) {
         console.log(err)
-        showToast("Sipariş bilgisi alınamadı", 'error')
+        alert("Sipariş bilgisi alınamadı")
       }
     }
 
@@ -4686,7 +4687,7 @@
 
         return `
           <div class="category-card" onclick="setOrderCat('${c.id}')">
-            <div class="category-card-emoji" style="background:${c.color || 'var(--green-light)'};color:${c.textColor || 'var(--green-dark)'}">${c.emoji || '🛒'}</div>
+            <div class="category-card-emoji">${c.emoji || '🛒'}</div>
             <div class="category-card-name">${c.name}</div>
             <div class="category-card-info">${count} ürün</div>
           </div>
@@ -4700,7 +4701,7 @@
       return `
     <div class="home-hero">
       <div class="hero-badge">
-        <i class="ti ti-rosette-discount" style="font-size:14px"></i> Online sipariş sistemi aktif
+        🛒 Online sipariş sistemi aktif
       </div>
 
       <h1>İlker Market kapınızda</h1>
@@ -4712,27 +4713,18 @@
 
       <div class="hero-steps">
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-category"></i></div>
-          <div>
-            <strong>1. Kategori seç</strong>
-            <span>Ürünlere hızlıca ulaş</span>
-          </div>
+          <strong>1. Kategori seç</strong>
+          <span>Ürünlere hızlıca ulaş</span>
         </div>
 
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-shopping-cart-plus"></i></div>
-          <div>
-            <strong>2. Sepete ekle</strong>
-            <span>İhtiyaçlarını tamamla</span>
-          </div>
+          <strong>2. Sepete ekle</strong>
+          <span>İhtiyaçlarını tamamla</span>
         </div>
 
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-brand-whatsapp"></i></div>
-          <div>
-            <strong>3. Onayla</strong>
-            <span>WhatsApp’tan siparişi gönder</span>
-          </div>
+          <strong>3. Onayla</strong>
+          <span>WhatsApp’tan siparişi gönder</span>
         </div>
       </div>
     </div>

@@ -10,9 +10,6 @@
   <meta name="theme-color" content="#1D9E75">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *,
     *::before,
@@ -34,15 +31,11 @@
       --green: #10b981;
       --green-light: #d1fae5;
       --green-dark: #059669;
-      /* rozet / durum etiketi tonları (b-active, sipariş takip pili, not kutusu) */
-      --green2: #d1fae5;
-      --green3: #065f46;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
       --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
       --rmd: 8px;
       --rlg: 12px;
-      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     /*@media (prefers-color-scheme: dark) {
@@ -61,7 +54,7 @@
     }*/
 
     body {
-      font-family: var(--font);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg3);
       color: var(--text);
       min-height: 100vh;
@@ -89,35 +82,13 @@
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+      font-size: 15px;
+      font-weight: 500;
       margin-right: auto;
     }
 
-    .logo-mark {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: linear-gradient(145deg, var(--green), var(--green-dark));
-      font-size: 15px;
-      box-shadow: 0 4px 10px rgba(16, 185, 129, .30);
-      flex-shrink: 0;
-    }
-
-    .logo-text {
-      font-size: 15.5px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      color: var(--text);
-    }
-
-    .logo-text span {
+    .logo span {
       color: var(--green);
-      font-weight: 800;
     }
 
     .nav-btn {
@@ -723,72 +694,6 @@
       font-size: 13px;
     }
 
-    /* ── TOAST BİLDİRİM ── */
-    #toast-stack {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 6000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: min(92%, 380px);
-      pointer-events: none;
-    }
-
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--text);
-      color: #fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.4;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, .22);
-      animation: toastIn .22s ease;
-    }
-
-    .toast.toast-error {
-      background: #A32D2D;
-    }
-
-    .toast.toast-success {
-      background: var(--green-dark);
-    }
-
-    .toast i {
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-
-    .toast.toast-out {
-      animation: toastOut .18s ease forwards;
-    }
-
-    @keyframes toastIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px) scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes toastOut {
-      to {
-        opacity: 0;
-        transform: translateY(-8px) scale(.97);
-      }
-    }
-
     /* kategori renk badge'leri */
     .cb {
       display: inline-block;
@@ -822,14 +727,8 @@
     }
 
     .category-card-emoji {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 10px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
+      font-size: 34px;
+      margin-bottom: 8px;
     }
 
     .category-card-name {
@@ -1052,22 +951,6 @@
       border: 1px solid rgba(0, 0, 0, .06);
       border-radius: 16px;
       padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hero-step-icon {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(20, 163, 105, .12);
-      color: var(--green-dark);
-      font-size: 16px;
     }
 
     .hero-step strong {
@@ -1743,13 +1626,8 @@
 
 <body>
 
-  <div id="toast-stack"></div>
-
   <div class="topbar">
-    <div class="logo">
-      <span class="logo-mark">🛒</span>
-      <span class="logo-text">İlker<span>Market</span></span>
-    </div>
+    <div class="logo">🛒 İlker<span>Market</span></div>
     <button class="nav-btn" id="nav-track" onclick="switchView('track')">
       <i class="ti ti-search"></i> Sipariş Takip
     </button>
@@ -2156,25 +2034,6 @@
 
     function save() {
       console.log("Save artık API üzerinden olacak")
-    }
-
-    /* ── TOAST BİLDİRİM ── */
-    function showToast(message, type = 'info', duration = 3200) {
-      const stack = document.getElementById('toast-stack')
-      if (!stack) return alert(message)
-
-      const icon = type === 'error' ? 'ti-alert-circle' : type === 'success' ? 'ti-circle-check' : 'ti-info-circle'
-
-      const el = document.createElement('div')
-      el.className = `toast ${type === 'error' ? 'toast-error' : type === 'success' ? 'toast-success' : ''}`
-      el.innerHTML = `<i class="ti ${icon}"></i><span>${message}</span>`
-
-      stack.appendChild(el)
-
-      setTimeout(() => {
-        el.classList.add('toast-out')
-        setTimeout(() => el.remove(), 200)
-      }, duration)
     }
 
     function exportData() {
@@ -3066,23 +2925,13 @@
       const phone = document.getElementById('customerPhone').value.trim();
       const note = document.getElementById('customerNote').value.trim();
       const paymentMethod = document.getElementById('paymentMethod').value;
-      if (!name || !address || !phone) {
-        showToast('Lütfen Ad Soyad, Adres ve Telefon bilgilerini doldurun.', 'error');
-        isSendingOrder = false;
-        setSendOrderLoading(false);
-        return;
-      }
+      if (!name || !address || !phone) return alert('Lütfen Ad Soyad, Adres ve Telefon bilgilerini doldurun.');
       const lines = Object.entries(cart).map(([id, qty]) => {
         const p = products.find(x => x.id == id);
         return p ? { p, qty, sub: p.price * qty } : null;
       }).filter(Boolean);
       saveCustomerInfoFromForm();
-      if (!lines.length) {
-        showToast('Sepetinizde geçerli ürün yok.', 'error');
-        isSendingOrder = false;
-        setSendOrderLoading(false);
-        return;
-      }
+      if (!lines.length) return alert('Sepetinizde geçerli ürün yok.');
       const region = document.getElementById('customerRegion').value;
       const list = regions || DEFAULT_REGIONS
       const regionData = list.find(r => r.id === region) || list[0]
@@ -3119,9 +2968,7 @@
 
       if (!orderRes.ok) {
         console.log("Sipariş kayıt hatası:", orderData)
-        showToast("Sipariş kaydedilemedi", 'error')
-        isSendingOrder = false;
-        setSendOrderLoading(false);
+        alert("Sipariş kaydedilemedi")
         return
       }
 
@@ -4179,8 +4026,6 @@
 
     function finishOrderSuccess() {
       Object.keys(cart).forEach(k => delete cart[k])
-      isSendingOrder = false
-      setSendOrderLoading(false)
       updateCartBar()
       closeSheet()
       renderOrderProducts()
@@ -4192,7 +4037,7 @@
       const resultEl = document.getElementById('track-result')
 
       if (!orderId || !phone) {
-        return showToast("Sipariş no ve telefon gerekli", 'error')
+        return alert("Sipariş no ve telefon gerekli")
       }
 
       try {
@@ -4304,7 +4149,7 @@
 
       } catch (err) {
         console.log(err)
-        showToast("Sipariş bilgisi alınamadı", 'error')
+        alert("Sipariş bilgisi alınamadı")
       }
     }
 
@@ -4686,7 +4531,7 @@
 
         return `
           <div class="category-card" onclick="setOrderCat('${c.id}')">
-            <div class="category-card-emoji" style="background:${c.color || 'var(--green-light)'};color:${c.textColor || 'var(--green-dark)'}">${c.emoji || '🛒'}</div>
+            <div class="category-card-emoji">${c.emoji || '🛒'}</div>
             <div class="category-card-name">${c.name}</div>
             <div class="category-card-info">${count} ürün</div>
           </div>
@@ -4700,7 +4545,7 @@
       return `
     <div class="home-hero">
       <div class="hero-badge">
-        <i class="ti ti-rosette-discount" style="font-size:14px"></i> Online sipariş sistemi aktif
+        🛒 Online sipariş sistemi aktif
       </div>
 
       <h1>İlker Market kapınızda</h1>
@@ -4712,27 +4557,18 @@
 
       <div class="hero-steps">
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-category"></i></div>
-          <div>
-            <strong>1. Kategori seç</strong>
-            <span>Ürünlere hızlıca ulaş</span>
-          </div>
+          <strong>1. Kategori seç</strong>
+          <span>Ürünlere hızlıca ulaş</span>
         </div>
 
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-shopping-cart-plus"></i></div>
-          <div>
-            <strong>2. Sepete ekle</strong>
-            <span>İhtiyaçlarını tamamla</span>
-          </div>
+          <strong>2. Sepete ekle</strong>
+          <span>İhtiyaçlarını tamamla</span>
         </div>
 
         <div class="hero-step">
-          <div class="hero-step-icon"><i class="ti ti-brand-whatsapp"></i></div>
-          <div>
-            <strong>3. Onayla</strong>
-            <span>WhatsApp’tan siparişi gönder</span>
-          </div>
+          <strong>3. Onayla</strong>
+          <span>WhatsApp’tan siparişi gönder</span>
         </div>
       </div>
     </div>
